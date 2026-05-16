@@ -33,7 +33,7 @@
             color: var(--text-main);
             overflow-x: hidden;
             height: 100vh;
-            transition: background 0.5s ease; /* Transition fluide lors du changement de fond */
+            transition: background 0.5s ease;
         }
 
         /* --- AUTHENTICATION --- */
@@ -552,7 +552,6 @@
             border-color: var(--success);
             box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
         }
-        /* La miniature dynamique */
         .theme-miniature {
             height: 65px;
             width: 100%;
@@ -609,26 +608,7 @@
             cursor: default;
         }
 
-        /* --- SHOP / SUCCESS / OTHER --- */
-        .shop-list-title {
-            font-size: 1.2rem;
-            color: var(--primary);
-            margin: 1.5rem 0 0.8rem 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255, 159, 67, 0.1);
-            padding-bottom: 4px;
-        }
-        .shop-list { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
-        .shop-item { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 12px; padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
-        .shop-info { display: flex; align-items: center; gap: 15px; }
-        .shop-icon { font-size: 2rem; }
-        .shop-details h4 { font-size: 1rem; }
-        .shop-details p { font-size: 0.8rem; color: var(--text-muted); }
-        .shop-cost { color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
-        .btn-buy { background: rgba(255, 159, 67, 0.1); color: var(--text-main); border: 1px solid rgba(255, 159, 67, 0.3); padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
-        .btn-buy.equipped { background: var(--success); color: black; border-color: var(--success); }
-
+        /* --- LOGS / SUCCESS --- */
         .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 700px; margin: 0 auto; }
         .ach-card { background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 15px; opacity: 0.4; }
         .ach-card.unlocked { opacity: 1; border-color: var(--primary); background: var(--bg-card); }
@@ -668,16 +648,7 @@
         .user-card-details .username-click { font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; }
         .user-card-details .username-click:hover { color: var(--primary); text-decoration: underline; }
         .user-card-details .sub { font-size: 0.75rem; color: var(--text-muted); }
-        .user-card-actions { display: flex; gap: 6px; }
         
-        .btn-action-sm { padding: 0.4rem 0.8rem; border-radius: 6px; border: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .btn-action-sm.add { background: var(--primary); color: black; }
-        .btn-action-sm.add:hover { background: #ffb061; }
-        .btn-action-sm.remove { background: rgba(255,255,255,0.05); color: #b2bec3; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-action-sm.remove:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .btn-action-sm.block { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
-        .btn-action-sm.block:hover { background: var(--danger); color: white; }
-
         .lead-tabs { display: flex; gap: 10px; margin-bottom: 1rem; }
         .lead-tab-btn { background: transparent; border: 1px solid #331b07; color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
         .lead-tab-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(255, 159, 67, 0.05); }
@@ -938,7 +909,6 @@
     </div>
 
     <script>
-        // --- CONSTANTES DU SYSTEME ---
         const ALL_BADGES = [
             { id: 'b_novice', name: 'Zéro Absolu', icon: '🥚', desc: 'Inscription sur le dashboard.', type: 'passive' },
             { id: 'b_br_10', name: 'Bras d\'acier', icon: '🦾', desc: 'Atteindre 10 branlettes.', type: 'branlettes', req: 10 },
@@ -963,30 +933,22 @@
             { id: 'd_hidden_1', title: 'Délivrance Ultime', desc: 'Atteindre un total de 12 éjaculations.', tag: 'hidden', rewardPts: 150, metric: 'ejaculations', target: 12 }
         ];
 
-        // --- ETAT GLOBAL DE L'APPLICATION ---
         let currentUser = localStorage.getItem('loggedUser') || null;
         let userData = null;
         let activeLeaderboardMetric = 'points';
 
-        // Variables pour le chrono anti-récidive
         let chronoInterval = null;
         let chronoStartTime = 0;
         let chronoElapsedTime = 0;
         let isChronoRunning = false;
 
-        // --- INITIALISATION ---
         document.addEventListener("DOMContentLoaded", () => {
             initApp();
-            
-            // Événements d'authentification
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             document.getElementById('registerForm').addEventListener('submit', handleRegister);
 
-            // Intervalle d'actualisation en tâche de fond (toutes les 5 secondes)
             setInterval(() => {
-                if (currentUser) {
-                    refreshBackgroundData();
-                }
+                if (currentUser) { refreshBackgroundData(); }
             }, 5000);
         });
 
@@ -1004,7 +966,6 @@
                         document.getElementById('menu-admin-btn').style.display = 'flex';
                     }
                     
-                    // Restaurer l'état du chronomètre
                     if (userData.chronoStartTime && userData.isChronoRunning) {
                         isChronoRunning = true;
                         chronoStartTime = userData.chronoStartTime;
@@ -1039,7 +1000,6 @@
             saveData();
         }
 
-        // --- AUTHENTICATION SCRIPTS ---
         function toggleAuthCards(showLogin) {
             document.getElementById('login-card').style.display = showLogin ? 'block' : 'none';
             document.getElementById('register-card').style.display = showLogin ? 'none' : 'block';
@@ -1107,7 +1067,7 @@
         }
 
         function logout() {
-            if (isChronoRunning) { toggleChrono(); } // Mettre en pause proprement avant déconnexion
+            if (isChronoRunning) { toggleChrono(); }
             localStorage.removeItem('loggedUser');
             currentUser = null;
             userData = null;
@@ -1116,7 +1076,6 @@
             document.getElementById('menu-admin-btn').style.display = 'none';
         }
 
-        // --- NAVIGATION PRINCIPALE ---
         function switchPage(pageId, btnElement) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
@@ -1131,7 +1090,6 @@
             updateDOMValues();
         }
 
-        // --- INTERACTION ET ENREGISTREMENT ---
         function incrementStat(metric, amount) {
             if (!userData) return;
             if (metric === 'branlettes') {
@@ -1171,7 +1129,6 @@
             const stored = localStorage.getItem('user_' + currentUser);
             if(stored) {
                 const parsed = JSON.parse(stored);
-                // Synchroniser les valeurs au cas où elles auraient été modifiées via le panel admin d'un autre onglet
                 userData.points = parsed.points;
                 userData.branlettes = parsed.branlettes;
                 userData.ejaculations = parsed.ejaculations;
@@ -1186,24 +1143,20 @@
             }
         }
 
-        // --- MISE À JOUR ET RENDU DU D.O.M ---
         function updateDOMValues() {
             if (!userData) return;
 
-            // Déterminer le rang textuel basé sur les points
             let rankStr = "Novice";
             if (userData.points >= 500) rankStr = "Dieu Vénérable ✨";
             else if (userData.points >= 300) rankStr = "Grand Maître 🔮";
             else if (userData.points >= 150) rankStr = "Initié Émérite ⚡";
             else if (userData.points >= 50) rankStr = "Compagnon 🦾";
 
-            // Sidebar
             document.getElementById('side-name').textContent = userData.username.toUpperCase();
             document.getElementById('side-rank').textContent = rankStr;
             document.getElementById('side-pts').textContent = userData.points;
             document.getElementById('side-br').textContent = userData.branlettes;
 
-            // Rendu des badges dans la sidebar
             const sideBadgesBox = document.getElementById('side-badges');
             sideBadgesBox.innerHTML = '';
             userData.equippedBadges.forEach(id => {
@@ -1211,17 +1164,15 @@
                 if(b) sideBadgesBox.innerHTML += `<span title="${b.name}: ${b.desc}">${b.icon}</span>`;
             });
 
-            // Page Profil
             document.getElementById('profile-display-name').textContent = userData.username.toUpperCase();
             document.getElementById('profile-display-rank').textContent = rankStr;
             document.getElementById('stat-points').textContent = userData.points;
             document.getElementById('stat-branlettes').textContent = userData.branlettes;
-            document.getElementById('stat-ejaculations').textContent = userData.exponential || userData.ejaculations;
+            document.getElementById('stat-ejaculations').textContent = userData.ejaculations;
             
             const noteInput = document.getElementById('user-note-input');
             if(noteInput && document.activeElement !== noteInput) noteInput.value = userData.note || '';
 
-            // Rendu des avatars
             const avatarContainer = document.getElementById('profile-avatar-container');
             if (userData.avatar.startsWith('data:image') || userData.avatar.startsWith('http')) {
                 avatarContainer.innerHTML = `<img src="${userData.avatar}" alt="Avatar">`;
@@ -1231,11 +1182,9 @@
                 avatarContainer.classList.remove('has-aura');
             }
 
-            // Page Compteurs
             document.getElementById('counter-br-val').textContent = userData.branlettes;
             document.getElementById('counter-ej-val').textContent = userData.ejaculations;
 
-            // Actualisation des vues d'onglets spécifiques
             if (document.getElementById('page-profil').classList.contains('active')) {
                 renderBadgesGrid();
                 renderThemesGrid();
@@ -1248,7 +1197,6 @@
             if (document.getElementById('page-admin').classList.contains('active')) loadAdminPanelData();
         }
 
-        // --- SCRIPTS DES ONGLETS DE PERSONNALISATION ---
         function switchCustomTab(panelId, btn) {
             document.querySelectorAll('.custom-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1283,12 +1231,9 @@
         function toggleBadgeEquip(badgeId) {
             const idx = userData.equippedBadges.indexOf(badgeId);
             if(idx > -1) {
-                // Ne pas déséquiper si c'est le seul
                 if(userData.equippedBadges.length > 1) userData.equippedBadges.splice(idx, 1);
             } else {
-                if(userData.equippedBadges.length >= 3) {
-                    userData.equippedBadges.shift(); // Limite max de 3 badges affichés simultanément
-                }
+                if(userData.equippedBadges.length >= 3) { userData.equippedBadges.shift(); }
                 userData.equippedBadges.push(badgeId);
             }
             saveData();
@@ -1338,11 +1283,9 @@
             document.body.style.backgroundAttachment = 'fixed';
         }
 
-        // --- LOGIQUE CHRONOMETRE ANTI-RECIDIVE ---
         function toggleChrono() {
             const btn = document.getElementById('chrono-toggle-btn');
             if (!isChronoRunning) {
-                // Lancement
                 isChronoRunning = true;
                 chronoStartTime = Date.now() - chronoElapsedTime;
                 userData.chronoStartTime = chronoStartTime;
@@ -1350,7 +1293,6 @@
                 chronoInterval = setInterval(updateChronoDisplay, 1000);
                 if(btn) { btn.textContent = 'Pause'; btn.style.borderColor = 'var(--danger)'; btn.style.color = 'var(--danger)'; }
             } else {
-                // Pause
                 isChronoRunning = false;
                 clearInterval(chronoInterval);
                 chronoElapsedTime = Date.now() - chronoStartTime;
@@ -1393,7 +1335,6 @@
             }
         }
 
-        // --- LOGIQUE AVATAR (UPLOAD BASE64) ---
         function triggerAvatarUpload() {
             document.getElementById('avatar-upload-input').click();
         }
@@ -1410,7 +1351,6 @@
             }
         }
 
-        // --- SCRIPTS ONGLETS DEFIS ---
         function renderChallenges() {
             const container = document.getElementById('defis-list-container');
             if(!container) return;
@@ -1463,7 +1403,6 @@
             alert(`🎉 Récompense réclamée ! +${pointsReward} Points.`);
         }
 
-        // --- SCRIPT COMMUNAUTÉ & CLASSEMENT ---
         function getAllUsersData() {
             return Object.keys(localStorage)
                 .filter(k => k.startsWith('user_'))
@@ -1517,9 +1456,7 @@
             activeLeaderboardMetric = metric;
             
             const th = document.getElementById('lead-th-metric');
-            if(th) {
-                th.textContent = metric.charAt(0).toUpperCase() + metric.slice(1);
-            }
+            if(th) { th.textContent = metric.charAt(0).toUpperCase() + metric.slice(1); }
             renderLeaderboard();
         }
 
@@ -1530,7 +1467,6 @@
 
             let users = getAllUsersData();
 
-            // Tri descendant selon la métrique sélectionnée
             users.sort((a, b) => {
                 let valA = a[activeLeaderboardMetric] || 0;
                 let valB = b[activeLeaderboardMetric] || 0;
@@ -1563,7 +1499,6 @@
             });
         }
 
-        // --- PANNEAU ADMIN DYNAMIQUE ---
         function loadAdminPanelData() {
             const tbody = document.getElementById('admin-users-tbody');
             if(!tbody) return;
@@ -1616,13 +1551,11 @@
             }
         }
 
-        // --- LOGIQUE FENÊTRES MODALES (PROFIL TIERS) ---
         function openUserProfileModal(username) {
             const stored = localStorage.getItem('user_' + username);
             if(!stored) return;
             const targetUser = JSON.parse(stored);
 
-            // Remplissage de l'avatar
             const avatarBox = document.getElementById('modal-avatar-container');
             if(targetUser.avatar.startsWith('data:image') || targetUser.avatar.startsWith('http')) {
                 avatarBox.innerHTML = `<img src="${targetUser.avatar}" alt="" style="width:100%; height:100%; object-fit:cover;">`;
@@ -1637,7 +1570,6 @@
             document.getElementById('modal-stat-br').textContent = targetUser.branlettes || 0;
             document.getElementById('modal-stat-ej').textContent = targetUser.ejaculations || 0;
 
-            // Détermination du rang
             let rStr = "Novice";
             if ((targetUser.points || 0) >= 500) rStr = "Dieu Vénérable ✨";
             else if ((targetUser.points || 0) >= 300) rStr = "Grand Maître 🔮";
@@ -1645,7 +1577,6 @@
             else if ((targetUser.points || 0) >= 50) rStr = "Compagnon 🦾";
             document.getElementById('modal-rank').textContent = rStr;
 
-            // Rendu des badges équipés
             const badgesBox = document.getElementById('modal-badges');
             badgesBox.innerHTML = '';
             const equipped = targetUser.equippedBadges || ['b_novice'];
@@ -1654,7 +1585,6 @@
                 if(b) badgesBox.innerHTML += `<span title="${b.name}: ${b.desc}">${b.icon}</span>`;
             });
 
-            // Rendu de la note publique
             const logsBox = document.getElementById('modal-logs-container');
             logsBox.innerHTML = '';
             if(targetUser.note) {
@@ -1663,7 +1593,6 @@
                 logsBox.innerHTML = `<div style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">Aucune humeur partagée.</div>`;
             }
 
-            // Rendu des succès débloqués
             const achievementsBox = document.getElementById('modal-achievements-container');
             achievementsBox.innerHTML = '';
             const unlocked = targetUser.unlockedBadges || ['b_novice'];
