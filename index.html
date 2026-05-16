@@ -8,11 +8,11 @@
         :root {
             --bg-dark: #050807;
             --bg-card: #0a0f0d;
-            --primary: #00b894;
-            --primary-glow: rgba(0, 184, 148, 0.2);
+            --primary: #ff9f43; /* Changement : Vert remplacé par Orange */
+            --primary-glow: rgba(255, 159, 67, 0.2); /* Changement : Lueur Orange */
             --text-main: #ffffff;
             --text-muted: #636e72;
-            --accent-orange: #ff9f43;
+            --accent-orange: #ff9f43; /* Même couleur que le primaire pour l'instant */
         }
 
         * {
@@ -97,7 +97,7 @@
         }
 
         .auth-btn:hover {
-            background: #00dcaf;
+            background: #ffb061; /* Légère variation pour le hover */
             transform: translateY(-2px);
         }
 
@@ -183,9 +183,11 @@
             color: var(--primary);
         }
 
+        /* Retiré car primaire est déjà orange
         .mini-box span.orange {
             color: var(--accent-orange);
         }
+        */
 
         .menu-items {
             display: flex;
@@ -211,7 +213,7 @@
 
         .menu-btn:hover, .menu-btn.active {
             color: var(--primary);
-            background: rgba(0, 184, 148, 0.05);
+            background: rgba(255, 159, 67, 0.05); /* Changement : Lueur Orange */
         }
 
         .menu-btn.active {
@@ -344,7 +346,9 @@
             margin-bottom: 0.3rem;
         }
 
+        /* Retiré car primaire est déjà orange
         .stat-card .val.orange { color: var(--accent-orange); }
+        */
 
         .stat-card .lbl {
             font-size: 0.75rem;
@@ -408,7 +412,9 @@
             color: var(--primary);
         }
         .big-number span { font-size: 1.5rem; color: var(--text-muted); font-weight: 400;}
+        /* Retiré car primaire est déjà orange
         .big-number.orange { color: var(--accent-orange); }
+        */
 
         .counter-actions {
             display: flex;
@@ -429,9 +435,11 @@
         .btn-count.minus { background: #131c19; color: var(--text-muted); }
         .btn-count.minus:hover { background: #1c2a26; }
         .btn-count.plus { background: var(--primary); color: black; }
-        .btn-count.plus:hover { background: #00dcaf; }
+        .btn-count.plus:hover { background: #ffb061; }
+        /* Retiré car primaire est déjà orange
         .btn-count.plus.orange { background: var(--accent-orange); }
         .btn-count.plus.orange:hover { background: #ffb061; }
+        */
 
         /* --- DESIGN PAGE : CHRONO --- */
         .chrono-circle {
@@ -467,7 +475,7 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .btn-chrono.start { background: rgba(0, 184, 148, 0.1); border: 1px solid var(--primary); color: var(--primary); }
+        .btn-chrono.start { background: rgba(255, 159, 67, 0.1); border: 1px solid var(--primary); color: var(--primary); } /* Changement : Lueur Orange */
         .btn-chrono.reset { background: #181717; border: 1px solid #333; color: #aaa; }
 
         /* --- DESIGN PAGE : BOUTIQUE --- */
@@ -562,15 +570,12 @@
     <div id="main-app">
         
         <div class="sidebar">
-            <div class="brand">🍃 NIGLO <span style="font-size:0.7rem; font-weight:300; color:white;">SANDWICH</span></div>
-            
-            <div class="user-summary">
+            <div class="brand">🍃 NIGLO <span style="font-size:0.7rem; font-weight:300; color:white;">BRANLETTE</span></div> <div class="user-summary">
                 <div class="name" id="side-name">zzhhr</div>
                 <div class="rank">Rookie</div>
                 <div class="mini-stats">
                     <div class="mini-box"><span id="side-pts">0</span>PTS</div>
-                    <div class="mini-box"><span class="orange" id="side-sandwichs">0</span>⏳</div>
-                </div>
+                    <div class="mini-box"><span id="side-ejaculations">0</span>⏳</div> </div>
             </div>
 
             <div class="menu-items">
@@ -606,26 +611,17 @@
                     <div class="compteur-card">
                         <div class="compteur-header">
                             <span>🍃</span>
-                            <div class="compteur-title">Niglos</div>
-                        </div>
+                            <div class="compteur-title">Branlettes</div> </div>
                         <div class="compteur-subtitle">COMPTEUR PERSONNEL</div>
-                        <div class="big-number"><span id="val-niglos">0</span><span>/100</span></div>
-                        <div class="counter-actions">
-                            <button class="btn-count minus" onclick="updateCount('niglos', -1)">-</button>
-                            <button class="btn-count plus" onclick="updateCount('niglos', 1)">+</button>
-                        </div>
+                        <div class="big-number"><span id="val-branlettes">0</span><span>/100</span></div> <div class="counter-actions">
+                            <button class="btn-count minus" onclick="updateCount('branlettes', -1)">-</button> <button class="btn-count plus" onclick="updateCount('branlettes', 1)">+</button> </div>
                     </div>
                     <div class="compteur-card">
                         <div class="compteur-header">
                             <span>🥪</span>
-                            <div class="compteur-title">Sandwichs</div>
-                        </div>
-                        <div class="compteur-subtitle">+2 PTS PAR SANDWICH</div>
-                        <div class="big-number orange"><span id="val-sandwichs">0</span><span>/100</span></div>
-                        <div class="counter-actions">
-                            <button class="btn-count minus" onclick="updateCount('sandwichs', -1)">-</button>
-                            <button class="btn-count plus orange" onclick="updateCount('sandwichs', 1)">+</button>
-                        </div>
+                            <div class="compteur-title">Éjaculations</div> </div>
+                        <div class="compteur-subtitle">+2 PTS PAR ÉJACULATION</div> <div class="big-number"><span id="val-ejaculations">0</span><span>/100</span></div> <div class="counter-actions">
+                            <button class="btn-count minus" onclick="updateCount('ejaculations', -1)">-</button> <button class="btn-count plus" onclick="updateCount('ejaculations', 1)">+</button> </div>
                     </div>
                 </div>
             </div>
@@ -648,13 +644,9 @@
                             <div class="lbl">Points</div>
                         </div>
                         <div class="stat-card">
-                            <div class="val" id="card-niglos">0</div>
-                            <div class="lbl">Niglos</div>
-                        </div>
+                            <div class="val" id="card-branlettes">0</div> <div class="lbl">Branlettes</div> </div>
                         <div class="stat-card">
-                            <div class="val orange" id="card-sandwichs">0</div>
-                            <div class="lbl">Sandwichs</div>
-                        </div>
+                            <div class="val" id="card-ejaculations">0</div> <div class="lbl">Éjaculations</div> </div>
                     </div>
 
                     <div class="decorations-section">
@@ -695,9 +687,7 @@
                         <div class="shop-info">
                             <div class="shop-icon">🥪</div>
                             <div class="shop-details">
-                                <h4>Sandwich d'Or</h4>
-                                <p>Le casse-croûte ultime</p>
-                                <div class="shop-cost">60 pts • Légendaire</div>
+                                <h4>Éjaculation d'Or</h4> <p>Le moment ultime</p> <div class="shop-cost">60 pts • Légendaire</div>
                             </div>
                         </div>
                         <button class="btn-buy" onclick="buyItem(60)">Acheter</button>
@@ -725,7 +715,7 @@
     <script>
         // --- VARIABLES GLOBALES DE SESSION ---
         let currentUser = null;
-        let userData = { points: 0, niglos: 0, sandwichs: 0 };
+        let userData = { points: 0, branlettes: 0, ejaculations: 0 }; // Changement : niglos remplacé par branlettes, sandwichs remplacé par ejaculations
         
         // Chrono
         let chronoInterval = null;
@@ -750,7 +740,7 @@
                 return;
             }
 
-            const initialData = { points: 0, niglos: 0, sandwichs: 0, password: pass };
+            const initialData = { points: 0, branlettes: 0, ejaculations: 0, password: pass }; // Changement : niglos remplacé par branlettes, sandwichs remplacé par ejaculations
             localStorage.setItem('user_' + user, JSON.stringify(initialData));
             alert('Compte créé avec succès ! Connecte-toi vite.');
             toggleAuth(true);
@@ -811,9 +801,9 @@
             
             userData[type] += amount;
 
-            // Système d'attribution automatique des points (Ex: +2 pts par sandwich)
-            if(type === 'sandwichs' && amount > 0) userData.points += 2;
-            if(type === 'niglos' && amount > 0) userData.points += 1;
+            // Système d'attribution automatique des points (Ex: +2 pts par éjaculation)
+            if(type === 'ejaculations' && amount > 0) userData.points += 2; // Changement : sandwichs remplacé par ejaculations
+            if(type === 'branlettes' && amount > 0) userData.points += 1; // Changement : niglos remplacé par branlettes
 
             saveData();
             updateDOMValues();
@@ -850,12 +840,12 @@
             document.getElementById('side-pts').textContent = userData.points;
             document.getElementById('card-pts').textContent = userData.points;
 
-            document.getElementById('val-niglos').textContent = userData.niglos;
-            document.getElementById('card-niglos').textContent = userData.niglos;
+            document.getElementById('val-branlettes').textContent = userData.branlettes; // Changement : val-niglos remplacé par val-branlettes, niglos remplacé par branlettes
+            document.getElementById('card-branlettes').textContent = userData.branlettes; // Changement : card-niglos remplacé par card-branlettes, niglos remplacé par branlettes
 
-            document.getElementById('val-sandwichs').textContent = userData.sandwichs;
-            document.getElementById('card-sandwichs').textContent = userData.sandwichs;
-            document.getElementById('side-sandwichs').textContent = userData.sandwichs;
+            document.getElementById('val-ejaculations').textContent = userData.ejaculations; // Changement : val-sandwichs remplacé par val-ejaculations, sandwichs remplacé par ejaculations
+            document.getElementById('card-ejaculations').textContent = userData.ejaculations; // Changement : card-sandwichs remplacé par card-ejaculations, sandwichs remplacé par ejaculations
+            document.getElementById('side-ejaculations').textContent = userData.ejaculations; // Changement : side-sandwichs remplacé par side-ejaculations, sandwichs remplacé par ejaculations
         }
 
         // --- LOGIQUE CHRONO ---
@@ -874,7 +864,7 @@
                 // Arrêter
                 isChronoRunning = false;
                 btn.textContent = "START";
-                btn.style.background = "rgba(0, 184, 148, 0.1)";
+                btn.style.background = "rgba(255, 159, 67, 0.1)"; /* Changement : Lueur Orange */
                 btn.style.borderColor = "var(--primary)";
                 btn.style.color = "var(--primary)";
                 clearInterval(chronoInterval);
