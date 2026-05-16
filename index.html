@@ -157,19 +157,31 @@
             margin-bottom: 1.5rem;
         }
 
+        .user-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .user-summary .name {
             font-weight: bold;
             font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
             word-break: break-all;
+        }
+
+        .equipped-badges-sub {
+            display: flex;
+            gap: 4px;
+            font-size: 1rem;
+            margin-top: 2px;
+            min-height: 1.2rem;
         }
 
         .user-summary .rank {
             font-size: 0.75rem;
             color: var(--primary);
             margin-bottom: 0.8rem;
+            margin-top: 2px;
         }
 
         .mini-stats {
@@ -348,7 +360,6 @@
 
         /* --- COMPTEURS --- */
         .compteur-wrapper { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
-        .compteur-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 16px; padding: 2rem; }
         .compteur-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 16px; padding: 2rem; }
         .compteur-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
         .compteur-title { font-weight: bold; font-size: 1.1rem;}
@@ -558,7 +569,10 @@
             <div class="brand">🍆 BRANLETTE</div>
             
             <div class="user-summary">
-                <div class="name" id="side-name">User</div>
+                <div class="user-block">
+                    <div class="name" id="side-name">User</div>
+                    <div class="equipped-badges-sub" id="side-badges"></div>
+                </div>
                 <div class="rank" id="side-rank">Novice</div>
                 <div class="mini-stats">
                     <div class="mini-box"><span id="side-pts">0</span>PTS</div>
@@ -699,7 +713,11 @@
                         <div class="avatar-main" id="profile-avatar-container">😈</div>
                         <div class="avatar-badge" onclick="triggerAvatarUpload()">📷</div>
                     </div>
-                    <div class="profile-name" id="prof-name">User</div>
+                    
+                    <div class="user-block" style="align-items: center; margin-bottom: 0.2rem;">
+                        <div class="profile-name" id="prof-name">User</div>
+                        <div class="equipped-badges-sub" id="prof-badges" style="font-size: 1.3rem;"></div>
+                    </div>
                     <div class="profile-rank" id="prof-rank">Novice</div>
 
                     <div class="stats-row">
@@ -750,7 +768,7 @@
                     <div class="shop-item">
                         <div class="shop-info">
                             <div class="shop-icon">👑</div>
-                            <div class="shop-details"><h4>Couronne Royale</h4><p>Affiche une couronne à gauche de ton pseudo</p><div class="shop-cost">30 pts</div></div>
+                            <div class="shop-details"><h4>Couronne Royale</h4><p>Affiche une couronne en dessous de ton pseudo</p><div class="shop-cost">30 pts</div></div>
                         </div>
                         <button class="btn-buy" id="btn-shop-crown" onclick="handleShopAction('crown', 30)">Acheter</button>
                     </div>
@@ -987,17 +1005,22 @@
             if(!currentUser) return;
 
             const rank = getRank(userData.points);
-            let finalName = currentUser;
             
-            if(userData.equipped.includes('crown')) finalName = "👑 " + finalName;
+            // On sépare la logique du nom et des émojis de badges en dessous
+            document.getElementById('side-name').textContent = currentUser;
+            document.getElementById('prof-name').textContent = currentUser;
             
-            if(userData.equipped.includes('shaolin_title')) finalName += " [Moine Shaolin]";
-            if(userData.equipped.includes('veloce_title')) finalName += " [⚡ Véloce]";
-            if(userData.equipped.includes('vampire_badge')) finalName += " [🦇 Vampire]";
-            if(userData.equipped.includes('rage_badge')) finalName += " [🚫 Rageux]";
+            // Construction de la chaîne d'émojis uniquement pour le dessous du pseudo
+            let badgesHtml = "";
+            if(userData.equipped.includes('crown')) badgesHtml += "👑 ";
+            if(userData.equipped.includes('shaolin_title')) badgesHtml += "🧘 ";
+            if(userData.equipped.includes('veloce_title')) badgesHtml += "⚡ ";
+            if(userData.equipped.includes('vampire_badge')) badgesHtml += "🦇 ";
+            if(userData.equipped.includes('rage_badge')) badgesHtml += "🚫 ";
 
-            document.getElementById('side-name').textContent = finalName;
-            document.getElementById('prof-name').textContent = finalName;
+            document.getElementById('side-badges').innerHTML = badgesHtml;
+            document.getElementById('prof-badges').innerHTML = badgesHtml;
+
             document.getElementById('side-rank').textContent = rank;
             document.getElementById('prof-rank').textContent = rank;
 
