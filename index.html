@@ -451,7 +451,7 @@
         }
         .btn-claim.claimed { background: rgba(0,0,0,0.3); border-color: transparent; color: var(--text-muted); cursor: not-allowed; }
 
-        /* --- SYSTEME DE BADGES DANS LE PROFIL --- */
+        /* --- SYSTEME DE PERSONNALISATION PROFIL (ONGLETS) --- */
         .badges-section {
             text-align: left;
             margin-top: 2rem;
@@ -460,11 +460,43 @@
             border-radius: 12px;
             border: 1px solid rgba(255, 159, 67, 0.05);
         }
+        .customization-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255, 159, 67, 0.1);
+            padding-bottom: 8px;
+        }
+        .custom-tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 4px 12px;
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .custom-tab-btn.active {
+            color: var(--primary);
+        }
+        .custom-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+        .custom-panel { display: none; }
+        .custom-panel.active { display: block; }
+
         .badges-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 12px;
-            margin-top: 1rem;
         }
         .badge-item {
             background: rgba(20, 20, 20, 0.8);
@@ -495,6 +527,86 @@
             font-size: 1.8rem;
             display: block;
             margin-bottom: 4px;
+        }
+
+        /* --- APERÇU DE BANNIÈRES DANS LE PROFIL --- */
+        .themes-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        .theme-preview-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .theme-preview-card.locked {
+            opacity: 0.5;
+        }
+        .theme-preview-card.equipped {
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
+        }
+        /* La miniature dynamique */
+        .theme-miniature {
+            height: 65px;
+            width: 100%;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            position: relative;
+        }
+        .theme-miniature .lock-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            font-size: 0.75rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        .theme-preview-info {
+            padding: 0.6rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .theme-preview-name {
+            font-size: 0.8rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        .btn-preview-action {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-preview-action:hover {
+            background: var(--primary);
+            color: black;
+            border-color: var(--primary);
+        }
+        .theme-preview-card.equipped .btn-preview-action {
+            background: var(--success);
+            color: black;
+            border-color: var(--success);
+            cursor: default;
         }
 
         /* --- SHOP / SUCCESS / OTHER --- */
@@ -848,21 +960,33 @@
                     </div>
 
                     <div class="badges-section">
-                        <h3 style="color:var(--primary); font-size:0.95rem; text-transform:uppercase;">🎖️ Vos Titres & Badges Débloqués</h3>
-                        <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Cliquez sur un badge ou un titre acquis pour l'équiper/déséquiper de votre pseudo.</p>
-                        <div class="badges-grid" id="badges-inventory-grid">
-                            <div class="badge-item" id="badge-shaolin_title" onclick="toggleEquipBadge('shaolin_title')">
-                                <span class="badge-icon">🧘</span><strong>[Moine Shaolin]</strong>
+                        <div class="customization-tabs">
+                            <button class="custom-tab-btn active" id="tab-btn-titles" onclick="switchCustomTab('titles')">🎖️ Titres & Badges</button>
+                            <button class="custom-tab-btn" id="tab-btn-themes" onclick="switchCustomTab('themes')">🖼️ Galerie des Fonds</button>
+                        </div>
+                        
+                        <div class="custom-panel active" id="custom-panel-titles">
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Cliquez sur un titre acquis pour l'équiper/déséquiper de votre pseudo.</p>
+                            <div class="badges-grid" id="badges-inventory-grid">
+                                <div class="badge-item" id="badge-shaolin_title" onclick="toggleEquipBadge('shaolin_title')">
+                                    <span class="badge-icon">🧘</span><strong>[Moine Shaolin]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-veloce_title" onclick="toggleEquipBadge('veloce_title')">
+                                    <span class="badge-icon">⚡</span><strong>[⚡ Véloce]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-vampire_badge" onclick="toggleEquipBadge('vampire_badge')">
+                                    <span class="badge-icon">🦇</span><strong>[🦇 Vampire]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-rage_badge" onclick="toggleEquipBadge('rage_badge')">
+                                    <span class="badge-icon">🚫</span><strong>[🚫 Rageux]</strong>
+                                </div>
                             </div>
-                            <div class="badge-item" id="badge-veloce_title" onclick="toggleEquipBadge('veloce_title')">
-                                <span class="badge-icon">⚡</span><strong>[⚡ Véloce]</strong>
-                            </div>
-                            <div class="badge-item" id="badge-vampire_badge" onclick="toggleEquipBadge('vampire_badge')">
-                                <span class="badge-icon">🦇</span><strong>[🦇 Vampire]</strong>
-                            </div>
-                            <div class="badge-item" id="badge-rage_badge" onclick="toggleEquipBadge('rage_badge')">
-                                <span class="badge-icon">🚫</span><strong>[🚫 Rageux]</strong>
-                            </div>
+                        </div>
+
+                        <div class="custom-panel" id="custom-panel-themes">
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Gérez l'apparence générale de votre application. Achetez ou équipez directement les thèmes ci-dessous.</p>
+                            <div class="themes-preview-grid" id="profile-themes-preview-grid">
+                                </div>
                         </div>
                     </div>
 
@@ -946,10 +1070,10 @@
         const ADMIN_USERNAME = "admin";
         const ADMIN_PASSWORD = "admin123";
 
-        // Définition de tous les thèmes/fonds disponibles
+        // Définition globale de tous les thèmes/fonds disponibles
         const APP_THEMES = {
-            classic: { name: "Sombre Classique (Feu de camp)", style: "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)", price: 0, icon: "🔥" },
-            pitchblack: { name: "Nuit Profonde (Noir Total)", style: "linear-gradient(135deg, #050505 0%, #000000 100%)", price: 0, icon: "🌑" },
+            classic: { name: "Sombre Classique", style: "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)", price: 0, icon: "🔥" },
+            pitchblack: { name: "Nuit Profonde", style: "linear-gradient(135deg, #050505 0%, #000000 100%)", price: 0, icon: "🌑" },
             sunrise: { name: "Aube Orangée", style: "radial-gradient(circle at 50% 10%, #3a1c00 0%, #1a0b00 50%, #050200 100%)", price: 0, icon: "🌅" },
             cyberpunk: { name: "Néon Cyberpunk", style: "linear-gradient(135deg, #1f0326 0%, #05010d 100%)", price: 40, icon: "🔮" },
             royal: { name: "Or Impérial Royal", style: "radial-gradient(circle at 50% 30%, #362903 0%, #120e01 60%, #000000 100%)", price: 75, icon: "🔱" }
@@ -984,7 +1108,7 @@
 
             const initialData = { 
                 points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", 
-                inventory: ["classic", "pitchblack", "sunrise"], // Les 3 thèmes gratuits débloqués dès le début
+                inventory: ["classic", "pitchblack", "sunrise"], 
                 equipped: [], logs: [], achievements: [], claimedChallenges: [] , friends: [], blocked: [], 
                 themeEquipped: "classic"
             };
@@ -1011,7 +1135,6 @@
 
         function validateUserArrays() {
             if(!userData.inventory) userData.inventory = ["classic", "pitchblack", "sunrise"];
-            // S'assurer que les thèmes gratuits y sont
             if(!userData.inventory.includes("classic")) userData.inventory.push("classic");
             if(!userData.inventory.includes("pitchblack")) userData.inventory.push("pitchblack");
             if(!userData.inventory.includes("sunrise")) userData.inventory.push("sunrise");
@@ -1056,6 +1179,20 @@
             if (pageId === 'admin-panel') loadAdminPanelData();
             if (pageId === 'comm') { renderCommunitySearch(); renderLeaderboard(); }
             if (pageId === 'boutique') { renderThemesShop(); }
+            if (pageId === 'profil-view') { renderProfileThemesPreview(); }
+        }
+
+        // Changement d'onglet à l'intérieur du Profil (Sous-navigation)
+        function switchCustomTab(tab) {
+            document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.custom-panel').forEach(p => p.classList.remove('active'));
+            
+            document.getElementById('tab-btn-' + tab).classList.add('active');
+            document.getElementById('custom-panel-' + tab).classList.add('active');
+
+            if(tab === 'themes') {
+                renderProfileThemesPreview();
+            }
         }
 
         function getRank(pts, role) {
@@ -1167,9 +1304,49 @@
             saveData(); updateDOMValues();
         }
 
-        /* --- LOGIQUE RENDU ET CONFIGURATION DE LA BOUTIQUE DE THÈMES --- */
+        /* --- RENDU DE LA GALERIE DES FONDS DANS LE PROFIL (AVEC APERÇU MINIATURE DYNAMIQUE) --- */
+        function renderProfileThemesPreview() {
+            const container = document.getElementById('profile-themes-preview-grid');
+            if(!container) return;
+            container.innerHTML = "";
+
+            Object.keys(APP_THEMES).forEach(themeKey => {
+                const theme = APP_THEMES[themeKey];
+                const isUnlocked = userData.inventory.includes(themeKey);
+                const isEquipped = userData.themeEquipped === themeKey;
+
+                let cardClass = "theme-preview-card";
+                if(!isUnlocked) cardClass += " locked";
+                if(isEquipped) cardClass += " equipped";
+
+                let btnHtml = "";
+                if(isEquipped) {
+                    btnHtml = `<button class="btn-preview-action" disabled>Équipé ✔️</button>`;
+                } else if(isUnlocked) {
+                    btnHtml = `<button class="btn-preview-action" onclick="handleThemeAction('${themeKey}', 0)">Équiper</button>`;
+                } else {
+                    btnHtml = `<button class="btn-preview-action" onclick="handleThemeAction('${themeKey}', ${theme.price})">Débloquer (${theme.price} p.)</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="theme-miniature" style="background: ${theme.style}; background-size: cover;">
+                            ${theme.icon}
+                            ${!isUnlocked ? `<span class="lock-indicator">🔒 Verrouillé</span>` : ''}
+                        </div>
+                        <div class="theme-preview-info">
+                            <div class="theme-preview-name">${theme.name}</div>
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        /* --- BOUTIQUE GENERALE DES THÈMES (SYNCHRONISÉE) --- */
         function renderThemesShop() {
             const container = document.getElementById('themes-shop-list');
+            if(!container) return;
             container.innerHTML = "";
 
             Object.keys(APP_THEMES).forEach(themeKey => {
@@ -1191,7 +1368,7 @@
                             <div class="shop-icon">${theme.icon}</div>
                             <div class="shop-details">
                                 <h4>${theme.name}</h4>
-                                <p>${theme.price === 0 ? 'Gratuit dès le départ' : 'Change complètement l\'arrière-plan de l\'application'}</p>
+                                <p>${theme.price === 0 ? 'Gratuit dès le départ' : 'Modifie l\'arrière-plan global de l\'application'}</p>
                                 ${!hasTheme ? `<div class="shop-cost">${theme.price} pts</div>` : '<div class="shop-cost" style="color:var(--success);">Débloqué</div>'}
                             </div>
                         </div>
@@ -1206,7 +1383,7 @@
 
             if (!hasTheme) {
                 if (userData.points < price) {
-                    alert("Pas assez de points pour acheter ce fond d'application ! 😢");
+                    alert("Pas assez de points pour débloquer ce fond d'application ! 😢");
                     return;
                 }
                 userData.points -= price;
@@ -1221,6 +1398,7 @@
             applyCurrentTheme();
             updateDOMValues();
             renderThemesShop();
+            renderProfileThemesPreview(); // Garde les deux vues synchronisées
         }
 
         function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
@@ -1316,6 +1494,8 @@
                     </div>
                 `).join('');
             }
+
+            renderProfileThemesPreview();
         }
 
         function updateChallengesDOM() {
@@ -1422,6 +1602,7 @@
         function renderCommunitySearch() {
             const query = document.getElementById('comm-search').value.toLowerCase().trim();
             const resultsContainer = document.getElementById('search-results-list');
+            if(!resultsContainer) return;
             resultsContainer.innerHTML = "";
 
             const allUsers = getAllPlatformUsers();
@@ -1513,6 +1694,7 @@
 
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-tbody');
+            if(!tbody) return;
             tbody.innerHTML = "";
 
             let allUsers = getAllPlatformUsers();
