@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Branlette Dashboard - Pro</title>
+    <title>Branlette Dashboard - Édition Légendaire</title>
     <style>
         :root {
             --bg-dark: #050807;
@@ -30,7 +30,7 @@
             height: 100vh;
         }
 
-        /* --- LOG IN / REGISTRATION --- */
+        /* --- AUTHENTICATION --- */
         #auth-container {
             display: flex;
             justify-content: center;
@@ -116,7 +116,7 @@
             text-decoration: underline;
         }
 
-        /* --- DASHBOARD MAIN INTERFACE --- */
+        /* --- SIDEBAR --- */
         #main-app {
             display: none; 
             height: 100vh;
@@ -159,10 +159,11 @@
 
         .user-summary .name {
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             gap: 5px;
+            word-break: break-all;
         }
 
         .user-summary .rank {
@@ -298,17 +299,12 @@
         }
 
         .btn-chrono {
-            flex: 1;
-            padding: 0.8rem;
-            border-radius: 8px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
+            flex: 1; padding: 0.8rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;
         }
         .btn-chrono.start { background: rgba(255, 159, 67, 0.15); border: 1px solid var(--primary); color: var(--primary); }
         .btn-chrono.reset { background: rgba(255,255,255,0.05); border: 1px solid #333; color: #aaa; }
 
-        /* --- ANIMATION AURA DE PROFILE --- */
+        /* --- AVATAR AURA --- */
         @keyframes auraGlow {
             0% { box-shadow: 0 0 15px rgba(255, 159, 67, 0.4); }
             50% { box-shadow: 0 0 35px rgba(255, 159, 67, 0.9); }
@@ -323,166 +319,101 @@
         }
 
         .avatar-main {
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.8);
-            border: 3px solid var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.5rem;
-            overflow: hidden;
-            box-shadow: 0 0 15px var(--primary-glow);
+            width: 100%; height: 100%; background: rgba(10, 10, 10, 0.8); border: 3px solid var(--primary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;
+            overflow: hidden; box-shadow: 0 0 15px var(--primary-glow);
         }
 
-        .avatar-main.has-aura {
-            animation: auraGlow 2s infinite ease-in-out;
-            border-color: #ff9f43;
-        }
-
-        .avatar-main img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
+        .avatar-main.has-aura { animation: auraGlow 2s infinite ease-in-out; border-color: #ff9f43; }
+        .avatar-main img { width: 100%; height: 100%; object-fit: cover; }
         .avatar-badge {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: var(--primary);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 2px solid #110700;
+            position: absolute; bottom: 5px; right: 5px; background: var(--primary); width: 32px; height: 32px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #110700;
         }
 
         .profile-name { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; }
         .profile-rank { color: var(--primary); font-size: 0.9rem; font-weight: 600; margin-bottom: 2.5rem; }
 
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 159, 67, 0.1);
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .stat-card .val {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
-        }
-
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; }
+        .stat-card .val { font-size: 2.2rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
         .stat-card .lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
 
         /* --- JOURNAL DE BORD --- */
-        .journal-box {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,159,67,0.1);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            text-align: left;
-        }
+        .journal-box { background: var(--bg-card); border: 1px solid rgba(255,159,67,0.1); padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: left; }
         .journal-box label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; }
         .journal-box textarea {
-            width: 100%;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid #331b07;
-            padding: 0.6rem;
-            color: white;
-            border-radius: 6px;
-            resize: none;
-            height: 60px;
-            outline: none;
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #331b07; padding: 0.6rem; color: white; border-radius: 6px; resize: none; height: 60px; outline: none;
         }
 
         /* --- COMPTEURS --- */
-        .compteur-wrapper {
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .compteur-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 159, 67, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-
+        .compteur-wrapper { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+        .compteur-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 16px; padding: 2rem; }
         .compteur-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
         .compteur-title { font-weight: bold; font-size: 1.1rem;}
         .compteur-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;}
 
         .big-number {
-            font-size: 4.5rem;
-            font-weight: 900;
-            text-align: center;
-            margin: 1rem 0;
-            color: var(--primary);
-            text-shadow: 0 0 20px var(--primary-glow);
+            font-size: 4.5rem; font-weight: 900; text-align: center; margin: 1rem 0; color: var(--primary); text-shadow: 0 0 20px var(--primary-glow);
         }
         .big-number span { font-size: 1.5rem; color: var(--text-muted); font-weight: 400; }
-
         .counter-actions { display: flex; gap: 15px; }
-        .btn-count {
-            flex: 1; padding: 1rem; border-radius: 10px; border: none; font-size: 1.5rem; font-weight: bold; cursor: pointer;
-        }
-        .btn-count.minus { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); }
-        .btn-count.plus { background: var(--primary); color: black; }
 
-        /* --- SHOP & ITEMS --- */
-        .shop-list { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
-        .shop-item {
-            background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 12px; padding: 1.2rem;
-            display: flex; justify-content: space-between; align-items: center;
+        /* --- ONGLER DEFIS (CHALLENGES) --- */
+        .challenge-list { display: flex; flex-direction: column; gap: 1.2rem; max-width: 650px; margin: 0 auto; }
+        .challenge-card {
+            background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 14px; padding: 1.5rem;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
+        .challenge-info { flex: 1; padding-right: 20px; }
+        .challenge-tag {
+            display: inline-block; font-size: 0.7rem; font-weight: bold; padding: 3px 8px; border-radius: 4px;
+            margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .challenge-tag.daily { background: rgba(255, 159, 67, 0.2); color: var(--primary); border: 1px solid var(--primary); }
+        .challenge-tag.epic { background: rgba(162, 62, 255, 0.2); color: #b873ff; border: 1px solid #b873ff; }
+        .challenge-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+        .challenge-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+        
+        .progress-container { width: 100%; max-width: 250px; background: rgba(0,0,0,0.4); height: 6px; border-radius: 3px; position: relative; }
+        .progress-bar { background: var(--primary); height: 100%; border-radius: 3px; width: 0%; transition: width 0.3s; }
+        .challenge-tag.epic ~ .progress-container .progress-bar { background: #b873ff; }
+        .progress-text { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block; }
+        
+        .challenge-reward { font-size: 0.8rem; color: #2ed573; font-weight: bold; margin-top: 5px; }
+
+        .btn-claim {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted);
+            padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: not-allowed; transition: all 0.2s;
+        }
+        .btn-claim.ready {
+            background: #2ed573; border-color: #2ed573; color: black; cursor: pointer; box-shadow: 0 0 10px rgba(46, 213, 115, 0.4);
+        }
+        .btn-claim.claimed { background: rgba(0,0,0,0.3); border-color: transparent; color: var(--text-muted); cursor: not-allowed; }
+
+        /* --- SHOP / SUCCESS / OTHER --- */
+        .shop-list { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
+        .shop-item { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 12px; padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
         .shop-info { display: flex; align-items: center; gap: 15px; }
         .shop-icon { font-size: 2rem; }
         .shop-details h4 { font-size: 1rem; }
         .shop-details p { font-size: 0.8rem; color: var(--text-muted); }
         .shop-cost { color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
-        .btn-buy {
-            background: rgba(255, 159, 67, 0.1); color: var(--text-main); border: 1px solid rgba(255, 159, 67, 0.3);
-            padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer;
-        }
+        .btn-buy { background: rgba(255, 159, 67, 0.1); color: var(--text-main); border: 1px solid rgba(255, 159, 67, 0.3); padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
         .btn-buy.equipped { background: #2ed573; color: black; border-color: #2ed573; }
 
-        /* --- SUCCESS / ACHIEVEMENTS --- */
         .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 700px; margin: 0 auto; }
-        .ach-card {
-            background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem;
-            display: flex; align-items: center; gap: 15px; opacity: 0.4; transition: all 0.3s;
-        }
-        .ach-card.unlocked { opacity: 1; border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 10px rgba(255,159,67,0.1); }
+        .ach-card { background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 15px; opacity: 0.4; }
+        .ach-card.unlocked { opacity: 1; border-color: var(--primary); background: var(--bg-card); }
         .ach-icon { font-size: 2rem; }
-        .ach-info h4 { font-size: 0.95rem; margin-bottom: 2px; }
+        .ach-info h4 { font-size: 0.95rem; }
         .ach-info p { font-size: 0.75rem; color: var(--text-muted); }
 
-        /* --- SESSIONS LOGS --- */
         .logs-section { text-align: left; margin-top: 2rem; }
         .logs-container { display: flex; flex-direction: column; gap: 0.5rem; max-height: 200px; overflow-y: auto; margin-top: 0.5rem; }
         .log-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; }
         .log-item span { color: var(--primary); font-weight: bold; }
 
-        /* --- ADMIN PANEL --- */
         .admin-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; margin-top: 1.5rem; }
         .admin-table th, .admin-table td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255, 159, 67, 0.1); }
         .admin-table th { background: rgba(255, 159, 67, 0.1); color: var(--primary); }
@@ -549,6 +480,7 @@
             <div class="menu-items">
                 <button class="menu-btn active" onclick="switchPage('profil', this)">🕒 Chrono</button>
                 <button class="menu-btn" onclick="switchPage('compteurs', this)">📊 Compteurs</button>
+                <button class="menu-btn" onclick="switchPage('challenges', this)">🎯 Défis</button>
                 <button class="menu-btn" onclick="switchPage('profil-view', this)">👤 Profil</button>
                 <button class="menu-btn" onclick="switchPage('boutique', this)">🛍️ Boutique</button>
                 <button class="menu-btn" onclick="switchPage('histoire', this)">📖 Histoire</button>
@@ -573,9 +505,7 @@
             </div>
 
             <div id="page-compteurs" class="page">
-                <div class="page-header">
-                    <div class="page-title">Compteurs</div>
-                </div>
+                <div class="page-header"><div class="page-title">Compteurs</div></div>
                 <div class="compteur-wrapper">
                     <div class="compteur-card">
                         <div class="compteur-header"><span>🍆</span><div class="compteur-title">Branlettes</div></div>
@@ -594,13 +524,54 @@
                         
                         <div class="journal-box">
                             <label>📓 Note de session (Journal de bord) :</label>
-                            <textarea id="session-note" placeholder="Décris ton état d'esprit, ta résistance ou ton ressenti..."></textarea>
+                            <textarea id="session-note" placeholder="Décris ton état d'esprit ou ta résistance..."></textarea>
                         </div>
 
                         <div class="counter-actions" style="margin-top:1rem;">
                             <button class="btn-count minus" onclick="updateCount('ejaculations', -1)">-</button>
                             <button class="btn-count plus" onclick="updateCount('ejaculations', 1)">+</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-challenges" class="page">
+                <div class="page-header"><div class="page-title">Missions & Défis</div></div>
+                <div class="challenge-list">
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag daily">Quotidien</span>
+                            <div class="challenge-title">L'Endurant Spontané</div>
+                            <div class="challenge-desc">Lancer le Chrono et s'entraîner pendant au moins 2 minutes en une seule fois.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-endurance"></div></div>
+                            <span class="progress-text" id="ch-progress-text-endurance">0 / 120 secondes</span>
+                            <div class="challenge-reward">🎁 Récompense : +15 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-endurance" onclick="claimChallenge('endurance', 15)">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag daily">Quotidien</span>
+                            <div class="challenge-title">Double Impact</div>
+                            <div class="challenge-desc">Incrémenter le compteur de branlettes au moins 2 fois aujourd'hui.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-double"></div></div>
+                            <span class="progress-text" id="ch-progress-text-double">0 / 2 Branlettes</span>
+                            <div class="challenge-reward">🎁 Récompense : +10 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-double" onclick="claimChallenge('double', 10)">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag epic">Épique</span>
+                            <div class="challenge-title">La Voie du Moine Shaolin</div>
+                            <div class="challenge-desc">Atteindre un total historique de 3 éjaculations ou plus.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-shaolin"></div></div>
+                            <span class="progress-text" id="ch-progress-text-shaolin">0 / 3 Éjaculations</span>
+                            <div class="challenge-reward" style="color:#b873ff;">🎁 Récompense EXCLUSIVE : Titre unique [Moine Shaolin]</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-shaolin" onclick="claimChallenge('shaolin', 0, 'shaolin_title')">Récupérer</button>
                     </div>
                 </div>
             </div>
@@ -622,31 +593,29 @@
                     </div>
 
                     <div style="text-align:left; margin-bottom:2rem;">
-                        <h3 style="color:var(--primary); font-size:0.9rem; text-transform:uppercase; margin-bottom:1rem;">🏆 Succès débloqués</h3>
+                        <h3 style="color:var(--primary); font-size:0.9rem; text-transform:uppercase; margin-bottom:1rem;">🏆 Succès passifs</h3>
                         <div class="achievements-grid">
-                            <div class="ach-card" id="ach-marathon"><div class="ach-icon">⏱️</div><div class="ach-info"><h4>Le Marathonien</h4><p>Lancer un chrono supérieur à 5 minutes (+10 pts)</p></div></div>
-                            <div class="ach-card" id="ach-sprinter"><div class="ach-icon">⚡</div><div class="ach-info"><h4>Le Sprinter</h4><p>Compléter une session en moins de 30 secondes (+5 pts)</p></div></div>
-                            <div class="ach-card" id="ach-vampire"><div class="ach-icon">🦉</div><div class="ach-info"><h4>Le Vampire</h4><p>Ajouter une éjaculation en pleine nuit (2h - 5h) (+15 pts)</p></div></div>
-                            <div class="ach-card" id="ach-zen"><div class="ach-icon">🧘</div><div class="ach-info"><h4>Zénitude absolue</h4><p>Atteindre plus de 50 points au total (+20 pts)</p></div></div>
+                            <div class="ach-card" id="ach-marathon"><div class="ach-icon">⏱️</div><div class="ach-info"><h4>Le Marathonien</h4><p>Chrono supérieur à 5 minutes (+10 pts)</p></div></div>
+                            <div class="ach-card" id="ach-sprinter"><div class="ach-icon">⚡</div><div class="ach-info"><h4>Le Sprinter</h4><p>Session finie en moins de 30 secondes (+5 pts)</p></div></div>
+                            <div class="ach-card" id="ach-vampire"><div class="ach-icon">🦉</div><div class="ach-info"><h4>Le Vampire</h4><p>Éjaculation en pleine nuit (2h - 5h) (+15 pts)</p></div></div>
+                            <div class="ach-card" id="ach-zen"><div class="ach-icon">🧘</div><div class="ach-info"><h4>Zénitude absolue</h4><p>Atteindre plus de 50 points (+20 pts)</p></div></div>
                         </div>
                     </div>
 
                     <div class="logs-section">
                         <h3 style="color:var(--primary); font-size:0.9rem; text-transform:uppercase;">📝 Historique du Journal de Bord</h3>
-                        <div class="logs-container" id="logs-container">
-                            <div style="color:var(--text-muted); font-size:0.9rem;">Aucune note enregistrée pour le moment.</div>
-                        </div>
+                        <div class="logs-container" id="logs-container"></div>
                     </div>
                 </div>
             </div>
 
             <div id="page-boutique" class="page">
-                <div class="page-header"><div class="page-title">Boutique de cosmétiques</div></div>
+                <div class="page-header"><div class="page-title">Boutique</div></div>
                 <div class="shop-list">
                     <div class="shop-item">
                         <div class="shop-info">
                             <div class="shop-icon">👑</div>
-                            <div class="shop-details"><h4>Couronne Royale</h4><p>Affiche une couronne à côté de ton pseudo</p><div class="shop-cost">30 pts</div></div>
+                            <div class="shop-details"><h4>Couronne Royale</h4><p>Affiche une couronne à gauche de ton pseudo</p><div class="shop-cost">30 pts</div></div>
                         </div>
                         <button class="btn-buy" id="btn-shop-crown" onclick="handleShopAction('crown', 30)">Acheter</button>
                     </div>
@@ -666,10 +635,6 @@
                     <h3>⚡ An -25 000 : Le Grand Choc Préhistorique</h3>
                     <p>Tout commença lors d'un hiver particulièrement rude. Un homme des cavernes nommé Grogh, s'ennuyant profondément près du feu alors que sa tribu chassait le mammouth, exécuta par hasard un mouvement de friction répétitif. L'énergie cinétique générée fut si intense qu'elle ralluma le feu de la tribu qui s'éteignait.</p>
                 </div>
-                <div class="history-card">
-                    <h3>🏛️ L'Antiquité et le Secret des Philosophes</h3>
-                    <p>En Grèce antique, la discipline fut élevée au rang d'art philosophique. Diogène de Sinope en devint le premier maître spirituel, la pratiquant sur la place publique d'Athènes pour triompher du stress de la vie quotidienne. À cette époque, l'éjaculation offrait le statut de "Sage".</p>
-                </div>
             </div>
 
             <div id="page-admin-panel" class="page">
@@ -685,7 +650,7 @@
 
     <script>
         let currentUser = null;
-        let userData = { points: 0, branlettes: 0, ejaculations: 0, avatar: "", inventory: [], equipped: [], logs: [], achievements: [] };
+        let userData = { points: 0, branlettes: 0, ejaculations: 0, avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [] };
         
         let chronoInterval = null;
         let startTime = 0;
@@ -697,7 +662,7 @@
 
         if (!localStorage.getItem('user_' + ADMIN_USERNAME)) {
             localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify({
-                points: 100, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: []
+                points: 100, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: []
             }));
         }
 
@@ -715,7 +680,7 @@
                 alert('Ce pseudo est indisponible !'); return;
             }
 
-            const initialData = { points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", inventory: [], equipped: [], logs: [], achievements: [] };
+            const initialData = { points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [] };
             localStorage.setItem('user_' + user, JSON.stringify(initialData));
             alert('Compte créé !'); toggleAuth(true);
         });
@@ -732,11 +697,11 @@
 
             currentUser = user;
             userData = JSON.parse(stored);
-            // Corriger les anciens formats de données vides si nécessaire
             if(!userData.inventory) userData.inventory = [];
             if(!userData.equipped) userData.equipped = [];
             if(!userData.logs) userData.logs = [];
             if(!userData.achievements) userData.achievements = [];
+            if(!userData.claimedChallenges) userData.claimedChallenges = [];
             
             launchApp();
         });
@@ -763,7 +728,6 @@
             if (pageId === 'admin-panel') loadAdminPanelData();
         }
 
-        // --- CALCUL DES RANGS ---
         function getRank(pts) {
             if (userData.role === 'admin') return "👑 Administrateur Global";
             if (pts >= 50) return "🌌 Dieu du Poignet";
@@ -772,41 +736,28 @@
             return "🌱 Novice Souple";
         }
 
-        // --- COMPTEURS ET SUCCÈS ---
+        // --- COMPTEURS & VALIDATIONS ---
         function updateCount(type, amount) {
             if((userData[type] + amount) < 0) return;
-            
             userData[type] += amount;
 
             if(amount > 0) {
                 if(type === 'ejaculations') {
                     userData.points += 2;
-                    
-                    // Vérification succès Vampire (Entre 2h et 5h du matin)
                     const hours = new Date().getHours();
-                    if(hours >= 2 && hours <= 5) {
-                        unlockAchievement('vampire', 15);
-                    }
+                    if(hours >= 2 && hours <= 5) unlockAchievement('vampire', 15);
+                    if(elapsedTime > 0 && elapsedTime < 30000) unlockAchievement('sprinter', 5);
 
-                    // Vérification succès Sprinter (Chrono actif et fini en moins de 30 sec)
-                    if(elapsedTime > 0 && elapsedTime < 30000) {
-                        unlockAchievement('sprinter', 5);
-                    }
-
-                    // Enregistrement de la Note du journal
                     const noteInput = document.getElementById('session-note');
                     const noteText = noteInput.value.trim() || "Session classique terminée.";
                     const dateStr = new Date().toLocaleDateString('fr-FR', {hour: '2-digit', minute:'2-digit'});
                     userData.logs.unshift({ date: dateStr, text: noteText, duration: document.getElementById('chrono-display').textContent });
-                    noteInput.value = ""; // reset
+                    noteInput.value = ""; 
                 }
                 if(type === 'branlettes') userData.points += 1;
             }
 
-            // Vérification succès Zénitude absolue (Plus de 50 points)
-            if(userData.points >= 50) {
-                unlockAchievement('zen', 20);
-            }
+            if(userData.points >= 50) unlockAchievement('zen', 20);
 
             saveData();
             updateDOMValues();
@@ -816,34 +767,40 @@
             if(!userData.achievements.includes(id)) {
                 userData.achievements.push(id);
                 userData.points += bonus;
-                alert(`🏆 SUCCÈS DÉBLOQUÉ ! Bonus de +${bonus} points.`);
+                alert(`🏆 SUCCÈS DÉBLOQUÉ ! +${bonus} points.`);
             }
         }
 
-        // --- BOUTIQUE DE COSMÉTIQUES ---
-        function handleShopAction(itemKey, cost) {
-            if(!userData.inventory.includes(itemKey)) {
-                // Mode Achat
-                if(userData.points < cost) {
-                    alert("Pas assez de points ! 😢"); return;
-                }
-                userData.points -= cost;
-                userData.inventory.push(itemKey);
-                userData.equipped.push(itemKey); // Équipe par défaut
-                alert("Achat réussi et équipé ! 🎉");
+        // --- INTERACTION LOGIQUE DES DEFIS ---
+        function claimChallenge(id, bonusPts, specialReward = null) {
+            if(userData.claimedChallenges.includes(id)) return;
+
+            userData.points += bonusPts;
+            if(specialReward) {
+                userData.inventory.push(specialReward);
+                userData.equipped.push(specialReward); // Équipé d'office
+                alert(`🎯 Défi Validé ! Tu as débloqué la récompense exclusive : ${specialReward === 'shaolin_title' ? '[Moine Shaolin]' : specialReward} !`);
             } else {
-                // Mode Équiper / Déséquiper
-                const index = userData.equipped.indexOf(itemKey);
-                if(index > -1) {
-                    userData.equipped.splice(index, 1);
-                    alert("Objet retiré.");
-                } else {
-                    userData.equipped.push(itemKey);
-                    alert("Objet équipé !");
-                }
+                alert(`🎯 Défi Validé ! Tu récupères +${bonusPts} points !`);
             }
+            
+            userData.claimedChallenges.push(id);
             saveData();
             updateDOMValues();
+        }
+
+        // --- SHOPPING ---
+        function handleShopAction(itemKey, cost) {
+            if(!userData.inventory.includes(itemKey)) {
+                if(userData.points < cost) { alert("Pas assez de points ! 😢"); return; }
+                userData.points -= cost; userData.inventory.push(itemKey); userData.equipped.push(itemKey);
+                alert("Achat réussi ! 🎉");
+            } else {
+                const index = userData.equipped.indexOf(itemKey);
+                if(index > -1) { userData.equipped.splice(index, 1); alert("Objet retiré."); }
+                else { userData.equipped.push(itemKey); alert("Objet équipé !"); }
+            }
+            saveData(); updateDOMValues();
         }
 
         function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
@@ -851,27 +808,25 @@
             const file = input.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    userData.avatar = e.target.result; saveData(); updateDOMValues();
-                };
+                reader.onload = function(e) { userData.avatar = e.target.result; saveData(); updateDOMValues(); };
                 reader.readAsDataURL(file);
             }
         }
 
-        // --- UPDATE TOTAL DE L'INTERFACE ---
+        // --- MISE À JOUR DOM ---
         function updateDOMValues() {
             if(!currentUser) return;
 
             const rank = getRank(userData.points);
-            let nameWithCrown = currentUser;
+            let finalName = currentUser;
             
-            // Appliquer la couronne si équipée
-            if(userData.equipped.includes('crown')) {
-                nameWithCrown = "👑 " + currentUser;
-            }
+            // Équipement Couronne
+            if(userData.equipped.includes('crown')) finalName = "👑 " + finalName;
+            // Équipement Titre Exclusif Défi Shaolin
+            if(userData.equipped.includes('shaolin_title')) finalName = finalName + " [Moine Shaolin]";
 
-            document.getElementById('side-name').textContent = nameWithCrown;
-            document.getElementById('prof-name').textContent = nameWithCrown;
+            document.getElementById('side-name').textContent = finalName;
+            document.getElementById('prof-name').textContent = finalName;
             document.getElementById('side-rank').textContent = rank;
             document.getElementById('prof-rank').textContent = rank;
 
@@ -883,65 +838,129 @@
             document.getElementById('card-ejaculations').textContent = userData.ejaculations;
             document.getElementById('side-ejaculations').textContent = userData.ejaculations;
 
-            // Appliquer l'effet Aura Cosmetique
             const avatarMain = document.getElementById('profile-avatar-container');
-            if(userData.equipped.includes('aura')) {
-                avatarMain.classList.add('has-aura');
-            } else {
-                avatarMain.classList.remove('has-aura');
-            }
+            if(userData.equipped.includes('aura')) avatarMain.classList.add('has-aura');
+            else avatarMain.classList.remove('has-aura');
 
-            if (userData.avatar) {
-                avatarMain.innerHTML = `<img src="${userData.avatar}" alt="Profil">`;
-            } else {
-                avatarMain.innerHTML = userData.role === 'admin' ? "👑" : "😈";
-            }
+            if (userData.avatar) avatarMain.innerHTML = `<img src="${userData.avatar}" alt="Profil">`;
+            else avatarMain.innerHTML = userData.role === 'admin' ? "👑" : "😈";
 
-            // Update Boutons Boutique
+            // BOUTIQUE STATUS
             const btnCrown = document.getElementById('btn-shop-crown');
             if(userData.inventory.includes('crown')) {
                 btnCrown.textContent = userData.equipped.includes('crown') ? "Équipé (Retirer)" : "Possédé (Équiper)";
                 btnCrown.classList.add('equipped');
-            } else {
-                btnCrown.textContent = "Acheter (30 pts)"; btnCrown.classList.remove('equipped');
-            }
+            } else { btnCrown.textContent = "Acheter (30 pts)"; btnCrown.classList.remove('equipped'); }
 
             const btnAura = document.getElementById('btn-shop-aura');
             if(userData.inventory.includes('aura')) {
                 btnAura.textContent = userData.equipped.includes('aura') ? "Équipé (Retirer)" : "Possédé (Équiper)";
                 btnAura.classList.add('equipped');
-            } else {
-                btnAura.textContent = "Acheter (50 pts)"; btnAura.classList.remove('equipped');
-            }
+            } else { btnAura.textContent = "Acheter (50 pts)"; btnAura.classList.remove('equipped'); }
 
-            // Update Cartes de Succès
             userData.achievements.forEach(achId => {
-                const card = document.getElementById('ach-' + achId);
-                if(card) card.classList.add('unlocked');
+                const card = document.getElementById('ach-' + achId); if(card) card.classList.add('unlocked');
             });
 
-            // Update Logs Journal de Bord
+            // LOGIQUE DE CALCUL DU REFRESH DES DEFIS EN DIRECT
+            updateChallengesDOM();
+
+            // HISTORIQUE JOURNAL
             const logsContainer = document.getElementById('logs-container');
             if(userData.logs.length === 0) {
-                logsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.9rem;">Aucune note enregistrée pour le moment.</div>`;
+                logsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.9rem;">Aucune note pour le moment.</div>`;
             } else {
                 logsContainer.innerHTML = userData.logs.map(log => `
                     <div class="log-item">
-                        <span>[${log.date}]</span> - Durée de session : ${log.duration || 'N/A'}<br>
+                        <span>[${log.date}]</span> - Durée : ${log.duration || 'N/A'}<br>
                         <p style="margin-top:4px; color:#fff;">${log.text}</p>
                     </div>
                 `).join('');
             }
         }
 
-        // --- LOGIQUE PANEL ADMINISTRATEUR ---
+        // --- CALCULS ET PROGRESSION DES DÉFIS ---
+        function updateChallengesDOM() {
+            // 1. Défi Endurance (Basé sur elapsedTime / 1000 pour les secondes)
+            const currentSeconds = Math.floor(elapsedTime / 1000);
+            const enduranceReady = currentSeconds >= 120;
+            updateSingleChallengeDOM('endurance', currentSeconds, 120, enduranceReady, "secondes");
+
+            // 2. Défi Branlettes
+            const doubleReady = userData.branlettes >= 2;
+            updateSingleChallengeDOM('double', userData.branlettes, 2, doubleReady, "Branlettes");
+
+            // 3. Défi Épique Shaolin
+            const shaolinReady = userData.ejaculations >= 3;
+            updateSingleChallengeDOM('shaolin', userData.ejaculations, 3, shaolinReady, "Éjaculations");
+        }
+
+        function updateSingleChallengeDOM(id, current, target, isReady, unit) {
+            const btn = document.getElementById('btn-claim-' + id);
+            const bar = document.getElementById('ch-progress-bar-' + id);
+            const txt = document.getElementById('ch-progress-text-' + id);
+
+            let pct = Math.min((current / target) * 100, 100);
+            bar.style.width = pct + "%";
+            txt.textContent = `${Math.min(current, target)} / ${target} ${unit}`;
+
+            if(userData.claimedChallenges.includes(id)) {
+                btn.textContent = "Récupéré ✔️";
+                btn.className = "btn-claim claimed";
+                btn.disabled = true;
+            } else if(isReady) {
+                btn.textContent = "Réclamer !";
+                btn.className = "btn-claim ready";
+                btn.disabled = false;
+            } else {
+                btn.textContent = "En cours...";
+                btn.className = "btn-claim";
+                btn.disabled = true;
+            }
+        }
+
+        // --- CHRONO ---
+        function toggleChrono() {
+            const btn = document.getElementById('btn-chrono-toggle');
+            if(!isChronoRunning) {
+                isChronoRunning = true; btn.textContent = "STOP";
+                btn.style.background = "rgba(214, 48, 49, 0.1)"; btn.style.borderColor = "#d63031"; btn.style.color = "#d63031";
+                startTime = Date.now() - elapsedTime;
+                chronoInterval = setInterval(updateChronoDisplay, 10);
+            } else {
+                isChronoRunning = false; btn.textContent = "START";
+                btn.style.background = "rgba(255, 159, 67, 0.15)"; btn.style.borderColor = "var(--primary)"; btn.style.color = "var(--primary)";
+                clearInterval(chronoInterval);
+                if(elapsedTime >= 300000) { unlockAchievement('marathon', 10); }
+                updateDOMValues();
+            }
+        }
+
+        function resetChrono() {
+            if(isChronoRunning) toggleChrono();
+            elapsedTime = 0; document.getElementById('chrono-display').textContent = "00:00:00.00";
+            updateDOMValues();
+        }
+
+        function updateChronoDisplay() {
+            elapsedTime = Date.now() - startTime;
+            let tempTime = elapsedTime;
+            const ms = Math.floor((tempTime % 1000) / 10); tempTime = Math.floor(tempTime / 1000);
+            const secs = tempTime % 60; tempTime = Math.floor(tempTime / 60);
+            const mins = tempTime % 60; const hrs = Math.floor(tempTime / 60);
+            document.getElementById('chrono-display').textContent = 
+                (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs) + "." + (ms < 10 ? "0" + ms : ms);
+            
+            // Rafraîchir les défis en même temps que le chrono tourne pour voir la barre grandir
+            updateChallengesDOM();
+        }
+
         function loadAdminPanelData() {
             const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = "";
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('user_')) {
-                    const username = key.replace('user_', '');
-                    const data = JSON.parse(localStorage.getItem(key));
+                    const username = key.replace('user_', ''); const data = JSON.parse(localStorage.getItem(key));
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td style="font-weight:bold; color:${username === ADMIN_USERNAME ? '#ff4757':'white'}">${username}</td>
@@ -974,42 +993,6 @@
         }
 
         function saveData() { if(currentUser) localStorage.setItem('user_' + currentUser, JSON.stringify(userData)); }
-
-        // --- CHRONO ---
-        function toggleChrono() {
-            const btn = document.getElementById('btn-chrono-toggle');
-            if(!isChronoRunning) {
-                isChronoRunning = true; btn.textContent = "STOP";
-                btn.style.background = "rgba(214, 48, 49, 0.1)"; btn.style.borderColor = "#d63031"; btn.style.color = "#d63031";
-                startTime = Date.now() - elapsedTime;
-                chronoInterval = setInterval(updateChronoDisplay, 10);
-            } else {
-                isChronoRunning = false; btn.textContent = "START";
-                btn.style.background = "rgba(255, 159, 67, 0.15)"; btn.style.borderColor = "var(--primary)"; btn.style.color = "var(--primary)";
-                clearInterval(chronoInterval);
-                
-                // Vérification succès Marathonien (Plus de 5 minutes soit 300 000 ms)
-                if(elapsedTime >= 300000) {
-                    unlockAchievement('marathon', 10);
-                    updateDOMValues();
-                }
-            }
-        }
-
-        function resetChrono() {
-            if(isChronoRunning) toggleChrono();
-            elapsedTime = 0; document.getElementById('chrono-display').textContent = "00:00:00.00";
-        }
-
-        function updateChronoDisplay() {
-            elapsedTime = Date.now() - startTime;
-            let tempTime = elapsedTime;
-            const ms = Math.floor((tempTime % 1000) / 10); tempTime = Math.floor(tempTime / 1000);
-            const secs = tempTime % 60; tempTime = Math.floor(tempTime / 60);
-            const mins = tempTime % 60; const hrs = Math.floor(tempTime / 60);
-            document.getElementById('chrono-display').textContent = 
-                (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs) + "." + (ms < 10 ? "0" + ms : ms);
-        }
     </script>
 </body>
 </html>
