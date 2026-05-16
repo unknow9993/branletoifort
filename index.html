@@ -161,6 +161,9 @@
         .user-summary .name {
             font-weight: bold;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .user-summary .rank {
@@ -298,6 +301,13 @@
             align-items: center;
             justify-content: center;
             font-size: 3.5rem;
+            overflow: hidden;
+        }
+
+        .avatar-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .avatar-badge {
@@ -313,6 +323,7 @@
             justify-content: center;
             cursor: pointer;
             border: 2px solid #110700;
+            font-size: 0.9rem;
         }
 
         .profile-name {
@@ -441,6 +452,55 @@
         .btn-count.plus { background: var(--primary); color: black; }
         .btn-count.plus:hover { background: #ffb061; transform: translateY(-1px); }
 
+        /* --- DESIGN PANEL ADMIN --- */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            margin-top: 1.5rem;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 159, 67, 0.1);
+        }
+
+        .admin-table th {
+            background: rgba(255, 159, 67, 0.1);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .admin-input {
+            width: 60px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #331b07;
+            color: white;
+            padding: 0.3rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .btn-admin-action {
+            background: #d63031;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-admin-save {
+            background: #2ed573;
+            color: black;
+            font-weight: bold;
+        }
+
         /* --- DESIGN PAGE : CHRONO --- */
         .chrono-circle {
             width: 260px;
@@ -540,6 +600,8 @@
 </head>
 <body>
 
+    <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this)">
+
     <div id="auth-container">
         <div class="auth-card" id="login-card">
             <h2>CONNEXION</h2>
@@ -582,7 +644,7 @@
             
             <div class="user-summary">
                 <div class="name" id="side-name">zzhhr</div>
-                <div class="rank">Rookie</div>
+                <div class="rank" id="side-rank">Rookie</div>
                 <div class="mini-stats">
                     <div class="mini-box"><span id="side-pts">0</span>PTS</div>
                     <div class="mini-box"><span id="side-ejaculations">0</span>⏳</div>
@@ -595,6 +657,7 @@
                 <button class="menu-btn" onclick="switchPage('profil-view', this)">👤 Profil</button>
                 <button class="menu-btn" onclick="switchPage('boutique', this)">🛍️ Boutique</button>
                 <button class="menu-btn" onclick="switchPage('histoire', this)">📖 Histoire</button>
+                <button class="menu-btn" id="admin-nav-btn" style="display: none; color: #ff4757;" onclick="switchPage('admin-panel', this)">🛠️ Admin Panel</button>
             </div>
         </div>
 
@@ -652,11 +715,11 @@
                 </div>
                 <div class="profile-centered">
                     <div class="avatar-container">
-                        <div class="avatar-main">😈</div>
-                        <div class="avatar-badge">📷</div>
+                        <div class="avatar-main" id="profile-avatar-container">😈</div>
+                        <div class="avatar-badge" onclick="triggerAvatarUpload()">📷</div>
                     </div>
                     <div class="profile-name" id="prof-name">zzhhr</div>
-                    <div class="profile-rank">Rookie</div>
+                    <div class="profile-rank" id="prof-rank">Rookie</div>
 
                     <div class="stats-row">
                         <div class="stat-card">
@@ -735,17 +798,53 @@
                 </div>
             </div>
 
+            <div id="page-admin-panel" class="page">
+                <div class="page-header">
+                    <div class="page-title">Panel Administrateur</div>
+                </div>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Gestion en direct des utilisateurs enregistrés dans la base de données locale.</p>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pseudo</th>
+                            <th>Points</th>
+                            <th>Branlettes</th>
+                            <th>Éjaculations</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-users-list">
+                        </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
     <script>
         let currentUser = null;
-        let userData = { points: 0, branlettes: 0, ejaculations: 0 };
+        let userData = { points: 0, branlettes: 0, ejaculations: 0, avatar: "" };
         
         let chronoInterval = null;
         let startTime = 0;
         let elapsedTime = 0;
         let isChronoRunning = false;
+
+        // Configuration du compte Administrateur Unique
+        const ADMIN_USERNAME = "admin";
+        const ADMIN_PASSWORD = "admin123";
+
+        // Initialisation automatique de l'admin s'il n'existe pas encore
+        if (!localStorage.getItem('user_' + ADMIN_USERNAME)) {
+            localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify({
+                points: 999,
+                branlettes: 0,
+                ejaculations: 0,
+                password: ADMIN_PASSWORD,
+                role: "admin",
+                avatar: ""
+            }));
+        }
 
         function toggleAuth(showLogin) {
             document.getElementById('login-card').style.display = showLogin ? 'block' : 'none';
@@ -757,12 +856,12 @@
             const user = document.getElementById('reg-username').value.trim();
             const pass = document.getElementById('reg-password').value;
 
-            if(localStorage.getItem('user_' + user)) {
-                alert('Ce pseudo existe déjà !');
+            if(user.toLowerCase() === ADMIN_USERNAME || localStorage.getItem('user_' + user)) {
+                alert('Ce pseudo est indisponible !');
                 return;
             }
 
-            const initialData = { points: 0, branlettes: 0, ejaculations: 0, password: pass };
+            const initialData = { points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "" };
             localStorage.setItem('user_' + user, JSON.stringify(initialData));
             alert('Compte créé avec succès ! Connecte-toi vite.');
             toggleAuth(true);
@@ -793,6 +892,15 @@
         function launchApp() {
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
+            
+            // Affichage conditionnel des outils admin
+            if (userData.role === "admin") {
+                document.getElementById('admin-nav-btn').style.display = 'flex';
+                loadAdminPanelData();
+            } else {
+                document.getElementById('admin-nav-btn').style.display = 'none';
+            }
+
             updateDOMValues();
         }
 
@@ -808,6 +916,10 @@
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             buttonElem.classList.add('active');
+            
+            if (pageId === 'admin-panel') {
+                loadAdminPanelData();
+            }
         }
 
         function updateCount(type, amount) {
@@ -833,6 +945,76 @@
             updateDOMValues();
         }
 
+        // --- GESTION PHOTO DE PROFIL ---
+        function triggerAvatarUpload() {
+            document.getElementById('avatar-upload-input').click();
+        }
+
+        function handleAvatarUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userData.avatar = e.target.result; // Base64 string image
+                    saveData();
+                    updateDOMValues();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- PANEL ADMIN LOGIQUE DE GESTION DIRECTE ---
+        function loadAdminPanelData() {
+            const tbody = document.getElementById('admin-users-list');
+            tbody.innerHTML = "";
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('user_')) {
+                    const username = key.replace('user_', '');
+                    const data = JSON.parse(localStorage.getItem(key));
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight: bold; color:${username === ADMIN_USERNAME ? '#ff4757':'white'}">${username} ${username === ADMIN_USERNAME ? '(Admin)':''}</td>
+                        <td><input type="number" class="admin-input" id="adm-pts-${username}" value="${data.points}"></td>
+                        <td><input type="number" class="admin-input" id="adm-br-${username}" value="${data.branlettes}"></td>
+                        <td><input type="number" class="admin-input" id="adm-ej-${username}" value="${data.ejaculations}"></td>
+                        <td>
+                            <button class="btn-admin-action btn-admin-save" onclick="saveUserFromAdmin('${username}')">Sauver</button>
+                            ${username !== ADMIN_USERNAME ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${username}')">Bannir</button>` : ''}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            }
+        }
+
+        function saveUserFromAdmin(username) {
+            const stored = localStorage.getItem('user_' + username);
+            if (!stored) return;
+
+            const data = JSON.parse(stored);
+            data.points = parseInt(document.getElementById(`adm-pts-${username}`).value) || 0;
+            data.branlettes = parseInt(document.getElementById(`adm-br-${username}`).value) || 0;
+            data.ejaculations = parseInt(document.getElementById(`adm-ej-${username}`).value) || 0;
+
+            localStorage.setItem('user_' + username, JSON.stringify(data));
+            alert(`Données de ${username} mises à jour avec succès !`);
+            
+            if (username === currentUser) {
+                userData = data;
+                updateDOMValues();
+            }
+        }
+
+        function deleteUserFromAdmin(username) {
+            if (confirm(`Voulez-vous vraiment supprimer définitivement le compte de ${username} ?`)) {
+                localStorage.removeItem('user_' + username);
+                loadAdminPanelData();
+            }
+        }
+
         function saveData() {
             if(currentUser) {
                 localStorage.setItem('user_' + currentUser, JSON.stringify(userData));
@@ -842,8 +1024,13 @@
         function updateDOMValues() {
             if(!currentUser) return;
 
+            const isUserAdmin = userData.role === "admin";
+            const roleName = isUserAdmin ? "👑 Administrateur" : "Rookie";
+
             document.getElementById('side-name').textContent = currentUser;
             document.getElementById('prof-name').textContent = currentUser;
+            document.getElementById('side-rank').textContent = roleName;
+            document.getElementById('prof-rank').textContent = roleName;
 
             document.getElementById('side-pts').textContent = userData.points;
             document.getElementById('card-pts').textContent = userData.points;
@@ -854,8 +1041,17 @@
             document.getElementById('val-ejaculations').textContent = userData.ejaculations;
             document.getElementById('card-ejaculations').textContent = userData.ejaculations;
             document.getElementById('side-ejaculations').textContent = userData.ejaculations;
+
+            // Update Avatar UI
+            const avatarContainer = document.getElementById('profile-avatar-container');
+            if (userData.avatar) {
+                avatarContainer.innerHTML = `<img src="${userData.avatar}" alt="Profil">`;
+            } else {
+                avatarContainer.innerHTML = isUserAdmin ? "👑" : "😈";
+            }
         }
 
+        // --- GESTION DU CHRONO ---
         function toggleChrono() {
             const btn = document.getElementById('btn-chrono-toggle');
             if(!isChronoRunning) {
