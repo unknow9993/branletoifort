@@ -1157,21 +1157,43 @@
         });
 
         function validateUserArrays() {
-            if(!userData.inventory) userData.inventory = ["classic", "pitchblack", "sunrise"];
-            if(!userData.inventory.includes("classic")) userData.inventory.push("classic");
-            if(!userData.inventory.includes("pitchblack")) userData.inventory.push("pitchblack");
-            if(!userData.inventory.includes("sunrise")) userData.inventory.push("sunrise");
-            
-            if(!userData.equipped) userData.equipped = [];
-            if(!userData.logs) userData.logs = [];
-            if(!userData.achievements) userData.achievements = [];
-            if(!userData.claimedChallenges) userData.claimedChallenges = [];
-            if(!userData.friends) userData.friends = [];
-            if(!userData.blocked) userData.blocked = [];
-            if(!userData.themeEquipped) userData.themeEquipped = "classic";
-            if(!userData.customBgData) userData.customBgData = "";
+    if (!userData) return;
+
+    // --- MODE ADMIN AUTOMATIQUE ---
+    // Si c'est le compte admin, on lui donne TOUT automatiquement
+    if (userData.role === "admin" || currentUser === ADMIN_USERNAME) {
+        userData.points = 999999; // Points infinis
+
+        // 1. Débloque automatiquement tous les thèmes de la boutique (APP_THEMES)
+        if (typeof APP_THEMES !== 'undefined') {
+            userData.inventory = Object.keys(APP_THEMES);
         }
 
+        // 2. Débloque automatiquement tous les succès (ALL_ACHIEVEMENTS)
+        if (typeof ALL_ACHIEVEMENTS !== 'undefined') {
+            userData.achievements = Object.keys(ALL_ACHIEVEMENTS);
+        }
+
+        // 3. Ajoute les autres cosmétiques de base s'ils existent
+        const objetsSpeciaux = ['crown', 'aura', 'shaolin_title', 'veloce_title', 'vampire_badge', 'rage_badge'];
+        objetsSpeciaux.forEach(obj => {
+            if (!userData.inventory.includes(obj)) {
+                userData.inventory.push(obj);
+            }
+        });
+    }
+
+    // Sécurités d'origine pour les utilisateurs normaux
+    if (!Array.isArray(userData.inventory)) userData.inventory = [];
+    if (!Array.isArray(userData.equipped)) userData.equipped = [];
+    if (!Array.isArray(userData.logs)) userData.logs = [];
+    if (!Array.isArray(userData.achievements)) userData.achievements = [];
+    if (!Array.isArray(userData.claimedChallenges)) userData.claimedChallenges = [];
+    if (!userData.friends) userData.friends = [];
+    if (!userData.blocked) userData.blocked = [];
+    if (!userData.themeEquipped) userData.themeEquipped = "classic";
+    if (!userData.customBgData) userData.customBgData = "";
+}
         function launchApp() {
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
