@@ -7,12 +7,17 @@
     <style>
         :root {
             --bg-dark: #050807;
-            --bg-card: rgba(10, 15, 13, 0.8); 
+            --bg-card: rgba(10, 15, 13, 0.75); 
             --primary: #ff9f43; 
-            --primary-glow: rgba(255, 159, 67, 0.4); 
+            --primary-glow: rgba(255, 159, 67, 0.3); 
             --text-main: #ffffff;
             --text-muted: #84817a;
             --accent-orange: #ff9f43; 
+            --success: #2ed573;
+            --danger: #ff4757;
+
+            /* Fond dynamique par défaut */
+            --app-background: radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%);
         }
 
         * {
@@ -23,22 +28,15 @@
         }
 
         body {
-            background: #000000;
+            background: var(--app-background);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: var(--text-main);
             overflow-x: hidden;
             height: 100vh;
-            position: relative;
-        }
-
-        /* --- FOND ANIMÉ CANVAS --- */
-        #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
+            transition: background 0.5s ease; /* Transition fluide lors du changement de fond */
         }
 
         /* --- AUTHENTICATION --- */
@@ -47,19 +45,17 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            position: relative;
-            z-index: 1;
         }
 
         .auth-card {
             background: var(--bg-card);
-            border: 1px solid rgba(255, 159, 67, 0.2);
-            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 159, 67, 0.15);
+            backdrop-filter: blur(8px);
             padding: 2.5rem;
             border-radius: 16px;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 159, 67, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
             text-align: center;
         }
 
@@ -67,8 +63,8 @@
             color: var(--primary);
             margin-bottom: 1.5rem;
             font-size: 1.8rem;
-            letter-spacing: 2px;
-            text-shadow: 0 0 15px var(--primary-glow);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px var(--primary-glow);
         }
 
         .form-group {
@@ -85,23 +81,22 @@
 
         .form-group input {
             width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #44230a;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #331b07;
             padding: 0.8rem;
             border-radius: 8px;
             color: white;
             outline: none;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s;
         }
 
         .form-group input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 12px var(--primary-glow);
-            background: rgba(20, 10, 0, 0.4);
+            box-shadow: 0 0 8px var(--primary-glow);
         }
 
         .auth-btn {
-            background: linear-gradient(135deg, var(--primary), #ff7f11);
+            background: var(--primary);
             color: black;
             font-weight: bold;
             border: none;
@@ -110,14 +105,12 @@
             border-radius: 8px;
             cursor: pointer;
             margin-top: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 159, 67, 0.3);
+            transition: transform 0.2s, background 0.3s;
         }
 
         .auth-btn:hover {
-            background: linear-gradient(135deg, #ffb061, var(--primary));
+            background: #ffb061;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 159, 67, 0.5);
         }
 
         .auth-toggle {
@@ -136,8 +129,6 @@
         #main-app {
             display: none; 
             height: 100vh;
-            position: relative;
-            z-index: 1;
         }
 
         .sidebar {
@@ -147,8 +138,8 @@
             width: 250px;
             height: 100%;
             background: rgba(5, 5, 5, 0.85);
-            backdrop-filter: blur(15px);
-            border-right: 1px solid rgba(255, 159, 67, 0.15);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 159, 67, 0.1);
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
@@ -164,30 +155,42 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            text-shadow: 0 0 12px var(--primary-glow);
+            text-shadow: 0 0 10px var(--primary-glow);
         }
 
         .user-summary {
-            background: rgba(20, 12, 5, 0.7);
-            border: 1px solid rgba(255, 159, 67, 0.15);
+            background: rgba(15, 10, 5, 0.6);
+            border: 1px solid rgba(255, 159, 67, 0.1);
             padding: 1rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
         }
 
+        .user-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .user-summary .name {
             font-weight: bold;
             font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
             word-break: break-all;
+        }
+
+        .equipped-badges-sub {
+            display: flex;
+            gap: 4px;
+            font-size: 1rem;
+            margin-top: 2px;
+            min-height: 1.2rem;
         }
 
         .user-summary .rank {
             font-size: 0.75rem;
             color: var(--primary);
             margin-bottom: 0.8rem;
+            margin-top: 2px;
         }
 
         .mini-stats {
@@ -197,12 +200,12 @@
 
         .mini-box {
             flex: 1;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.4);
             padding: 0.5rem;
             border-radius: 6px;
             text-align: center;
             font-size: 0.8rem;
-            border: 1px solid rgba(255, 159, 67, 0.1);
+            border: 1px solid rgba(255, 159, 67, 0.05);
         }
 
         .mini-box span {
@@ -235,7 +238,7 @@
 
         .menu-btn:hover, .menu-btn.active {
             color: var(--primary);
-            background: rgba(255, 159, 67, 0.12);
+            background: rgba(255, 159, 67, 0.08);
         }
 
         .menu-btn.active {
@@ -268,8 +271,8 @@
 
         .btn-logout {
             background: transparent;
-            border: 1px solid #d63031;
-            color: #d63031;
+            border: 1px solid var(--danger);
+            color: var(--danger);
             padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
@@ -278,9 +281,8 @@
         }
 
         .btn-logout:hover {
-            background: #d63031;
+            background: var(--danger);
             color: white;
-            box-shadow: 0 0 12px rgba(214, 48, 49, 0.4);
         }
 
         .page { display: none; }
@@ -296,7 +298,7 @@
         .chrono-circle {
             width: 260px;
             height: 260px;
-            border: 4px solid rgba(255, 159, 67, 0.15);
+            border: 4px solid rgba(255, 159, 67, 0.1);
             border-top-color: var(--primary);
             border-radius: 50%;
             margin: 2rem auto;
@@ -306,21 +308,7 @@
             font-size: 2.2rem;
             font-weight: 700;
             color: var(--primary);
-            background: rgba(0, 0, 0, 0.4);
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 20px rgba(255, 159, 67, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        /* Animation pulsation active lorsque le chrono tourne */
-        .chrono-circle.running {
-            animation: chronoPulse 1.5s infinite ease-in-out;
-            border-color: #ffb061;
-        }
-
-        @keyframes chronoPulse {
-            0% { box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 15px rgba(255, 159, 67, 0.3); }
-            50% { box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 35px rgba(255, 159, 67, 0.7); border-color: var(--primary); }
-            100% { box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 15px rgba(255, 159, 67, 0.3); }
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 20px var(--primary-glow);
         }
 
         .chrono-actions {
@@ -332,12 +320,10 @@
         }
 
         .btn-chrono {
-            flex: 1; padding: 0.8rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: all 0.2s ease;
+            flex: 1; padding: 0.8rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;
         }
         .btn-chrono.start { background: rgba(255, 159, 67, 0.15); border: 1px solid var(--primary); color: var(--primary); }
-        .btn-chrono.start:hover { background: rgba(255, 159, 67, 0.3); box-shadow: 0 0 12px var(--primary-glow); }
         .btn-chrono.reset { background: rgba(255,255,255,0.05); border: 1px solid #333; color: #aaa; }
-        .btn-chrono.reset:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
         /* --- AVATAR AURA --- */
         @keyframes auraGlow {
@@ -354,7 +340,7 @@
         }
 
         .avatar-main {
-            width: 100%; height: 100%; background: rgba(10, 10, 10, 0.9); border: 3px solid var(--primary);
+            width: 100%; height: 100%; background: rgba(10, 10, 10, 0.8); border: 3px solid var(--primary);
             border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;
             overflow: hidden; box-shadow: 0 0 15px var(--primary-glow);
         }
@@ -364,29 +350,26 @@
         .avatar-badge {
             position: absolute; bottom: 5px; right: 5px; background: var(--primary); width: 32px; height: 32px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #110700;
-            transition: transform 0.2s;
         }
-        .avatar-badge:hover { transform: scale(1.1); }
 
         .profile-name { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; }
         .profile-rank { color: var(--primary); font-size: 0.9rem; font-weight: 600; margin-bottom: 2.5rem; }
 
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.15); padding: 1.5rem; border-radius: 12px; text-align: center; backdrop-filter: blur(10px); }
+        .stat-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; }
         .stat-card .val { font-size: 2.2rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
         .stat-card .lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
 
         /* --- JOURNAL DE BORD --- */
-        .journal-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,159,67,0.15); padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: left; }
+        .journal-box { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,159,67,0.1); padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: left; }
         .journal-box label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; }
         .journal-box textarea {
-            width: 100%; background: rgba(0,0,0,0.6); border: 1px solid #44230a; padding: 0.6rem; color: white; border-radius: 6px; resize: none; height: 60px; outline: none; transition: border-color 0.3s;
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #331b07; padding: 0.6rem; color: white; border-radius: 6px; resize: none; height: 60px; outline: none;
         }
-        .journal-box textarea:focus { border-color: var(--primary); }
 
         /* --- COMPTEURS --- */
         .compteur-wrapper { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
-        .compteur-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.15); border-radius: 16px; padding: 2rem; backdrop-filter: blur(10px); }
+        .compteur-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 16px; padding: 2rem; }
         .compteur-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
         .compteur-title { font-weight: bold; font-size: 1.1rem;}
         .compteur-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;}
@@ -396,15 +379,52 @@
         }
         .big-number span { font-size: 1.5rem; color: var(--text-muted); font-weight: 400; }
         
-        .counter-actions { display: flex; gap: 15px; }
-        .btn-count { flex: 1; padding: 0.8rem; background: rgba(255,159,67,0.1); border: 1px solid rgba(255,159,67,0.2); color: white; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-        .btn-count:hover { background: var(--primary); color: black; box-shadow: 0 0 12px var(--primary-glow); }
+        .counter-actions { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+            margin-top: 1.5rem;
+        }
+        .btn-count { 
+            flex: 1; 
+            max-width: 200px; 
+            height: 48px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 1.6rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.2s ease-in-out; 
+        }
+        .btn-count.minus { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #b2bec3; 
+        }
+        .btn-count.minus:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            color: #fff; 
+            transform: translateY(-2px); 
+        }
+        .btn-count.plus { 
+            background: var(--primary); 
+            color: #050807; 
+        }
+        .btn-count.plus:hover { 
+            background: #ffb061; 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px var(--primary-glow); 
+        }
+        .btn-count:active { transform: translateY(0); }
 
-        /* --- ONGLER DEFIS (CHALLENGES) --- */
+        /* --- ONGLETS DEFIS --- */
         .challenge-list { display: flex; flex-direction: column; gap: 1.2rem; max-width: 650px; margin: 0 auto; }
         .challenge-card {
-            background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.15); border-radius: 14px; padding: 1.5rem;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+            background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 14px; padding: 1.5rem;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .challenge-info { flex: 1; padding-right: 20px; }
         .challenge-tag {
@@ -413,66 +433,329 @@
         }
         .challenge-tag.daily { background: rgba(255, 159, 67, 0.2); color: var(--primary); border: 1px solid var(--primary); }
         .challenge-tag.epic { background: rgba(162, 62, 255, 0.2); color: #b873ff; border: 1px solid #b873ff; }
+        .challenge-tag.hidden { background: rgba(235, 94, 40, 0.2); color: #eb5e28; border: 1px solid #eb5e28; }
         .challenge-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
         .challenge-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
         
-        .progress-container { width: 100%; max-width: 250px; background: rgba(0,0,0,0.5); height: 8px; border-radius: 4px; position: relative; overflow: hidden; }
-        .progress-bar { background: linear-gradient(90deg, var(--primary), #ff7f11); height: 100%; border-radius: 4px; width: 0%; transition: width 0.3s; }
-        .challenge-tag.epic ~ .progress-container .progress-bar { background: linear-gradient(90deg, #b873ff, #8e44ad); }
+        .progress-container { width: 100%; max-width: 250px; background: rgba(0,0,0,0.4); height: 6px; border-radius: 3px; position: relative; }
+        .progress-bar { background: var(--primary); height: 100%; border-radius: 3px; width: 0%; transition: width 0.3s; }
+        .challenge-tag.epic ~ .progress-container .progress-bar { background: #b873ff; }
+        .challenge-tag.hidden ~ .progress-container .progress-bar { background: #eb5e28; }
         .progress-text { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block; }
         
-        .challenge-reward { font-size: 0.8rem; color: #2ed573; font-weight: bold; margin-top: 5px; }
+        .challenge-reward { font-size: 0.8rem; color: var(--success); font-weight: bold; margin-top: 5px; }
 
         .btn-claim {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted);
             padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: not-allowed; transition: all 0.2s;
         }
         .btn-claim.ready {
-            background: #2ed573; border-color: #2ed573; color: black; cursor: pointer; box-shadow: 0 0 12px rgba(46, 213, 115, 0.5);
+            background: var(--success); border-color: var(--success); color: black; cursor: pointer; box-shadow: 0 0 10px rgba(46, 213, 115, 0.4);
         }
-        .btn-claim.claimed { background: rgba(0,0,0,0.4); border-color: transparent; color: var(--text-muted); cursor: not-allowed; }
+        .btn-claim.claimed { background: rgba(0,0,0,0.3); border-color: transparent; color: var(--text-muted); cursor: not-allowed; }
+
+        /* --- SYSTEME DE PERSONNALISATION PROFIL (ONGLETS) --- */
+        .badges-section {
+            text-align: left;
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 159, 67, 0.05);
+        }
+        .customization-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255, 159, 67, 0.1);
+            padding-bottom: 8px;
+        }
+        .custom-tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 4px 12px;
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .custom-tab-btn.active {
+            color: var(--primary);
+        }
+        .custom-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+        .custom-panel { display: none; }
+        .custom-panel.active { display: block; }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+        .badge-item {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #222;
+            padding: 0.8rem 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: all 0.2s;
+        }
+        .badge-item.unlocked {
+            opacity: 1;
+            border-color: rgba(255, 159, 67, 0.3);
+            background: rgba(40, 25, 10, 0.3);
+        }
+        .badge-item.unlocked:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        .badge-item.equipped {
+            border-color: var(--success);
+            background: rgba(46, 213, 115, 0.1);
+            box-shadow: inset 0 0 8px rgba(46, 213, 115, 0.2);
+        }
+        .badge-icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* --- APERÇU DE BANNIÈRES DANS LE PROFIL --- */
+        .themes-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        .theme-preview-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .theme-preview-card.locked {
+            opacity: 0.5;
+        }
+        .theme-preview-card.equipped {
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
+        }
+        /* La miniature dynamique */
+        .theme-miniature {
+            height: 65px;
+            width: 100%;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+        }
+        .theme-miniature .lock-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            font-size: 0.75rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        .theme-preview-info {
+            padding: 0.6rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .theme-preview-name {
+            font-size: 0.8rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        .btn-preview-action {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-preview-action:hover {
+            background: var(--primary);
+            color: black;
+            border-color: var(--primary);
+        }
+        .theme-preview-card.equipped .btn-preview-action {
+            background: var(--success);
+            color: black;
+            border-color: var(--success);
+            cursor: default;
+        }
+
+        /* Petit bouton d'upload sur la miniature du fond personnalisé */
+        .btn-upload-bg-mini {
+            background: rgba(0,0,0,0.75);
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+        .btn-upload-bg-mini:hover {
+            background: var(--primary);
+            color: black;
+        }
 
         /* --- SHOP / SUCCESS / OTHER --- */
+        .shop-list-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin: 1.5rem 0 0.8rem 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 159, 67, 0.1);
+            padding-bottom: 4px;
+        }
         .shop-list { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
-        .shop-item { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.15); border-radius: 12px; padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); }
+        .shop-item { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 12px; padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
         .shop-info { display: flex; align-items: center; gap: 15px; }
         .shop-icon { font-size: 2rem; }
         .shop-details h4 { font-size: 1rem; }
         .shop-details p { font-size: 0.8rem; color: var(--text-muted); }
         .shop-cost { color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
-        .btn-buy { background: rgba(255, 159, 67, 0.1); color: var(--text-main); border: 1px solid rgba(255, 159, 67, 0.3); padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-        .btn-buy:hover { background: rgba(255, 159, 67, 0.2); }
-        .btn-buy.equipped { background: #2ed573; color: black; border-color: #2ed573; box-shadow: 0 0 10px rgba(46, 213, 115, 0.3); }
+        .btn-buy { background: rgba(255, 159, 67, 0.1); color: var(--text-main); border: 1px solid rgba(255, 159, 67, 0.3); padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .btn-buy.equipped { background: var(--success); color: black; border-color: var(--success); }
 
         .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 700px; margin: 0 auto; }
-        .ach-card { background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 15px; opacity: 0.4; transition: all 0.3s; }
-        .ach-card.unlocked { opacity: 1; border-color: var(--primary); background: var(--bg-card); box-shadow: 0 4px 12px rgba(255,159,67,0.05); }
+        .ach-card { background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 15px; opacity: 0.4; }
+        .ach-card.unlocked { opacity: 1; border-color: var(--primary); background: var(--bg-card); }
         .ach-icon { font-size: 2rem; }
         .ach-info h4 { font-size: 0.95rem; }
         .ach-info p { font-size: 0.75rem; color: var(--text-muted); }
 
         .logs-section { text-align: left; margin-top: 2rem; }
         .logs-container { display: flex; flex-direction: column; gap: 0.5rem; max-height: 200px; overflow-y: auto; margin-top: 0.5rem; }
-        .log-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+        .log-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; }
         .log-item span { color: var(--primary); font-weight: bold; }
 
-        .admin-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; margin-top: 1.5rem; backdrop-filter: blur(10px); }
+        .admin-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; margin-top: 1.5rem; }
         .admin-table th, .admin-table td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255, 159, 67, 0.1); }
-        .admin-table th { background: rgba(255, 159, 67, 0.15); color: var(--primary); }
-        .admin-input { width: 60px; background: rgba(0,0,0,0.6); border: 1px solid #44230a; color: white; padding: 0.3rem; border-radius: 4px; text-align: center; }
-        .btn-admin-action { background: #d63031; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .btn-admin-save { background: #2ed573; color: black; font-weight: bold; }
+        .admin-table th { background: rgba(255, 159, 67, 0.1); color: var(--primary); }
+        .admin-input { width: 60px; background: rgba(0,0,0,0.5); border: 1px solid #331b07; color: white; padding: 0.3rem; border-radius: 4px; text-align: center; }
+        .btn-admin-action { background: var(--danger); color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .btn-admin-save { background: var(--success); color: black; font-weight: bold; }
 
-        .history-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.15); padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin: 0 auto 1.5rem auto; border-radius: 12px; backdrop-filter: blur(10px); }
+        .history-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin: 0 auto 1.5rem auto; border-radius: 12px;}
         .history-card h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 0.8rem; font-size: 1.1rem; color: var(--primary); }
         .history-card p { color: #b2bec3; font-size: 0.9rem; line-height: 1.6; }
+
+        /* --- COMMUNITY STYLE & LEADERBOARD --- */
+        .comm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; max-width: 1000px; margin: 0 auto; }
+        .search-box { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #331b07; padding: 0.8rem 1rem; border-radius: 8px; color: white; outline: none; margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .search-box:focus { border-color: var(--primary); box-shadow: 0 0 8px var(--primary-glow); }
+        
+        .comm-section { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); padding: 1.5rem; border-radius: 16px; min-height: 400px; }
+        .comm-section h3 { margin-bottom: 1rem; color: var(--primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .user-list { display: flex; flex-direction: column; gap: 0.8rem; max-height: 450px; overflow-y: auto; }
+        .user-card-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 1rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .user-card-info { display: flex; align-items: center; gap: 12px; }
+        .user-card-avatar { width: 40px; height: 40px; background: #110700; border: 1px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; overflow: hidden; object-fit: cover; }
+        .user-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-card-details .username-click { font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; }
+        .user-card-details .username-click:hover { color: var(--primary); text-decoration: underline; }
+        .user-card-details .sub { font-size: 0.75rem; color: var(--text-muted); }
+        .user-card-actions { display: flex; gap: 6px; }
+        
+        .btn-action-sm { padding: 0.4rem 0.8rem; border-radius: 6px; border: none; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-action-sm.add { background: var(--primary); color: black; }
+        .btn-action-sm.add:hover { background: #ffb061; }
+        .btn-action-sm.remove { background: rgba(255,255,255,0.05); color: #b2bec3; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-action-sm.remove:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-action-sm.block { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-action-sm.block:hover { background: var(--danger); color: white; }
+
+        .lead-tabs { display: flex; gap: 10px; margin-bottom: 1rem; }
+        .lead-tab-btn { background: transparent; border: 1px solid #331b07; color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+        .lead-tab-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(255, 159, 67, 0.05); }
+
+        .leaderboard-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        .leaderboard-table th { color: var(--text-muted); font-weight: 600; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .leaderboard-table td { padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .lead-rank-num { font-weight: bold; width: 30px; color: var(--text-muted); }
+        .lead-rank-num.top1 { color: #f1c40f; }
+        .lead-rank-num.top2 { color: #b2bec3; }
+        .lead-rank-num.top3 { color: #e67e22; }
+        .lead-user-cell { display: flex; align-items: center; gap: 8px; }
+
+        /* --- MODAL DIALOG STYLE --- */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal-wrapper { background: #0c0f0e; border: 1px solid rgba(255, 159, 67, 0.2); width: 100%; max-width: 500px; border-radius: 16px; padding: 2rem; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+        .modal-close:hover { color: white; }
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-
     <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this)">
+    <input type="file" id="custom-bg-upload-input" accept="image/*" style="display: none;" onchange="handleCustomBgUpload(this)">
+
+    <div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
+        <div class="modal-wrapper" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeModal(null)">&times;</span>
+            <div class="profile-centered" style="margin-top: 1rem;">
+                <div class="avatar-container">
+                    <div class="avatar-main" id="modal-avatar-container">😈</div>
+                </div>
+                <div class="user-block" style="align-items: center; margin-bottom: 0.2rem;">
+                    <div class="profile-name" id="modal-name">User</div>
+                    <div class="equipped-badges-sub" id="modal-badges" style="font-size: 1.3rem;"></div>
+                </div>
+                <div class="profile-rank" id="modal-rank" style="margin-bottom: 1.5rem;">Novice</div>
+
+                <div class="stats-row" style="gap: 1rem;">
+                    <div class="stat-card" style="padding: 1rem;"><div class="val" id="modal-stat-pts" style="font-size:1.6rem;">0</div><div class="lbl" style="font-size:0.65rem;">Points</div></div>
+                    <div class="stat-card" style="padding: 1rem;"><div class="val" id="modal-stat-br" style="font-size:1.6rem;">0</div><div class="lbl" style="font-size:0.65rem;">Branlettes</div></div>
+                    <div class="stat-card" style="padding: 1rem;"><div class="val" id="modal-stat-ej" style="font-size:1.6rem;">0</div><div class="lbl" style="font-size:0.65rem;">Éjaculations</div></div>
+                </div>
+
+                <div style="text-align:left; margin-top:1.5rem;">
+                    <h4 style="color:var(--primary); font-size:0.8rem; text-transform:uppercase; margin-bottom:0.6rem;">🏆 Succès passifs</h4>
+                    <div class="achievements-grid" id="modal-achievements-container" style="grid-template-columns: repeat(2, 1fr); gap: 0.6rem;"></div>
+                </div>
+
+                <div class="logs-section" style="margin-top: 1.5rem;">
+                    <h4 style="color:var(--primary); font-size:0.8rem; text-transform:uppercase;">📓 Dernières notes publiques</h4>
+                    <div class="logs-container" id="modal-logs-container" style="max-height: 120px; margin-top: 0.4rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="auth-container">
         <div class="auth-card" id="login-card">
@@ -513,7 +796,10 @@
             <div class="brand">🍆 BRANLETTE</div>
             
             <div class="user-summary">
-                <div class="name" id="side-name">User</div>
+                <div class="user-block">
+                    <div class="name" id="side-name">User</div>
+                    <div class="equipped-badges-sub" id="side-badges"></div>
+                </div>
                 <div class="rank" id="side-rank">Novice</div>
                 <div class="mini-stats">
                     <div class="mini-box"><span id="side-pts">0</span>PTS</div>
@@ -525,6 +811,7 @@
                 <button class="menu-btn active" onclick="switchPage('profil', this)">🕒 Chrono</button>
                 <button class="menu-btn" onclick="switchPage('compteurs', this)">📊 Compteurs</button>
                 <button class="menu-btn" onclick="switchPage('challenges', this)">🎯 Défis</button>
+                <button class="menu-btn" onclick="switchPage('comm', this)">👥 Communauté</button>
                 <button class="menu-btn" onclick="switchPage('profil-view', this)">👤 Profil</button>
                 <button class="menu-btn" onclick="switchPage('boutique', this)">🛍️ Boutique</button>
                 <button class="menu-btn" onclick="switchPage('histoire', this)">📖 Histoire</button>
@@ -551,6 +838,7 @@
             <div id="page-compteurs" class="page">
                 <div class="page-header"><div class="page-title">Compteurs</div></div>
                 <div class="compteur-wrapper">
+                    
                     <div class="compteur-card">
                         <div class="compteur-header"><span>🍆</span><div class="compteur-title">Branlettes</div></div>
                         <div class="compteur-subtitle">Friction de base (+1 PT)</div>
@@ -571,7 +859,7 @@
                             <textarea id="session-note" placeholder="Décris ton état d'esprit ou ta résistance..."></textarea>
                         </div>
 
-                        <div class="counter-actions" style="margin-top:1rem;">
+                        <div class="counter-actions">
                             <button class="btn-count minus" onclick="updateCount('ejaculations', -1)">-</button>
                             <button class="btn-count plus" onclick="updateCount('ejaculations', 1)">+</button>
                         </div>
@@ -582,6 +870,7 @@
             <div id="page-challenges" class="page">
                 <div class="page-header"><div class="page-title">Missions & Défis</div></div>
                 <div class="challenge-list">
+                    
                     <div class="challenge-card">
                         <div class="challenge-info">
                             <span class="challenge-tag daily">Quotidien</span>
@@ -592,6 +881,18 @@
                             <div class="challenge-reward">🎁 Récompense : +15 PTS</div>
                         </div>
                         <button class="btn-claim" id="btn-claim-endurance" onclick="claimChallenge('endurance', 15)">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag daily">Quotidien</span>
+                            <div class="challenge-title">L'Éclair Éclatant</div>
+                            <div class="challenge-desc">Lancer le chrono et terminer une éjaculation en moins de 90 secondes.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-speedrun"></div></div>
+                            <span class="progress-text" id="ch-progress-text-speedrun">Non accompli</span>
+                            <div class="challenge-reward" style="color:#ff9f43">🎁 Récompense UNIQUE : Titre Équipable [⚡ Véloce] & +10 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-speedrun" onclick="claimChallenge('speedrun', 10, 'veloce_title')">Récupérer</button>
                     </div>
 
                     <div class="challenge-card">
@@ -617,6 +918,46 @@
                         </div>
                         <button class="btn-claim" id="btn-claim-shaolin" onclick="claimChallenge('shaolin', 0, 'shaolin_title')">Récupérer</button>
                     </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag hidden">Secret</span>
+                            <div class="challenge-title">Créature de la Nuit</div>
+                            <div class="challenge-desc">Incrémenter n'importe quel compteur durant les heures interdites (entre 2h et 5h du matin).</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-night"></div></div>
+                            <span class="progress-text" id="ch-progress-text-night">Verrouillé</span>
+                            <div class="challenge-reward" style="color:#eb5e28;">🎁 Récompense SECRÈTE : Badge exclusif [🦇 Vampire] & +15 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-night" onclick="claimChallenge('night', 15, 'vampire_badge')">Récupérer</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="page-comm" class="page">
+                <div class="page-header"><div class="page-title">Communauté</div></div>
+                <div class="comm-grid">
+                    <div>
+                        <input type="text" class="search-box" id="comm-search" placeholder="🔍 Rechercher un utilisateur par son pseudo..." oninput="renderCommunitySearch()">
+                        <div class="comm-section">
+                            <h3>👥 Résultats de la Recherche</h3>
+                            <div class="user-list" id="search-results-list"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="comm-section">
+                            <div class="lead-tabs">
+                                <button class="lead-tab-btn active" id="btn-lead-global" onclick="toggleLeadTab('global')">🏆 Classement Général</button>
+                                <button class="lead-tab-btn" id="btn-lead-friends" onclick="toggleLeadTab('friends')">🤝 Classement Amis</button>
+                            </div>
+                            <div style="max-height:480px; overflow-y:auto;">
+                                <table class="leaderboard-table">
+                                    <thead><tr><th>#</th><th>Utilisateur</th><th>Points</th><th>⏳</th></tr></thead>
+                                    <tbody id="leaderboard-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -627,7 +968,11 @@
                         <div class="avatar-main" id="profile-avatar-container">😈</div>
                         <div class="avatar-badge" onclick="triggerAvatarUpload()">📷</div>
                     </div>
-                    <div class="profile-name" id="prof-name">User</div>
+                    
+                    <div class="user-block" style="align-items: center; margin-bottom: 0.2rem;">
+                        <div class="profile-name" id="prof-name">User</div>
+                        <div class="equipped-badges-sub" id="prof-badges" style="font-size: 1.3rem;"></div>
+                    </div>
                     <div class="profile-rank" id="prof-rank">Novice</div>
 
                     <div class="stats-row">
@@ -636,7 +981,38 @@
                         <div class="stat-card"><div class="val" id="card-ejaculations">0</div><div class="lbl">Éjaculations</div></div>
                     </div>
 
-                    <div style="text-align:left; margin-bottom:2rem;">
+                    <div class="badges-section">
+                        <div class="customization-tabs">
+                            <button class="custom-tab-btn active" id="tab-btn-titles" onclick="switchCustomTab('titles')">🎖️ Titres & Badges</button>
+                            <button class="custom-tab-btn" id="tab-btn-themes" onclick="switchCustomTab('themes')">🖼️ Galerie des Fonds</button>
+                        </div>
+                        
+                        <div class="custom-panel active" id="custom-panel-titles">
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Cliquez sur un titre acquis pour l'équiper/déséquiper de votre pseudo.</p>
+                            <div class="badges-grid" id="badges-inventory-grid">
+                                <div class="badge-item" id="badge-shaolin_title" onclick="toggleEquipBadge('shaolin_title')">
+                                    <span class="badge-icon">🧘</span><strong>[Moine Shaolin]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-veloce_title" onclick="toggleEquipBadge('veloce_title')">
+                                    <span class="badge-icon">⚡</span><strong>[⚡ Véloce]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-vampire_badge" onclick="toggleEquipBadge('vampire_badge')">
+                                    <span class="badge-icon">🦇</span><strong>[🦇 Vampire]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-rage_badge" onclick="toggleEquipBadge('rage_badge')">
+                                    <span class="badge-icon">🚫</span><strong>[🚫 Rageux]</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custom-panel" id="custom-panel-themes">
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Gérez l'apparence générale de votre application. L'arrière-plan ultime vous laisse uploader vos images !</p>
+                            <div class="themes-preview-grid" id="profile-themes-preview-grid">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align:left; margin-top:2rem; margin-bottom:2rem;">
                         <h3 style="color:var(--primary); font-size:0.9rem; text-transform:uppercase; margin-bottom:1rem;">🏆 Succès passifs</h3>
                         <div class="achievements-grid">
                             <div class="ach-card" id="ach-marathon"><div class="ach-icon">⏱️</div><div class="ach-info"><h4>Le Marathonien</h4><p>Chrono supérieur à 5 minutes (+10 pts)</p></div></div>
@@ -655,11 +1031,13 @@
 
             <div id="page-boutique" class="page">
                 <div class="page-header"><div class="page-title">Boutique</div></div>
+                
+                <div class="shop-list-title">🎭 Cosmétiques & Effets</div>
                 <div class="shop-list">
                     <div class="shop-item">
                         <div class="shop-info">
                             <div class="shop-icon">👑</div>
-                            <div class="shop-details"><h4>Couronne Royale</h4><p>Affiche une couronne à gauche de ton pseudo</p><div class="shop-cost">30 pts</div></div>
+                            <div class="shop-details"><h4>Couronne Royale</h4><p>Affiche une couronne en dessous de ton pseudo</p><div class="shop-cost">30 pts</div></div>
                         </div>
                         <button class="btn-buy" id="btn-shop-crown" onclick="handleShopAction('crown', 30)">Acheter</button>
                     </div>
@@ -671,6 +1049,10 @@
                         <button class="btn-buy" id="btn-shop-aura" onclick="handleShopAction('aura', 50)">Acheter</button>
                     </div>
                 </div>
+
+                <div class="shop-list-title">🖼️ Thèmes & Fonds d'Application</div>
+                <div class="shop-list" id="themes-shop-list">
+                    </div>
             </div>
 
             <div id="page-histoire" class="page">
@@ -693,102 +1075,43 @@
     </div>
 
     <script>
-        // --- LOGIQUE FOND ANIMÉ DE PARTICULES ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-
-        let particlesArray = [];
-        const numberOfParticles = 45;
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 4 + 1;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * -0.5 - 0.1; // Remonte doucement vers le haut
-                this.alpha = Math.random() * 0.5 + 0.1;
-                this.hue = Math.random() * 20 + 20; // Teintes orangées/feu
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                // Si la particule sort de l'écran, elle revient en bas
-                if (this.y < 0) {
-                    this.y = canvas.height;
-                    this.x = Math.random() * canvas.width;
-                }
-                if (this.x < 0 || this.x > canvas.width) {
-                    this.speedX = -this.speedX;
-                }
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `hsl(${this.hue}, 100%, 55%)`;
-                ctx.shadowBlur = this.size * 3;
-                ctx.shadowColor = `hsl(${this.hue}, 100%, 55%)`;
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            // Création d'un fondu de fond radial style "ambient glow"
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Effet halo de feu au centre/bas
-            let gradient = ctx.createRadialGradient(canvas.width/2, canvas.height * 0.4, 10, canvas.width/2, canvas.height * 0.4, canvas.width * 0.8);
-            gradient.addColorStop(0, '#260f00');
-            gradient.addColorStop(0.5, '#0a0300');
-            gradient.addColorStop(1, '#000000');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-            requestAnimationFrame(animateParticles);
-        }
-
-        initParticles();
-        animateParticles();
-
-
-        // --- APPLICATION CORE LOGIC ---
         let currentUser = null;
-        let userData = { points: 0, branlettes: 0, ejaculations: 0, avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [] };
+        let userData = { 
+            points: 0, branlettes: 0, ejaculations: 0, avatar: "", role: "user",
+            inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], 
+            friends: [], blocked: [], themeEquipped: "classic", customBgData: "" 
+        };
         
         let chronoInterval = null;
         let startTime = 0;
         let elapsedTime = 0;
         let isChronoRunning = false;
+        let rageClicks = 0; 
+        let activeLeadTab = 'global';
 
         const ADMIN_USERNAME = "admin";
         const ADMIN_PASSWORD = "admin123";
 
+        // Définition globale de tous les thèmes/fonds disponibles (Ajout du thème custom ULTIME)
+        const APP_THEMES = {
+            classic: { name: "Sombre Classique", style: "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)", price: 0, icon: "🔥", isCustom: false },
+            pitchblack: { name: "Nuit Profonde", style: "linear-gradient(135deg, #050505 0%, #000000 100%)", price: 0, icon: "🌑", isCustom: false },
+            sunrise: { name: "Aube Orangée", style: "radial-gradient(circle at 50% 10%, #3a1c00 0%, #1a0b00 50%, #050200 100%)", price: 0, icon: "🌅", isCustom: false },
+            cyberpunk: { name: "Néon Cyberpunk", style: "linear-gradient(135deg, #1f0326 0%, #05010d 100%)", price: 40, icon: "🔮", isCustom: false },
+            royal: { name: "Or Impérial Royal", style: "radial-gradient(circle at 50% 30%, #362903 0%, #120e01 60%, #000000 100%)", price: 75, icon: "🔱", isCustom: false },
+            custom: { name: "🌌 ARRIÈRE-PLAN ULTIME (Perso)", style: "rgba(30, 30, 30, 0.4)", price: 150, icon: "🖼️", isCustom: true }
+        };
+
+        const ALL_ACHIEVEMENTS = {
+            marathon: { title: "Le Marathonien", desc: "Chrono supérieur à 5 mins", icon: "⏱️" },
+            sprinter: { title: "Le Sprinter", desc: "Session finie en < 30 secs", icon: "⚡" },
+            vampire: { title: "Le Vampire", desc: "Éjaculation nocturne (2h-5h)", icon: "🦉" },
+            zen: { title: "Zénitude absolue", desc: "Atteindre plus de 50 pts", icon: "🧘" }
+        };
+
         if (!localStorage.getItem('user_' + ADMIN_USERNAME)) {
             localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify({
-                points: 100, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: []
+                points: 500, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], friends: [], blocked: [], themeEquipped: "classic", customBgData: ""
             }));
         }
 
@@ -806,7 +1129,12 @@
                 alert('Ce pseudo est indisponible !'); return;
             }
 
-            const initialData = { points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [] };
+            const initialData = { 
+                points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", 
+                inventory: ["classic", "pitchblack", "sunrise"], 
+                equipped: [], logs: [], achievements: [], claimedChallenges: [] , friends: [], blocked: [], 
+                themeEquipped: "classic", customBgData: ""
+            };
             localStorage.setItem('user_' + user, JSON.stringify(initialData));
             alert('Compte créé !'); toggleAuth(true);
         });
@@ -823,19 +1151,32 @@
 
             currentUser = user;
             userData = JSON.parse(stored);
-            if(!userData.inventory) userData.inventory = [];
+            validateUserArrays();
+            
+            launchApp();
+        });
+
+        function validateUserArrays() {
+            if(!userData.inventory) userData.inventory = ["classic", "pitchblack", "sunrise"];
+            if(!userData.inventory.includes("classic")) userData.inventory.push("classic");
+            if(!userData.inventory.includes("pitchblack")) userData.inventory.push("pitchblack");
+            if(!userData.inventory.includes("sunrise")) userData.inventory.push("sunrise");
+            
             if(!userData.equipped) userData.equipped = [];
             if(!userData.logs) userData.logs = [];
             if(!userData.achievements) userData.achievements = [];
             if(!userData.claimedChallenges) userData.claimedChallenges = [];
-            
-            launchApp();
-        });
+            if(!userData.friends) userData.friends = [];
+            if(!userData.blocked) userData.blocked = [];
+            if(!userData.themeEquipped) userData.themeEquipped = "classic";
+            if(!userData.customBgData) userData.customBgData = "";
+        }
 
         function launchApp() {
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             document.getElementById('admin-nav-btn').style.display = userData.role === "admin" ? 'flex' : 'none';
+            applyCurrentTheme();
             updateDOMValues();
         }
 
@@ -844,6 +1185,18 @@
             currentUser = null;
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('auth-container').style.display = 'flex';
+            document.documentElement.style.setProperty('--app-background', APP_THEMES.classic.style);
+        }
+
+        function applyCurrentTheme() {
+            const currentThemeKey = userData.themeEquipped || "classic";
+            
+            if(currentThemeKey === "custom" && userData.customBgData) {
+                // Si l'utilisateur a configuré son fond d'écran perso, on charge son image enregistrée
+                document.documentElement.style.setProperty('--app-background', `url(${userData.customBgData})`);
+            } else if (APP_THEMES[currentThemeKey]) {
+                document.documentElement.style.setProperty('--app-background', APP_THEMES[currentThemeKey].style);
+            }
         }
 
         function switchPage(pageId, buttonElem) {
@@ -852,26 +1205,60 @@
             document.getElementById('page-' + pageId).classList.add('active');
             buttonElem.classList.add('active');
             if (pageId === 'admin-panel') loadAdminPanelData();
+            if (pageId === 'comm') { renderCommunitySearch(); renderLeaderboard(); }
+            if (pageId === 'boutique') { renderThemesShop(); }
+            if (pageId === 'profil-view') { renderProfileThemesPreview(); }
         }
 
-        function getRank(pts) {
-            if (userData.role === 'admin') return "👑 Administrateur Global";
+        function switchCustomTab(tab) {
+            document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.custom-panel').forEach(p => p.classList.remove('active'));
+            
+            document.getElementById('tab-btn-' + tab).classList.add('active');
+            document.getElementById('custom-panel-' + tab).classList.add('active');
+
+            if(tab === 'themes') {
+                renderProfileThemesPreview();
+            }
+        }
+
+        function getRank(pts, role) {
+            if (role === 'admin') return "👑 Administrateur Global";
             if (pts >= 50) return "🌌 Dieu du Poignet";
             if (pts >= 30) return "🧘 Moine de l'Endurance";
             if (pts >= 15) return "🥋 Ceinture Blanche";
             return "🌱 Novice Souple";
         }
 
-        // --- COMPTEURS & VALIDATIONS ---
         function updateCount(type, amount) {
+            if (type === 'branlettes' && amount === -1 && userData.branlettes === 0) {
+                rageClicks++;
+                if (rageClicks >= 10 && !userData.inventory.includes('rage_badge')) {
+                    userData.inventory.push('rage_badge');
+                    alert("🚫 DÉFI SECRET VALIDÉ ! Tu as débloqué le badge [🚫 Rageux] pour avoir spammé le bouton moins dans le vide.");
+                    saveData();
+                    updateDOMValues();
+                }
+                return;
+            }
+
             if((userData[type] + amount) < 0) return;
             userData[type] += amount;
+
+            const hours = new Date().getHours();
+
+            if (amount > 0 && (hours >= 2 && hours <= 5) && !userData.inventory.includes('night_checked')) {
+                userData.inventory.push('night_checked'); 
+            }
 
             if(amount > 0) {
                 if(type === 'ejaculations') {
                     userData.points += 2;
-                    const hours = new Date().getHours();
                     if(hours >= 2 && hours <= 5) unlockAchievement('vampire', 15);
+                    
+                    if(elapsedTime > 0 && elapsedTime <= 90000 && !userData.inventory.includes('speedrun_checked')) {
+                        userData.inventory.push('speedrun_checked');
+                    }
                     if(elapsedTime > 0 && elapsedTime < 30000) unlockAchievement('sprinter', 5);
 
                     const noteInput = document.getElementById('session-note');
@@ -897,7 +1284,6 @@
             }
         }
 
-        // --- INTERACTION LOGIQUE DES DEFIS ---
         function claimChallenge(id, bonusPts, specialReward = null) {
             if(userData.claimedChallenges.includes(id)) return;
 
@@ -905,7 +1291,11 @@
             if(specialReward) {
                 userData.inventory.push(specialReward);
                 userData.equipped.push(specialReward); 
-                alert(`🎯 Défi Validé ! Tu as débloqué la récompense exclusive : ${specialReward === 'shaolin_title' ? '[Moine Shaolin]' : specialReward} !`);
+                let label = specialReward;
+                if(specialReward === 'shaolin_title') label = '[Moine Shaolin]';
+                if(specialReward === 'veloce_title') label = '[⚡ Véloce]';
+                if(specialReward === 'vampire_badge') label = '[🦇 Vampire]';
+                alert(`🎯 Défi Validé ! Tu as débloqué et équipé la récompense : ${label} !`);
             } else {
                 alert(`🎯 Défi Validé ! Tu récupères +${bonusPts} points !`);
             }
@@ -915,7 +1305,19 @@
             updateDOMValues();
         }
 
-        // --- SHOPPING ---
+        function toggleEquipBadge(badgeKey) {
+            if (!userData.inventory.includes(badgeKey)) return; 
+
+            const index = userData.equipped.indexOf(badgeKey);
+            if (index > -1) {
+                userData.equipped.splice(index, 1); 
+            } else {
+                userData.equipped.push(badgeKey); 
+            }
+            saveData();
+            updateDOMValues();
+        }
+
         function handleShopAction(itemKey, cost) {
             if(!userData.inventory.includes(itemKey)) {
                 if(userData.points < cost) { alert("Pas assez de points ! 😢"); return; }
@@ -929,6 +1331,139 @@
             saveData(); updateDOMValues();
         }
 
+        /* --- LOGIQUE DE L'IMAGE PERSO DU FOND ULTIME --- */
+        function triggerCustomBgUpload() {
+            document.getElementById('custom-bg-upload-input').click();
+        }
+
+        function handleCustomBgUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userData.customBgData = e.target.result; // Sauvegarde l'image en base64
+                    saveData();
+                    if(userData.themeEquipped === "custom") {
+                        applyCurrentTheme();
+                    }
+                    renderProfileThemesPreview();
+                    alert("Image personnalisée chargée avec succès ! 🔥 Atteint l'infini.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /* --- RENDU DE LA GALERIE DES FONDS DANS LE PROFIL (MIS À JOUR POUR LE FOND ULTIME) --- */
+        function renderProfileThemesPreview() {
+            const container = document.getElementById('profile-themes-preview-grid');
+            if(!container) return;
+            container.innerHTML = "";
+
+            Object.keys(APP_THEMES).forEach(themeKey => {
+                const theme = APP_THEMES[themeKey];
+                const isUnlocked = userData.inventory.includes(themeKey);
+                const isEquipped = userData.themeEquipped === themeKey;
+
+                let cardClass = "theme-preview-card";
+                if(!isUnlocked) cardClass += " locked";
+                if(isEquipped) cardClass += " equipped";
+
+                let btnHtml = "";
+                if(isEquipped) {
+                    btnHtml = `<button class="btn-preview-action" disabled>Équipé ✔️</button>`;
+                } else if(isUnlocked) {
+                    btnHtml = `<button class="btn-preview-action" onclick="handleThemeAction('${themeKey}', 0)">Équiper</button>`;
+                } else {
+                    btnHtml = `<button class="btn-preview-action" onclick="handleThemeAction('${themeKey}', ${theme.price})">Débloquer (${theme.price} p.)</button>`;
+                }
+
+                // Aperçu spécifique si c'est le fond personnalisé
+                let backgroundStyle = theme.style;
+                let uploadButtonHtml = "";
+                if (theme.isCustom && isUnlocked) {
+                    if (userData.customBgData) {
+                        backgroundStyle = `url(${userData.customBgData})`;
+                    }
+                    uploadButtonHtml = `<button class="btn-upload-bg-mini" onclick="event.stopPropagation(); triggerCustomBgUpload();">📁 Choisir une image</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="theme-miniature" style="background: ${backgroundStyle}; background-size: cover; background-position: center;">
+                            <span>${theme.icon}</span>
+                            ${uploadButtonHtml}
+                            ${!isUnlocked ? `<span class="lock-indicator">🔒 Verrouillé</span>` : ''}
+                        </div>
+                        <div class="theme-preview-info">
+                            <div class="theme-preview-name">${theme.name}</div>
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        /* --- BOUTIQUE GENERALE DES THÈMES SYNCHRONISÉE --- */
+        function renderThemesShop() {
+            const container = document.getElementById('themes-shop-list');
+            if(!container) return;
+            container.innerHTML = "";
+
+            Object.keys(APP_THEMES).forEach(themeKey => {
+                const theme = APP_THEMES[themeKey];
+                const hasTheme = userData.inventory.includes(themeKey);
+                const isEquipped = userData.themeEquipped === themeKey;
+
+                let btnText = `Acheter (${theme.price} pts)`;
+                let btnClass = "btn-buy";
+
+                if (hasTheme) {
+                    btnText = isEquipped ? "Équipé ✔️" : "Équiper";
+                    if (isEquipped) btnClass += " equipped";
+                }
+
+                let descText = theme.price === 0 ? 'Gratuit dès le départ' : 'Modifie l\'arrière-plan global de l\'application';
+                if(theme.isCustom) descText = "🔥 BONUS ULTIME : Importez l'image de votre choix depuis votre appareil et changez-en quand vous le souhaitez !";
+
+                container.innerHTML += `
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">${theme.icon}</div>
+                            <div class="shop-details">
+                                <h4>${theme.name}</h4>
+                                <p style="max-width:350px;">${descText}</p>
+                                ${!hasTheme ? `<div class="shop-cost">${theme.price} pts</div>` : '<div class="shop-cost" style="color:var(--success);">Débloqué</div>'}
+                            </div>
+                        </div>
+                        <button class="${btnClass}" onclick="handleThemeAction('${themeKey}', ${theme.price})">${btnText}</button>
+                    </div>
+                `;
+            });
+        }
+
+        function handleThemeAction(themeKey, price) {
+            const hasTheme = userData.inventory.includes(themeKey);
+
+            if (!hasTheme) {
+                if (userData.points < price) {
+                    alert("Pas assez de points pour débloquer ce fond d'application ! 😢");
+                    return;
+                }
+                userData.points -= price;
+                userData.inventory.push(themeKey);
+                userData.themeEquipped = themeKey;
+                alert(`Fond "${APP_THEMES[themeKey].name}" débloqué ! S'il s'agit du fond ultime, allez dans votre Profil pour y ajouter votre photo ! 🎉`);
+            } else {
+                userData.themeEquipped = themeKey;
+            }
+
+            saveData();
+            applyCurrentTheme();
+            updateDOMValues();
+            renderThemesShop();
+            renderProfileThemesPreview();
+        }
+
         function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
         function handleAvatarUpload(input) {
             const file = input.files[0];
@@ -939,18 +1474,29 @@
             }
         }
 
-        // --- MISE À JOUR DOM ---
+        function getBadgesEmojisString(equippedList) {
+            let badgesHtml = "";
+            if(equippedList.includes('crown')) badgesHtml += "👑 ";
+            if(equippedList.includes('shaolin_title')) badgesHtml += "🧘 ";
+            if(equippedList.includes('veloce_title')) badgesHtml += "⚡ ";
+            if(equippedList.includes('vampire_badge')) badgesHtml += "🦇 ";
+            if(equippedList.includes('rage_badge')) badgesHtml += "🚫 ";
+            return badgesHtml;
+        }
+
         function updateDOMValues() {
             if(!currentUser) return;
 
-            const rank = getRank(userData.points);
-            let finalName = currentUser;
+            const rank = getRank(userData.points, userData.role);
             
-            if(userData.equipped.includes('crown')) finalName = "👑 " + finalName;
-            if(userData.equipped.includes('shaolin_title')) finalName = finalName + " [Moine Shaolin]";
+            document.getElementById('side-name').textContent = currentUser;
+            document.getElementById('prof-name').textContent = currentUser;
+            
+            let badgesHtml = getBadgesEmojisString(userData.equipped);
 
-            document.getElementById('side-name').textContent = finalName;
-            document.getElementById('prof-name').textContent = finalName;
+            document.getElementById('side-badges').innerHTML = badgesHtml;
+            document.getElementById('prof-badges').innerHTML = badgesHtml;
+
             document.getElementById('side-rank').textContent = rank;
             document.getElementById('prof-rank').textContent = rank;
 
@@ -985,6 +1531,19 @@
                 const card = document.getElementById('ach-' + achId); if(card) card.classList.add('unlocked');
             });
 
+            const badgeKeys = ['shaolin_title', 'veloce_title', 'vampire_badge', 'rage_badge'];
+            badgeKeys.forEach(key => {
+                const badgeElement = document.getElementById('badge-' + key);
+                if(userData.inventory.includes(key)) {
+                    badgeElement.classList.add('unlocked');
+                    if(userData.equipped.includes(key)) {
+                        badgeElement.classList.add('equipped');
+                    } else {
+                        badgeElement.classList.remove('equipped');
+                    }
+                }
+            });
+
             updateChallengesDOM();
 
             const logsContainer = document.getElementById('logs-container');
@@ -998,19 +1557,26 @@
                     </div>
                 `).join('');
             }
+
+            renderProfileThemesPreview();
         }
 
-        // --- CALCULS ET PROGRESSION DES DÉFIS ---
         function updateChallengesDOM() {
             const currentSeconds = Math.floor(elapsedTime / 1000);
             const enduranceReady = currentSeconds >= 120;
             updateSingleChallengeDOM('endurance', currentSeconds, 120, enduranceReady, "secondes");
+
+            const speedrunReady = userData.inventory.includes('speedrun_checked');
+            updateSingleChallengeDOM('speedrun', speedrunReady ? 1 : 0, 1, speedrunReady, "effectué");
 
             const doubleReady = userData.branlettes >= 2;
             updateSingleChallengeDOM('double', userData.branlettes, 2, doubleReady, "Branlettes");
 
             const shaolinReady = userData.ejaculations >= 3;
             updateSingleChallengeDOM('shaolin', userData.ejaculations, 3, shaolinReady, "Éjaculations");
+
+            const nightReady = userData.inventory.includes('night_checked');
+            updateSingleChallengeDOM('night', nightReady ? 1 : 0, 1, nightReady, "complété");
         }
 
         function updateSingleChallengeDOM(id, current, target, isReady, unit) {
@@ -1019,38 +1585,43 @@
             const txt = document.getElementById('ch-progress-text-' + id);
 
             let pct = Math.min((current / target) * 100, 100);
-            bar.style.width = pct + "%";
-            txt.textContent = `${Math.min(current, target)} / ${target} ${unit}`;
+            if(bar) bar.style.width = pct + "%";
+            
+            if(txt) {
+                if(id === 'speedrun' || id === 'night') {
+                    txt.textContent = isReady ? "Accompli !" : "Verrouillé";
+                } else {
+                    txt.textContent = `${Math.min(current, target)} / ${target} ${unit}`;
+                }
+            }
 
-            if(userData.claimedChallenges.includes(id)) {
-                btn.textContent = "Récupéré ✔️";
-                btn.className = "btn-claim claimed";
-                btn.disabled = true;
-            } else if(isReady) {
-                btn.textContent = "Réclamer !";
-                btn.className = "btn-claim ready";
-                btn.disabled = false;
-            } else {
-                btn.textContent = "En cours...";
-                btn.className = "btn-claim";
-                btn.disabled = true;
+            if(btn) {
+                if(userData.claimedChallenges.includes(id)) {
+                    btn.textContent = "Récupéré ✔️";
+                    btn.className = "btn-claim claimed";
+                    btn.disabled = true;
+                } else if(isReady) {
+                    btn.textContent = "Réclamer !";
+                    btn.className = "btn-claim ready";
+                    btn.disabled = false;
+                } else {
+                    btn.textContent = "En cours...";
+                    btn.className = "btn-claim";
+                    btn.disabled = true;
+                }
             }
         }
 
-        // --- CHRONO ---
         function toggleChrono() {
             const btn = document.getElementById('btn-chrono-toggle');
-            const display = document.getElementById('chrono-display');
             if(!isChronoRunning) {
                 isChronoRunning = true; btn.textContent = "STOP";
                 btn.style.background = "rgba(214, 48, 49, 0.1)"; btn.style.borderColor = "#d63031"; btn.style.color = "#d63031";
-                display.classList.add('running'); // Active la pulsation
                 startTime = Date.now() - elapsedTime;
                 chronoInterval = setInterval(updateChronoDisplay, 10);
             } else {
                 isChronoRunning = false; btn.textContent = "START";
                 btn.style.background = "rgba(255, 159, 67, 0.15)"; btn.style.borderColor = "var(--primary)"; btn.style.color = "var(--primary)";
-                display.classList.remove('running'); // Stoppe la pulsation
                 clearInterval(chronoInterval);
                 if(elapsedTime >= 300000) { unlockAchievement('marathon', 10); }
                 updateDOMValues();
@@ -1075,26 +1646,247 @@
             updateChallengesDOM();
         }
 
-        function loadAdminPanelData() {
-            const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = "";
+        function getAllPlatformUsers() {
+            let users = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('user_')) {
-                    const username = key.replace('user_', ''); const data = JSON.parse(localStorage.getItem(key));
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="font-weight:bold; color:${username === ADMIN_USERNAME ? '#ff4757':'white'}">${username}</td>
-                        <td><input type="number" class="admin-input" id="adm-pts-${username}" value="${data.points}"></td>
-                        <td><input type="number" class="admin-input" id="adm-br-${username}" value="${data.branlettes}"></td>
-                        <td><input type="number" class="admin-input" id="adm-ej-${username}" value="${data.ejaculations}"></td>
-                        <td>
-                            <button class="btn-admin-action btn-admin-save" onclick="saveUserFromAdmin('${username}')">Sauver</button>
-                            ${username !== ADMIN_USERNAME ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${username}')">Bannir</button>` : ''}
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
+                    const uName = key.replace('user_', '');
+                    try {
+                        const uData = JSON.parse(localStorage.getItem(key));
+                        users.push({ username: uName, data: uData });
+                    } catch(e) {}
                 }
             }
+            return users;
+        }
+
+        function renderCommunitySearch() {
+            const query = document.getElementById('comm-search').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('search-results-list');
+            if(!resultsContainer) return;
+            resultsContainer.innerHTML = "";
+
+            const allUsers = getAllPlatformUsers();
+            const filteredUsers = allUsers.filter(u => u.username !== currentUser);
+
+            let matchingUsers = filteredUsers;
+            if(query !== "") {
+                matchingUsers = filteredUsers.filter(u => u.username.toLowerCase().includes(query));
+            }
+
+            if(matchingUsers.length === 0) {
+                resultsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding: 2rem;">Aucun utilisateur trouvé.</div>`;
+                return;
+            }
+
+            matchingUsers.forEach(u => {
+                const isFriend = userData.friends.includes(u.username);
+                const isBlocked = userData.blocked.includes(u.username);
+                const uRank = getRank(u.data.points || 0, u.data.role);
+
+                let avatarHtml = "😈";
+                if(u.data.avatar) avatarHtml = `<img src="${u.data.avatar}">`;
+                else if(u.data.role === 'admin') avatarHtml = "👑";
+
+                const card = document.createElement('div');
+                card.className = "user-card-item";
+                
+                let actionButtons = "";
+                if(isBlocked) {
+                    actionButtons = `<button class="btn-action-sm remove" onclick="toggleBlockUser('${u.username}')">Débloquer</button>`;
+                } else {
+                    actionButtons = `
+                        <button class="btn-action-sm ${isFriend ? 'remove':'add'}" onclick="toggleFriendUser('${u.username}')">
+                            ${isFriend ? 'Retirer':'Ajouter'}
+                        </button>
+                        <button class="btn-action-sm block" onclick="toggleBlockUser('${u.username}')">Bloquer</button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="user-card-info">
+                        <div class="user-card-avatar ${u.data.equipped && u.data.equipped.includes('aura') ? 'has-aura':''}">${avatarHtml}</div>
+                        <div class="user-card-details">
+                            <div class="username-click" onclick="viewUserUserProfile('${u.username}')">${u.username}</div>
+                            <div class="sub">${uRank} • ${u.data.points || 0} PTS</div>
+                        </div>
+                    </div>
+                    <div class="user-card-actions">${actionButtons}</div>
+                `;
+                resultsContainer.appendChild(card);
+            });
+        }
+
+        function toggleFriendUser(targetUser) {
+            const index = userData.friends.indexOf(targetUser);
+            if(index > -1) {
+                userData.friends.splice(index, 1);
+            } else {
+                const blockIdx = userData.blocked.indexOf(targetUser);
+                if(blockIdx > -1) userData.blocked.splice(blockIdx, 1);
+                userData.friends.push(targetUser);
+            }
+            saveData();
+            renderCommunitySearch();
+            renderLeaderboard();
+        }
+
+        function toggleBlockUser(targetUser) {
+            const index = userData.blocked.indexOf(targetUser);
+            if(index > -1) {
+                userData.blocked.splice(index, 1);
+            } else {
+                const friendIdx = userData.friends.indexOf(targetUser);
+                if(friendIdx > -1) userData.friends.splice(friendIdx, 1);
+                userData.blocked.push(targetUser);
+            }
+            saveData();
+            renderCommunitySearch();
+            renderLeaderboard();
+        }
+
+        function toggleLeadTab(tabType) {
+            activeLeadTab = tabType;
+            document.getElementById('btn-lead-global').classList.toggle('active', tabType === 'global');
+            document.getElementById('btn-lead-friends').classList.toggle('active', tabType === 'friends');
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            const tbody = document.getElementById('leaderboard-tbody');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+
+            let allUsers = getAllPlatformUsers();
+            allUsers = allUsers.filter(u => !userData.blocked.includes(u.username));
+
+            if(activeLeadTab === 'friends') {
+                allUsers = allUsers.filter(u => u.username === currentUser || userData.friends.includes(u.username));
+            }
+
+            allUsers.sort((a, b) => (b.data.points || 0) - (a.data.points || 0));
+
+            allUsers.forEach((u, index) => {
+                const position = index + 1;
+                let rankClass = "lead-rank-num";
+                if(position === 1) rankClass += " top1";
+                if(position === 2) rankClass += " top2";
+                if(position === 3) rankClass += " top3";
+
+                let nameStyle = "";
+                if(u.username === currentUser) nameStyle = "color:var(--primary); font-weight:900;";
+
+                let subBadgesString = getBadgesEmojisString(u.data.equipped || []);
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="${rankClass}">${position}</td>
+                        <td>
+                            <div class="lead-user-cell">
+                                <span class="username-click" style="${nameStyle}" onclick="viewUserUserProfile('${u.username}')">${u.username}</span>
+                                <span style="font-size:0.8rem; opacity:0.8;">${subBadgesString}</span>
+                            </div>
+                        </td>
+                        <td style="font-weight:600; color:var(--accent-orange);">${u.data.points || 0}</td>
+                        <td>${u.data.ejaculations || 0}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function viewUserUserProfile(username) {
+            let targetData = null;
+            if(username === currentUser) {
+                targetData = userData;
+            } else {
+                const stored = localStorage.getItem('user_' + username);
+                if(!stored) return;
+                targetData = JSON.parse(stored);
+            }
+
+            document.getElementById('modal-name').textContent = username;
+            document.getElementById('modal-rank').textContent = getRank(targetData.points || 0, targetData.role);
+            document.getElementById('modal-stat-pts').textContent = targetData.points || 0;
+            document.getElementById('modal-stat-br').textContent = targetData.branlettes || 0;
+            document.getElementById('modal-stat-ej').textContent = targetData.ejaculations || 0;
+
+            document.getElementById('modal-badges').innerHTML = getBadgesEmojisString(targetData.equipped || []);
+
+            const modalAvatar = document.getElementById('modal-avatar-container');
+            if(targetData.equipped && targetData.equipped.includes('aura')) modalAvatar.classList.add('has-aura');
+            else modalAvatar.classList.remove('has-aura');
+
+            if(targetData.avatar) modalAvatar.innerHTML = `<img src="${targetData.avatar}">`;
+            else modalAvatar.innerHTML = targetData.role === 'admin' ? "👑" : "😈";
+
+            const achContainer = document.getElementById('modal-achievements-container');
+            achContainer.innerHTML = "";
+            const tAch = targetData.achievements || [];
+            if(tAch.length === 0) {
+                achContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.75rem; grid-column: span 2;">Aucun succès débloqué.</div>`;
+            } else {
+                tAch.forEach(id => {
+                    const info = ALL_ACHIEVEMENTS[id];
+                    if(info) {
+                        achContainer.innerHTML += `
+                            <div class="ach-card unlocked" style="padding:0.5rem; gap:8px;">
+                                <div style="font-size:1.2rem;">${info.icon}</div>
+                                <div>
+                                    <h5 style="font-size:0.8rem;">${info.title}</h5>
+                                    <p style="font-size:0.65rem; color:var(--text-muted);">${info.desc}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            const logsContainer = document.getElementById('modal-logs-container');
+            const tLogs = targetData.logs || [];
+            if(tLogs.length === 0) {
+                logsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.8rem;">Aucune note publique.</div>`;
+            } else {
+                logsContainer.innerHTML = tLogs.slice(0, 3).map(log => `
+                    <div class="log-item" style="padding:0.4rem; font-size:0.75rem;">
+                        <span>[${log.date}]</span> - ${log.duration || 'N/A'}<br>
+                        <p style="margin-top:2px; color:#fff; font-style:italic;">"${log.text}"</p>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('profile-modal').classList.add('active');
+        }
+
+        function closeModal(event) {
+            if(!event || event.target === document.getElementById('profile-modal')) {
+                document.getElementById('profile-modal').classList.remove('active');
+            }
+        }
+
+        function loadAdminPanelData() {
+            const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = "";
+            const allUsers = getAllPlatformUsers();
+
+            allUsers.forEach(u => {
+                const tr = document.createElement('tr');
+                let deleteButtonHtml = '';
+                if (u.username !== ADMIN_USERNAME) {
+                    deleteButtonHtml = `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${u.username}')">Bannir</button>`;
+                }
+
+                tr.innerHTML = `
+                    <td style="font-weight:bold; color:${u.username === ADMIN_USERNAME ? '#ff4757':'white'}">${u.username}</td>
+                    <td><input type="number" class="admin-input" id="adm-pts-${u.username}" value="${u.data.points || 0}"></td>
+                    <td><input type="number" class="admin-input" id="adm-br-${u.username}" value="${u.data.branlettes || 0}"></td>
+                    <td><input type="number" class="admin-input" id="adm-ej-${u.username}" value="${u.data.ejaculations || 0}"></td>
+                    <td>
+                        <button class="btn-admin-action btn-admin-save" onclick="saveUserFromAdmin('${u.username}')">Sauver</button>
+                        ${deleteButtonHtml}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         function saveUserFromAdmin(username) {
@@ -1105,7 +1897,7 @@
             data.ejaculations = parseInt(document.getElementById(`adm-ej-${username}`).value) || 0;
             localStorage.setItem('user_' + username, JSON.stringify(data));
             alert('Données mises à jour.');
-            if (username === currentUser) { userData = data; updateDOMValues(); }
+            if (username === currentUser) { userData = data; validateUserArrays(); applyCurrentTheme(); updateDOMValues(); }
         }
 
         function deleteUserFromAdmin(username) {
