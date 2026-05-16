@@ -786,15 +786,19 @@
 
             <div id="page-histoire" class="page">
                 <div class="page-header">
-                    <div class="page-title">Histoire</div>
+                    <div class="page-title">Histoire & Origines</div>
                 </div>
                 <div class="history-card">
-                    <h3>🌍 Mode Solo & Endurance</h3>
-                    <p>Le contrôle de soi et le suivi des performances personnelles font partie des défis modernes les plus partagés. Ce dashboard te permet de suivre ton rythme avec précision.</p>
+                    <h3>⚡ An -25 000 : Le Grand Choc Préhistorique</h3>
+                    <p>Tout commença lors d'un hiver particulièrement rude en Eurasie. Un homme des cavernes nommé Grogh, s'ennuyant profondément près du feu alors que sa tribu chassait le mammouth, exécuta par pur hasard un mouvement de friction répétitif. L'histoire raconte qu'il ne découvrit pas seulement une sensation révolutionnaire, mais que l'énergie cinétique générée fut si intense qu'elle ralluma le feu de la tribu qui s'éteignait. Le concept de l'endurance solo venait de naître, gravé sur les murs des grottes à coup d'émojis aubergine primitifs.</p>
                 </div>
                 <div class="history-card">
-                    <h3>🌾 Statistiques & Évolution</h3>
-                    <p>Du rang de Rookie jusqu'aux sommets, l'analyse des compteurs permet de mieux comprendre ses habitudes et de se fixer des objectifs d'endurance clairs.</p>
+                    <h3>🏛️ L'Antiquité et le Secret des Philosophes</h3>
+                    <p>En Grèce antique, la discipline fut élevée au rang d'art philosophique. Diogène de Sinope en devint le premier grand maître spirituel, la pratiquant directement sur la place publique d'Athènes pour triompher du stress de la vie quotidienne. À cette époque, l'éjaculation n'était pas vue comme une fin en soi, mais comme l'obtention instantanée du statut de "Sage". Les Romains tentèrent plus tard d'en faire une épreuve olympique secrète, mais les parchemins contenant les scores furent malheureusement perdus durant l'incendie de Rome.</p>
+                </div>
+                <div class="history-card">
+                    <h3>💻 L'Ère Numérique : La Naissance du Dashboard</h3>
+                    <p>Pendant des siècles, les compteurs restèrent artisanaux (marques à la craie sur le mur, encoches sur des lits en bois). En 2026, face à la surconsommation d'écrans et au besoin crucial de mesurer scientifiquement sa gestion du temps et de l'énergie, le grand administrateur de ce site créa l'outil ultime : **Le Branlette Dashboard**. Désormais, chaque friction est chronométrée, chaque explosion est comptabilisée en points de bravoure, permettant aux Rookies de s'élever jusqu'au panthéon des dieux de l'endurance.</p>
                 </div>
             </div>
 
@@ -830,11 +834,9 @@
         let elapsedTime = 0;
         let isChronoRunning = false;
 
-        // Configuration du compte Administrateur Unique
         const ADMIN_USERNAME = "admin";
         const ADMIN_PASSWORD = "admin123";
 
-        // Initialisation automatique de l'admin s'il n'existe pas encore
         if (!localStorage.getItem('user_' + ADMIN_USERNAME)) {
             localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify({
                 points: 999,
@@ -893,7 +895,6 @@
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             
-            // Affichage conditionnel des outils admin
             if (userData.role === "admin") {
                 document.getElementById('admin-nav-btn').style.display = 'flex';
                 loadAdminPanelData();
@@ -945,7 +946,6 @@
             updateDOMValues();
         }
 
-        // --- GESTION PHOTO DE PROFIL ---
         function triggerAvatarUpload() {
             document.getElementById('avatar-upload-input').click();
         }
@@ -955,7 +955,7 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    userData.avatar = e.target.result; // Base64 string image
+                    userData.avatar = e.target.result;
                     saveData();
                     updateDOMValues();
                 };
@@ -963,7 +963,6 @@
             }
         }
 
-        // --- PANEL ADMIN LOGIQUE DE GESTION DIRECTE ---
         function loadAdminPanelData() {
             const tbody = document.getElementById('admin-users-list');
             tbody.innerHTML = "";
@@ -1042,7 +1041,6 @@
             document.getElementById('card-ejaculations').textContent = userData.ejaculations;
             document.getElementById('side-ejaculations').textContent = userData.ejaculations;
 
-            // Update Avatar UI
             const avatarContainer = document.getElementById('profile-avatar-container');
             if (userData.avatar) {
                 avatarContainer.innerHTML = `<img src="${userData.avatar}" alt="Profil">`;
@@ -1051,7 +1049,6 @@
             }
         }
 
-        // --- GESTION DU CHRONO ---
         function toggleChrono() {
             const btn = document.getElementById('btn-chrono-toggle');
             if(!isChronoRunning) {
