@@ -29,14 +29,11 @@
 
         body {
             background: var(--app-background);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
             background-attachment: fixed;
             color: var(--text-main);
             overflow-x: hidden;
             height: 100vh;
-            transition: background 0.5s ease;
+            transition: background 0.5s ease; /* Transition fluide lors du changement de fond */
         }
 
         /* --- AUTHENTICATION --- */
@@ -454,7 +451,7 @@
         }
         .btn-claim.claimed { background: rgba(0,0,0,0.3); border-color: transparent; color: var(--text-muted); cursor: not-allowed; }
 
-        /* --- SYSTEME DE PERSONNALISATION PROFIL --- */
+        /* --- SYSTEME DE PERSONNALISATION PROFIL (ONGLETS) --- */
         .badges-section {
             text-align: left;
             margin-top: 2rem;
@@ -532,7 +529,7 @@
             margin-bottom: 4px;
         }
 
-        /* --- BANNIERES & THÈMES --- */
+        /* --- APERÇU DE BANNIÈRES DANS LE PROFIL --- */
         .themes-preview-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -548,20 +545,22 @@
             transition: all 0.2s;
             position: relative;
         }
-        .theme-preview-card.locked { opacity: 0.5; }
+        .theme-preview-card.locked {
+            opacity: 0.5;
+        }
         .theme-preview-card.equipped {
             border-color: var(--success);
             box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
         }
+        /* La miniature dynamique */
         .theme-miniature {
             height: 65px;
             width: 100%;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             position: relative;
         }
         .theme-miniature .lock-indicator {
@@ -610,20 +609,7 @@
             cursor: default;
         }
 
-        .btn-upload-bg-mini {
-            background: rgba(0,0,0,0.75);
-            border: 1px dashed var(--primary);
-            color: var(--primary);
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 4px;
-            font-weight: bold;
-        }
-        .btn-upload-bg-mini:hover { background: var(--primary); color: black; }
-
-        /* --- SHOP / SUCCESS --- */
+        /* --- SHOP / SUCCESS / OTHER --- */
         .shop-list-title {
             font-size: 1.2rem;
             color: var(--primary);
@@ -714,8 +700,8 @@
     </style>
 </head>
 <body>
+
     <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this)">
-    <input type="file" id="custom-bg-upload-input" accept="image/*" style="display: none;" onchange="handleCustomBgUpload(this)">
 
     <div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
         <div class="modal-wrapper" onclick="event.stopPropagation()">
@@ -786,6 +772,7 @@
     <div id="main-app">
         <div class="sidebar">
             <div class="brand">🍆 BRANLETTE</div>
+            
             <div class="user-summary">
                 <div class="user-block">
                     <div class="name" id="side-name">User</div>
@@ -797,158 +784,268 @@
                     <div class="mini-box"><span id="side-ejaculations">0</span>⏳</div>
                 </div>
             </div>
+
             <div class="menu-items">
-                <button class="menu-btn active" onclick="switchPage('profil', this)">🕒 Chrono & Profil</button>
+                <button class="menu-btn active" onclick="switchPage('profil', this)">🕒 Chrono</button>
                 <button class="menu-btn" onclick="switchPage('compteurs', this)">📊 Compteurs</button>
-                <button class="menu-btn" onclick="switchPage('defis', this)">🎯 Défis Actifs</button>
-                <button class="menu-btn" onclick="switchPage('magasin', this)">🏪 Boutique d'Aura</button>
-                <button class="menu-btn" onclick="switchPage('communaute', this)">👥 Communauté</button>
-                <button class="menu-btn" id="menu-btn-admin" style="display:none;" onclick="switchPage('admin', this)">⚙️ Administration</button>
+                <button class="menu-btn" onclick="switchPage('challenges', this)">🎯 Défis</button>
+                <button class="menu-btn" onclick="switchPage('comm', this)">👥 Communauté</button>
+                <button class="menu-btn" onclick="switchPage('profil-view', this)">👤 Profil</button>
+                <button class="menu-btn" onclick="switchPage('boutique', this)">🛍️ Boutique</button>
+                <button class="menu-btn" onclick="switchPage('histoire', this)">📖 Histoire</button>
+                <button class="menu-btn" id="admin-nav-btn" style="display: none; color: #ff4757;" onclick="switchPage('admin-panel', this)">🛠️ Admin Panel</button>
             </div>
         </div>
 
         <div class="content-container">
-            <div class="page-header">
-                <div class="page-title" id="page-title-text">CHRONO & PROFIL</div>
-                <button class="btn-logout" onclick="logout()">Se déconnecter</button>
+            
+            <div id="page-profil" class="page active">
+                <div class="page-header">
+                    <div class="page-title">Chrono</div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+                <div class="profile-centered">
+                    <div class="chrono-circle" id="chrono-display">00:00:00.00</div>
+                    <div class="chrono-actions">
+                        <button class="btn-chrono start" id="btn-chrono-toggle" onclick="toggleChrono()">START</button>
+                        <button class="btn-chrono reset" onclick="resetChrono()">RESET</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="page active" id="page-profil">
+            <div id="page-compteurs" class="page">
+                <div class="page-header"><div class="page-title">Compteurs</div></div>
+                <div class="compteur-wrapper">
+                    
+                    <div class="compteur-card">
+                        <div class="compteur-header"><span>🍆</span><div class="compteur-title">Branlettes</div></div>
+                        <div class="compteur-subtitle">Friction de base (+1 PT)</div>
+                        <div class="big-number"><span id="val-branlettes">0</span><span>/100</span></div>
+                        <div class="counter-actions">
+                            <button class="btn-count minus" onclick="updateCount('branlettes', -1)">-</button>
+                            <button class="btn-count plus" onclick="updateCount('branlettes', 1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="compteur-card">
+                        <div class="compteur-header"><span>💦</span><div class="compteur-title">Éjaculations</div></div>
+                        <div class="compteur-subtitle">Finalisation (+2 PTS)</div>
+                        <div class="big-number"><span id="val-ejaculations">0</span><span>/100</span></div>
+                        
+                        <div class="journal-box">
+                            <label>📓 Note de session (Journal de bord) :</label>
+                            <textarea id="session-note" placeholder="Décris ton état d'esprit ou ta résistance..."></textarea>
+                        </div>
+
+                        <div class="counter-actions">
+                            <button class="btn-count minus" onclick="updateCount('ejaculations', -1)">-</button>
+                            <button class="btn-count plus" onclick="updateCount('ejaculations', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-challenges" class="page">
+                <div class="page-header"><div class="page-title">Missions & Défis</div></div>
+                <div class="challenge-list">
+                    
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag daily">Quotidien</span>
+                            <div class="challenge-title">L'Endurant Spontané</div>
+                            <div class="challenge-desc">Lancer le Chrono et s'entraîner pendant au moins 2 minutes en une seule fois.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-endurance"></div></div>
+                            <span class="progress-text" id="ch-progress-text-endurance">0 / 120 secondes</span>
+                            <div class="challenge-reward">🎁 Récompense : +15 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-endurance" onclick="claimChallenge('endurance', 15)">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag daily">Quotidien</span>
+                            <div class="challenge-title">L'Éclair Éclatant</div>
+                            <div class="challenge-desc">Lancer le chrono et terminer une éjaculation en moins de 90 secondes.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-speedrun"></div></div>
+                            <span class="progress-text" id="ch-progress-text-speedrun">Non accompli</span>
+                            <div class="challenge-reward" style="color:#ff9f43">🎁 Récompense UNIQUE : Titre Équipable [⚡ Véloce] & +10 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-speedrun" onclick="claimChallenge('speedrun', 10, 'veloce_title')">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag daily">Quotidien</span>
+                            <div class="challenge-title">Double Impact</div>
+                            <div class="challenge-desc">Incrémenter le compteur de branlettes au moins 2 fois aujourd'hui.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-double"></div></div>
+                            <span class="progress-text" id="ch-progress-text-double">0 / 2 Branlettes</span>
+                            <div class="challenge-reward">🎁 Récompense : +10 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-double" onclick="claimChallenge('double', 10)">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag epic">Épique</span>
+                            <div class="challenge-title">La Voie du Moine Shaolin</div>
+                            <div class="challenge-desc">Atteindre un total historique de 3 éjaculations ou plus.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-shaolin"></div></div>
+                            <span class="progress-text" id="ch-progress-text-shaolin">0 / 3 Éjaculations</span>
+                            <div class="challenge-reward" style="color:#b873ff;">🎁 Récompense EXCLUSIVE : Titre unique [Moine Shaolin]</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-shaolin" onclick="claimChallenge('shaolin', 0, 'shaolin_title')">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag hidden">Secret</span>
+                            <div class="challenge-title">Créature de la Nuit</div>
+                            <div class="challenge-desc">Incrémenter n'importe quel compteur durant les heures interdites (entre 2h et 5h du matin).</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-night"></div></div>
+                            <span class="progress-text" id="ch-progress-text-night">Verrouillé</span>
+                            <div class="challenge-reward" style="color:#eb5e28;">🎁 Récompense SECRÈTE : Badge exclusif [🦇 Vampire] & +15 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-night" onclick="claimChallenge('night', 15, 'vampire_badge')">Récupérer</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="page-comm" class="page">
+                <div class="page-header"><div class="page-title">Communauté</div></div>
+                <div class="comm-grid">
+                    <div>
+                        <input type="text" class="search-box" id="comm-search" placeholder="🔍 Rechercher un utilisateur par son pseudo..." oninput="renderCommunitySearch()">
+                        <div class="comm-section">
+                            <h3>👥 Résultats de la Recherche</h3>
+                            <div class="user-list" id="search-results-list"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="comm-section">
+                            <div class="lead-tabs">
+                                <button class="lead-tab-btn active" id="btn-lead-global" onclick="toggleLeadTab('global')">🏆 Classement Général</button>
+                                <button class="lead-tab-btn" id="btn-lead-friends" onclick="toggleLeadTab('friends')">🤝 Classement Amis</button>
+                            </div>
+                            <div style="max-height:480px; overflow-y:auto;">
+                                <table class="leaderboard-table">
+                                    <thead><tr><th>#</th><th>Utilisateur</th><th>Points</th><th>⏳</th></tr></thead>
+                                    <tbody id="leaderboard-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-profil-view" class="page">
+                <div class="page-header"><div class="page-title">Profil</div></div>
                 <div class="profile-centered">
                     <div class="avatar-container">
                         <div class="avatar-main" id="profile-avatar-container">😈</div>
-                        <div class="avatar-badge" onclick="triggerAvatarUpload()">✏️</div>
+                        <div class="avatar-badge" onclick="triggerAvatarUpload()">📷</div>
                     </div>
-                    <div class="profile-name" id="prof-name">Username</div>
-                    <div class="profile-rank" id="prof-rank">Rang de Légende</div>
-
-                    <div class="chrono-circle" id="chrono-display">00:00:00</div>
-                    <div class="chrono-actions">
-                        <button class="btn-chrono start" id="btn-chrono-toggle" onclick="toggleChrono()">LANCER LA SESSION</button>
-                        <button class="btn-chrono reset" onclick="resetChrono()">ANNULER</button>
+                    
+                    <div class="user-block" style="align-items: center; margin-bottom: 0.2rem;">
+                        <div class="profile-name" id="prof-name">User</div>
+                        <div class="equipped-badges-sub" id="prof-badges" style="font-size: 1.3rem;"></div>
                     </div>
+                    <div class="profile-rank" id="prof-rank">Novice</div>
 
-                    <div class="stats-row" style="margin-top: 3rem;">
-                        <div class="stat-card"><div class="val" id="stat-points">0</div><div class="lbl">Aura globale</div></div>
-                        <div class="stat-card"><div class="val" id="stat-branlettes">0</div><div class="lbl">Frictions (Total)</div></div>
-                        <div class="stat-card"><div class="val" id="stat-ejaculations">0</div><div class="lbl">Éjaculations</div></div>
-                    </div>
-
-                    <div class="journal-box">
-                        <label>Notes publiques de la session actuelle :</label>
-                        <textarea id="journal-input" placeholder="Décrivez votre état d'esprit ou vos exploits pour la communauté..." oninput="updateJournalText()"></textarea>
+                    <div class="stats-row">
+                        <div class="stat-card"><div class="val" id="card-pts">0</div><div class="lbl">Points</div></div>
+                        <div class="stat-card"><div class="val" id="card-branlettes">0</div><div class="lbl">Branlettes</div></div>
+                        <div class="stat-card"><div class="val" id="card-ejaculations">0</div><div class="lbl">Éjaculations</div></div>
                     </div>
 
                     <div class="badges-section">
                         <div class="customization-tabs">
-                            <button class="custom-tab-btn active" onclick="switchCustomTab('badges', this)">🏅 Badges Rares</button>
-                            <button class="custom-tab-btn" onclick="switchCustomTab('themes', this)">🎨 Thèmes de Fond</button>
+                            <button class="custom-tab-btn active" id="tab-btn-titles" onclick="switchCustomTab('titles')">🎖️ Titres & Badges</button>
+                            <button class="custom-tab-btn" id="tab-btn-themes" onclick="switchCustomTab('themes')">🖼️ Galerie des Fonds</button>
                         </div>
-
-                        <div class="custom-panel active" id="custom-panel-badges">
-                            <div class="badges-grid" id="badges-container"></div>
+                        
+                        <div class="custom-panel active" id="custom-panel-titles">
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Cliquez sur un titre acquis pour l'équiper/déséquiper de votre pseudo.</p>
+                            <div class="badges-grid" id="badges-inventory-grid">
+                                <div class="badge-item" id="badge-shaolin_title" onclick="toggleEquipBadge('shaolin_title')">
+                                    <span class="badge-icon">🧘</span><strong>[Moine Shaolin]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-veloce_title" onclick="toggleEquipBadge('veloce_title')">
+                                    <span class="badge-icon">⚡</span><strong>[⚡ Véloce]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-vampire_badge" onclick="toggleEquipBadge('vampire_badge')">
+                                    <span class="badge-icon">🦇</span><strong>[🦇 Vampire]</strong>
+                                </div>
+                                <div class="badge-item" id="badge-rage_badge" onclick="toggleEquipBadge('rage_badge')">
+                                    <span class="badge-icon">🚫</span><strong>[🚫 Rageux]</strong>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="custom-panel" id="custom-panel-themes">
-                            <div class="themes-preview-grid" id="themes-container"></div>
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Gérez l'apparence générale de votre application. Achetez ou équipez directement les thèmes ci-dessous.</p>
+                            <div class="themes-preview-grid" id="profile-themes-preview-grid">
+                                </div>
                         </div>
+                    </div>
+
+                    <div style="text-align:left; margin-top:2rem; margin-bottom:2rem;">
+                        <h3 style="color:var(--primary); font-size:0.9rem; text-transform:uppercase; margin-bottom:1rem;">🏆 Succès passifs</h3>
+                        <div class="achievements-grid">
+                            <div class="ach-card" id="ach-marathon"><div class="ach-icon">⏱️</div><div class="ach-info"><h4>Le Marathonien</h4><p>Chrono supérieur à 5 minutes (+10 pts)</p></div></div>
+                            <div class="ach-card" id="ach-sprinter"><div class="ach-icon">⚡</div><div class="ach-info"><h4>Le Sprinter</h4><p>Session finie en moins de 30 secondes (+5 pts)</p></div></div>
+                            <div class="ach-card" id="ach-vampire"><div class="ach-icon">🦉</div><div class="ach-info"><h4>Le Vampire</h4><p>Éjaculation en pleine nuit (2h - 5h) (+15 pts)</p></div></div>
+                            <div class="ach-card" id="ach-zen"><div class="ach-icon">🧘</div><div class="ach-info"><h4>Zénitude absolue</h4><p>Atteindre plus de 50 points (+20 pts)</p></div></div>
+                        </div>
+                    </div>
+
+                    <div class="logs-section">
+                        <h3 style="color:var(--primary); font-size:0.9rem; text-transform:uppercase;">📝 Historique du Journal de Bord</h3>
+                        <div class="logs-container" id="logs-container"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="page" id="page-compteurs">
-                <div class="compteur-wrapper">
-                    <div class="compteur-card">
-                        <div class="compteur-header">
-                            <span style="font-size: 1.5rem;">✊</span>
-                            <div>
-                                <div class="compteur-title">Compteur de Branlettes</div>
-                                <div class="compteur-subtitle">Ajoutez chaque session achevée sans forcément éjaculer (Edging compris).</div>
-                            </div>
-                        </div>
-                        <div class="big-number" id="count-br-display">0 <span>sessions</span></div>
-                        <div class="counter-actions">
-                            <button class="btn-count minus" onclick="adjustCounter('branlettes', -1)">-</button>
-                            <button class="btn-count plus" onclick="adjustCounter('branlettes', 1)">+</button>
-                        </div>
-                    </div>
-
-                    <div class="compteur-card">
-                        <div class="compteur-header">
-                            <span style="font-size: 1.5rem;">💦</span>
-                            <div>
-                                <div class="compteur-title">Compteur d'Éjaculations</div>
-                                <div class="compteur-subtitle">Chaque orgasme libérateur réinitialise vos multiplicateurs temporels.</div>
-                            </div>
-                        </div>
-                        <div class="big-number" id="count-ej-display">0 <span>orgasmes</span></div>
-                        <div class="counter-actions">
-                            <button class="btn-count minus" onclick="adjustCounter('ejaculations', -1)">-</button>
-                            <button class="btn-count plus" onclick="adjustCounter('ejaculations', 1)">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page" id="page-defis">
-                <div class="challenge-list" id="challenges-container"></div>
-            </div>
-
-            <div class="page" id="page-magasin">
+            <div id="page-boutique" class="page">
+                <div class="page-header"><div class="page-title">Boutique</div></div>
+                
+                <div class="shop-list-title">🎭 Cosmétiques & Effets</div>
                 <div class="shop-list">
-                    <div class="shop-list-title">Auras d'Avatars Disponibles</div>
-                    <div id="shop-items-container"></div>
-                    
-                    <div class="shop-list-title" style="margin-top: 2rem;">Fonds Exclusifs Édition Légendaire</div>
-                    <div id="shop-themes-container"></div>
-                </div>
-            </div>
-
-            <div class="page" id="page-communaute">
-                <div class="history-card">
-                    <h3>📢 Flux Global de l'Élite</h3>
-                    <p>Découvrez les classements en direct et explorez les fiches détaillées de vos rivaux.</p>
-                </div>
-                <div class="comm-grid">
-                    <div class="comm-section">
-                        <h3>👥 Utilisateurs Enregistrés</h3>
-                        <input type="text" class="search-box" id="user-search" placeholder="Rechercher un membre de la communauté..." oninput="renderCommunityUsers()">
-                        <div class="user-list" id="community-users-list"></div>
-                    </div>
-                    <div class="comm-section">
-                        <h3>📈 Classement Mondial</h3>
-                        <div class="lead-tabs">
-                            <button class="lead-tab-btn active" id="lead-tab-pts" onclick="switchLeaderboard('points')">Points d'Aura</button>
-                            <button class="lead-tab-btn" id="lead-tab-ej" onclick="switchLeaderboard('ejaculations')">Éjaculations</button>
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">👑</div>
+                            <div class="shop-details"><h4>Couronne Royale</h4><p>Affiche une couronne en dessous de ton pseudo</p><div class="shop-cost">30 pts</div></div>
                         </div>
-                        <table class="leaderboard-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 40px;">Rang</th>
-                                    <th>Nom d'utilisateur</th>
-                                    <th id="lead-th-val" style="text-align: right;">Points</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboard-tbody"></tbody>
-                        </table>
+                        <button class="btn-buy" id="btn-shop-crown" onclick="handleShopAction('crown', 30)">Acheter</button>
                     </div>
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">✨</div>
+                            <div class="shop-details"><h4>Aura Mystique</h4><p>Ajoute un effet de lueur animée à ton avatar</p><div class="shop-cost">50 pts</div></div>
+                        </div>
+                        <button class="btn-buy" id="btn-shop-aura" onclick="handleShopAction('aura', 50)">Acheter</button>
+                    </div>
+                </div>
+
+                <div class="shop-list-title">🖼️ Thèmes & Fonds d'Application</div>
+                <div class="shop-list" id="themes-shop-list">
+                    </div>
+            </div>
+
+            <div id="page-histoire" class="page">
+                <div class="page-header"><div class="page-title">Histoire & Lore</div></div>
+                <div class="history-card">
+                    <h3>⚡ An -25 000 : Le Grand Choc Préhistorique</h3>
+                    <p>Tout commença lors d'un hiver particulièrement rude. Un homme des cavernes nommé Grogh, s'ennuyant profondément près du feu alors que sa tribu chassait le mammouth, exécuta par hasard un mouvement de friction répétitif. L'énergie cinétique générée fut si intense qu'elle ralluma le feu de la tribu qui s'éteignait.</p>
                 </div>
             </div>
 
-            <div class="page" id="page-admin">
-                <h2>Tableau de contrôle général</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1rem;">Modifier instantanément les statistiques globales de n'importe quel compte utilisateur.</p>
+            <div id="page-admin-panel" class="page">
+                <div class="page-header"><div class="page-title">Panel Administrateur</div></div>
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Pseudo</th>
-                            <th>Points d'Aura</th>
-                            <th>Branlettes</th>
-                            <th>Éjaculations</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-tbody"></tbody>
+                    <thead><tr><th>Pseudo</th><th>Points</th><th>Branlettes</th><th>Éjaculations</th><th>Actions</th></tr></thead>
+                    <tbody id="admin-users-list"></tbody>
                 </table>
             </div>
 
@@ -956,817 +1053,771 @@
     </div>
 
     <script>
-        const ADMIN_USERNAME = "zzhhr";
         let currentUser = null;
-        let userData = null;
-
-        // Chrono State
-        let chronoTimer = null;
-        let chronoSeconds = 0;
+        let userData = { 
+            points: 0, branlettes: 0, ejaculations: 0, avatar: "", role: "user",
+            inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], 
+            friends: [], blocked: [], themeEquipped: "classic" 
+        };
+        
+        let chronoInterval = null;
+        let startTime = 0;
+        let elapsedTime = 0;
         let isChronoRunning = false;
+        let rageClicks = 0; 
+        let activeLeadTab = 'global';
 
-        // Leaderboard Tab State
-        let currentLeaderboardTab = 'points'; 
+        const ADMIN_USERNAME = "admin";
+        const ADMIN_PASSWORD = "admin123";
 
-        // Listes Prédéfinies
-        const RANKS = [
-            { min: 0, title: "Novice Abstinent 🥚" },
-            { min: 50, title: "Frictionneur Certifié 🪵" },
-            { min: 200, title: "Maître de l'Edging ⏳" },
-            { min: 500, title: "Seigneur du Sperme 🌊" },
-            { min: 1200, title: "Divinité Phallique ⚡" },
-            { min: 3000, title: "Légende Absolue d'Orichalque 👑" }
-        ];
+        // Définition globale de tous les thèmes/fonds disponibles
+        const APP_THEMES = {
+            classic: { name: "Sombre Classique", style: "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)", price: 0, icon: "🔥" },
+            pitchblack: { name: "Nuit Profonde", style: "linear-gradient(135deg, #050505 0%, #000000 100%)", price: 0, icon: "🌑" },
+            sunrise: { name: "Aube Orangée", style: "radial-gradient(circle at 50% 10%, #3a1c00 0%, #1a0b00 50%, #050200 100%)", price: 0, icon: "🌅" },
+            cyberpunk: { name: "Néon Cyberpunk", style: "linear-gradient(135deg, #1f0326 0%, #05010d 100%)", price: 40, icon: "🔮" },
+            royal: { name: "Or Impérial Royal", style: "radial-gradient(circle at 50% 30%, #362903 0%, #120e01 60%, #000000 100%)", price: 75, icon: "🔱" }
+        };
 
-        const BADGES = [
-            { id: 'b1', icon: '🔥', name: 'Chauffeur de salle', desc: 'Avoir accompli plus de 5 branlettes au total.' },
-            { id: 'b2', icon: '💧', name: 'Grand Purgeur', desc: 'Avoir éjaculé plus de 10 fois au total.' },
-            { id: 'b3', icon: '🎖️', name: 'Vétéran Endurant', desc: 'Posséder plus de 350 points d\'Aura cumulés.' },
-            { id: 'b4', icon: '👑', name: 'Dieu Vivant', desc: 'Atteindre un total stratosphérique de 1500 points.' }
-        ];
+        const ALL_ACHIEVEMENTS = {
+            marathon: { title: "Le Marathonien", desc: "Chrono supérieur à 5 mins", icon: "⏱️" },
+            sprinter: { title: "Le Sprinter", desc: "Session finie en < 30 secs", icon: "⚡" },
+            vampire: { title: "Le Vampire", desc: "Éjaculation nocturne (2h-5h)", icon: "🦉" },
+            zen: { title: "Zénitude absolue", desc: "Atteindre plus de 50 pts", icon: "🧘" }
+        };
 
-        const SHOP_ITEMS = [
-            { id: 'aura_orange', icon: '🟠', name: 'Aura Flamboyante', desc: 'Anime votre avatar avec un halo orange.', cost: 40, type: 'aura' },
-            { id: 'aura_purple', icon: '🟣', name: 'Aura du Néant Violet', desc: 'Donne l\'éclat des profondeurs cosmiques.', cost: 150, type: 'aura' },
-            { id: 'aura_rainbow', icon: '🌈', name: 'Aura Prismatique Arc-en-ciel', desc: 'Un scintillement légendaire multicolore.', cost: 500, type: 'aura' }
-        ];
+        if (!localStorage.getItem('user_' + ADMIN_USERNAME)) {
+            localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify({
+                points: 100, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], friends: [], blocked: [], themeEquipped: "classic"
+            }));
+        }
 
-        const SHOP_THEMES = [
-            { id: 'theme_dark', icon: '⬛', name: 'Fond Sombre Abyssal', desc: 'Un dégradé gris nuit ultra-minimaliste.', cost: 25, value: 'linear-gradient(135deg, #090a0f 0%, #020203 100%)', type: 'theme' },
-            { id: 'theme_neon', icon: '🛸', name: 'Néon Cyberpunk Punk', desc: 'Un style pourpre aux lueurs bleutées.', cost: 100, value: 'radial-gradient(circle at 50% 30%, #34004a 0%, #050014 60%, #000000 100%)', type: 'theme' },
-            { id: 'theme_gold', icon: '🔱', name: 'Palais Impérial Doré', desc: 'Affichez votre opulence avec de l\'or fondu.', cost: 300, value: 'radial-gradient(circle at 50% 30%, #4a3b00 0%, #140f00 50%, #000000 100%)', type: 'theme' }
-        ];
-
-        const DEFIS_LIST = [
-            { id: 'd1', tag: 'daily', title: 'Échauffement Quotidien', desc: 'Atteindre au moins 1 friction sur votre compteur de sessions.', check: (u) => (u.branlettes || 0) >= 1, rewardPts: 15 },
-            { id: 'd2', tag: 'epic', title: 'La Purge des Héros', desc: 'Atteindre un grand total de 5 éjaculations consignées.', check: (u) => (u.ejaculations || 0) >= 5, rewardPts: 60 },
-            { id: 'd3', tag: 'hidden', title: 'Grand Ascète Sacré', desc: 'Accumuler une réserve d\'Aura supérieure ou égale à 400 points.', check: (u) => (u.points || 0) >= 400, rewardPts: 150 }
-        ];
-
-        // GESTION DES COMPTES & AUTHENTIFICATION
         function toggleAuth(showLogin) {
             document.getElementById('login-card').style.display = showLogin ? 'block' : 'none';
             document.getElementById('register-card').style.display = showLogin ? 'none' : 'block';
         }
 
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('reg-username').value.trim();
+            const pass = document.getElementById('reg-password').value;
+
+            if(user.toLowerCase() === ADMIN_USERNAME || localStorage.getItem('user_' + user)) {
+                alert('Ce pseudo est indisponible !'); return;
+            }
+
+            const initialData = { 
+                points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", 
+                inventory: ["classic", "pitchblack", "sunrise"], 
+                equipped: [], logs: [], achievements: [], claimedChallenges: [] , friends: [], blocked: [], 
+                themeEquipped: "classic"
+            };
+            localStorage.setItem('user_' + user, JSON.stringify(initialData));
+            alert('Compte créé !'); toggleAuth(true);
+        });
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('login-username').value.trim();
             const pass = document.getElementById('login-password').value;
-            if(!user) return;
-
             const stored = localStorage.getItem('user_' + user);
-            if (!stored) {
-                // Création automatique si inexistant
-                initUser(user);
-            } else {
-                userData = JSON.parse(stored);
+
+            if(!stored || JSON.parse(stored).password !== pass) {
+                alert('Identifiants incorrects !'); return;
             }
+
             currentUser = user;
-            loginSuccess();
+            userData = JSON.parse(stored);
+            validateUserArrays();
+            
+            launchApp();
         });
-
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('reg-username').value.trim();
-            if(!user) return;
-
-            if(localStorage.getItem('user_' + user)) {
-                alert('Ce pseudo est déjà pris.');
-                return;
-            }
-            initUser(user);
-            currentUser = user;
-            loginSuccess();
-        });
-
-        function initUser(username) {
-            userData = {
-                points: 0,
-                branlettes: 0,
-                ejaculations: 0,
-                avatar: '😈',
-                journal: '',
-                unlockedItems: [], 
-                equippedAura: null,
-                equippedTheme: 'default',
-                customBgBase64: null, 
-                claimedChallenges: [] 
-            };
-            localStorage.setItem('user_' + username, JSON.stringify(userData));
-        }
 
         function validateUserArrays() {
-            if (!userData.unlockedItems) userData.unlockedItems = [];
-            if (!userData.claimedChallenges) userData.claimedChallenges = [];
+            if(!userData.inventory) userData.inventory = ["classic", "pitchblack", "sunrise"];
+            if(!userData.inventory.includes("classic")) userData.inventory.push("classic");
+            if(!userData.inventory.includes("pitchblack")) userData.inventory.push("pitchblack");
+            if(!userData.inventory.includes("sunrise")) userData.inventory.push("sunrise");
+            
+            if(!userData.equipped) userData.equipped = [];
+            if(!userData.logs) userData.logs = [];
+            if(!userData.achievements) userData.achievements = [];
+            if(!userData.claimedChallenges) userData.claimedChallenges = [];
+            if(!userData.friends) userData.friends = [];
+            if(!userData.blocked) userData.blocked = [];
+            if(!userData.themeEquipped) userData.themeEquipped = "classic";
         }
 
-        function loginSuccess() {
-            validateUserArrays();
+        function launchApp() {
             document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
-            
-            if(currentUser === ADMIN_USERNAME) {
-                document.getElementById('menu-btn-admin').style.display = 'block';
-            } else {
-                document.getElementById('menu-btn-admin').style.display = 'none';
-            }
-
-            document.getElementById('journal-input').value = userData.journal || '';
-            
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('admin-nav-btn').style.display = userData.role === "admin" ? 'flex' : 'none';
             applyCurrentTheme();
             updateDOMValues();
-            switchPage('profil', document.querySelector('.menu-btn'));
         }
 
         function logout() {
-            saveData();
             if(isChronoRunning) toggleChrono();
             currentUser = null;
-            userData = null;
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('auth-container').style.display = 'flex';
-            document.getElementById('loginForm').reset();
-            document.getElementById('registerForm').reset();
-            toggleAuth(true);
+            document.documentElement.style.setProperty('--app-background', APP_THEMES.classic.style);
         }
 
-        // NAVIGATION ONGLET PRINCIPAL
-        function switchPage(pageId, btnElement) {
+        function applyCurrentTheme() {
+            const currentThemeKey = userData.themeEquipped || "classic";
+            if (APP_THEMES[currentThemeKey]) {
+                document.documentElement.style.setProperty('--app-background', APP_THEMES[currentThemeKey].style);
+            }
+        }
+
+        function switchPage(pageId, buttonElem) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            
             document.getElementById('page-' + pageId).classList.add('active');
-            if(btnElement) btnElement.classList.add('active');
-
-            const titles = {
-                'profil': 'CHRONO & PROFIL',
-                'compteurs': 'COMPTEURS DE SESSIONS',
-                'defis': '🎯 DÉFIS & RÉCOMPENSES',
-                'magasin': '🏪 BOUTIQUE DE PRESTIGE',
-                'communaute': '👥 CLASSEMENT ET COMMUNAUTÉ',
-                'admin': '⚙️ CONSOLE D\'ADMINISTRATION'
-            };
-            document.getElementById('page-title-text').innerText = titles[pageId] || 'TABLEAU DE BORD';
-
-            if(pageId === 'communaute') {
-                renderCommunityUsers();
-                renderLeaderboard();
-            } else if(pageId === 'admin') {
-                loadAdminPanelData();
-            } else if(pageId === 'profil') {
-                renderBadgesAndThemes();
-            } else if(pageId === 'defis') {
-                renderChallenges();
-            } else if(pageId === 'magasin') {
-                renderShop();
-            }
+            buttonElem.classList.add('active');
+            if (pageId === 'admin-panel') loadAdminPanelData();
+            if (pageId === 'comm') { renderCommunitySearch(); renderLeaderboard(); }
+            if (pageId === 'boutique') { renderThemesShop(); }
+            if (pageId === 'profil-view') { renderProfileThemesPreview(); }
         }
 
-        // NAVONGLETS INTERNES PROFIL (BADGES VS THÈMES)
-        function switchCustomTab(tabId, btn) {
-            btn.parentNode.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        // Changement d'onglet à l'intérieur du Profil (Sous-navigation)
+        function switchCustomTab(tab) {
+            document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.custom-panel').forEach(p => p.classList.remove('active'));
             
-            if(tabId === 'badges') {
-                document.getElementById('custom-panel-badges').classList.add('active');
-                document.getElementById('custom-panel-themes').classList.add('active'); // fallback
-                document.getElementById('custom-panel-themes').style.display = 'none';
-                document.getElementById('custom-panel-badges').style.display = 'block';
-            } else {
-                document.getElementById('custom-panel-badges').style.display = 'none';
-                document.getElementById('custom-panel-themes').style.display = 'block';
-                document.getElementById('custom-panel-themes').classList.add('active');
+            document.getElementById('tab-btn-' + tab).classList.add('active');
+            document.getElementById('custom-panel-' + tab).classList.add('active');
+
+            if(tab === 'themes') {
+                renderProfileThemesPreview();
             }
         }
 
-        // SYNC ET LEVIERS DES GRAPHISMES / DONNÉES
-        function getRankTitle(pts) {
-            let title = RANKS[0].title;
-            for(let i=0; i<RANKS.length; i++) {
-                if(pts >= RANKS[i].min) title = RANKS[i].title;
-            }
-            return title;
+        function getRank(pts, role) {
+            if (role === 'admin') return "👑 Administrateur Global";
+            if (pts >= 50) return "🌌 Dieu du Poignet";
+            if (pts >= 30) return "🧘 Moine de l'Endurance";
+            if (pts >= 15) return "🥋 Ceinture Blanche";
+            return "🌱 Novice Souple";
         }
 
-        function updateDOMValues() {
-            if(!userData) return;
-            const rank = getRankTitle(userData.points);
-
-            // Rendu de l'Aura/Halo sur l'avatar
-            const pAvatar = document.getElementById('profile-avatar-container');
-            pAvatar.className = "avatar-main"; 
-            pAvatar.innerText = userData.avatar || '😈';
-            if(userData.equippedAura) {
-                pAvatar.classList.add('has-aura');
-                if(userData.equippedAura === 'aura_purple') pAvatar.style.borderColor = '#b873ff';
-                else if(userData.equippedAura === 'aura_rainbow') pAvatar.style.borderColor = '#2ed573';
-                else pAvatar.style.borderColor = '#ff9f43';
-            } else {
-                pAvatar.style.borderColor = 'var(--primary)';
-            }
-
-            // Sync des textes textuels simples
-            document.getElementById('side-name').innerText = currentUser;
-            document.getElementById('side-rank').innerText = rank;
-            document.getElementById('side-pts').innerText = userData.points;
-            document.getElementById('side-ejaculations').innerText = userData.ejaculations;
-
-            document.getElementById('prof-name').innerText = currentUser;
-            document.getElementById('prof-rank').innerText = rank;
-            document.getElementById('stat-points').innerText = userData.points;
-            document.getElementById('stat-branlettes').innerText = userData.branlettes;
-            document.getElementById('stat-ejaculations').innerText = userData.ejaculations;
-
-            document.getElementById('count-br-display').innerHTML = `${userData.branlettes} <span>sessions</span>`;
-            document.getElementById('count-ej-display').innerHTML = `${userData.ejaculations} <span>orgasmes</span>`;
-
-            // Affichage rapide des badges équipés dans la sidebar
-            const sideBadges = document.getElementById('side-badges');
-            sideBadges.innerHTML = '';
-            BADGES.forEach(b => {
-                const badgeUnlocked = (b.id === 'b1' && userData.branlettes >= 5) ||
-                                      (b.id === 'b2' && userData.ejaculations >= 10) ||
-                                      (b.id === 'b3' && userData.points >= 350) ||
-                                      (b.id === 'b4' && userData.points >= 1500);
-                if(badgeUnlocked) {
-                    const span = document.createElement('span');
-                    span.innerText = b.icon;
-                    span.title = b.name;
-                    sideBadges.appendChild(span);
+        function updateCount(type, amount) {
+            if (type === 'branlettes' && amount === -1 && userData.branlettes === 0) {
+                rageClicks++;
+                if (rageClicks >= 10 && !userData.inventory.includes('rage_badge')) {
+                    userData.inventory.push('rage_badge');
+                    alert("🚫 DÉFI SECRET VALIDÉ ! Tu as débloqué le badge [🚫 Rageux] pour avoir spammé le bouton moins dans le vide.");
+                    saveData();
+                    updateDOMValues();
                 }
-            });
-        }
-
-        function adjustCounter(field, value) {
-            if(!userData) return;
-            userData[field] = (userData[field] || 0) + value;
-            if(userData[field] < 0) userData[field] = 0;
-
-            // Gain d'Aura organique lors de l'incrémentation
-            if(value > 0) {
-                if(field === 'branlettes') userData.points += 10;
-                if(field === 'ejaculations') userData.points += 5; 
+                return;
             }
-            
+
+            if((userData[type] + amount) < 0) return;
+            userData[type] += amount;
+
+            const hours = new Date().getHours();
+
+            if (amount > 0 && (hours >= 2 && hours <= 5) && !userData.inventory.includes('night_checked')) {
+                userData.inventory.push('night_checked'); 
+            }
+
+            if(amount > 0) {
+                if(type === 'ejaculations') {
+                    userData.points += 2;
+                    if(hours >= 2 && hours <= 5) unlockAchievement('vampire', 15);
+                    
+                    if(elapsedTime > 0 && elapsedTime <= 90000 && !userData.inventory.includes('speedrun_checked')) {
+                        userData.inventory.push('speedrun_checked');
+                    }
+                    if(elapsedTime > 0 && elapsedTime < 30000) unlockAchievement('sprinter', 5);
+
+                    const noteInput = document.getElementById('session-note');
+                    const noteText = noteInput.value.trim() || "Session classique terminée.";
+                    const dateStr = new Date().toLocaleDateString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+                    userData.logs.unshift({ date: dateStr, text: noteText, duration: document.getElementById('chrono-display').textContent });
+                    noteInput.value = ""; 
+                }
+                if(type === 'branlettes') userData.points += 1;
+            }
+
+            if(userData.points >= 50) unlockAchievement('zen', 20);
+
             saveData();
             updateDOMValues();
         }
 
-        function updateJournalText() {
-            if(!userData) return;
-            userData.journal = document.getElementById('journal-input').value;
-            saveData();
+        function unlockAchievement(id, bonus) {
+            if(!userData.achievements.includes(id)) {
+                userData.achievements.push(id);
+                userData.points += bonus;
+                alert(`🏆 SUCCÈS DÉBLOQUÉ ! +${bonus} points.`);
+            }
         }
 
-        // LOGIQUE CHRONOMÈTRE
+        function claimChallenge(id, bonusPts, specialReward = null) {
+            if(userData.claimedChallenges.includes(id)) return;
+
+            userData.points += bonusPts;
+            if(specialReward) {
+                userData.inventory.push(specialReward);
+                userData.equipped.push(specialReward); 
+                let label = specialReward;
+                if(specialReward === 'shaolin_title') label = '[Moine Shaolin]';
+                if(specialReward === 'veloce_title') label = '[⚡ Véloce]';
+                if(specialReward === 'vampire_badge') label = '[🦇 Vampire]';
+                alert(`🎯 Défi Validé ! Tu as débloqué et équipé la récompense : ${label} !`);
+            } else {
+                alert(`🎯 Défi Validé ! Tu récupères +${bonusPts} points !`);
+            }
+            
+            userData.claimedChallenges.push(id);
+            saveData();
+            updateDOMValues();
+        }
+
+        function toggleEquipBadge(badgeKey) {
+            if (!userData.inventory.includes(badgeKey)) return; 
+
+            const index = userData.equipped.indexOf(badgeKey);
+            if (index > -1) {
+                userData.equipped.splice(index, 1); 
+            } else {
+                userData.equipped.push(badgeKey); 
+            }
+            saveData();
+            updateDOMValues();
+        }
+
+        function handleShopAction(itemKey, cost) {
+            if(!userData.inventory.includes(itemKey)) {
+                if(userData.points < cost) { alert("Pas assez de points ! 😢"); return; }
+                userData.points -= cost; userData.inventory.push(itemKey); userData.equipped.push(itemKey);
+                alert("Achat réussi ! 🎉");
+            } else {
+                const index = userData.equipped.indexOf(itemKey);
+                if(index > -1) { userData.equipped.splice(index, 1); alert("Objet retiré."); }
+                else { userData.equipped.push(itemKey); alert("Objet équipé !"); }
+            }
+            saveData(); updateDOMValues();
+        }
+
+        /* --- RENDU DE LA GALERIE DES FONDS DANS LE PROFIL (AVEC APERÇU MINIATURE DYNAMIQUE) --- */
+        function renderProfileThemesPreview() {
+            const container = document.getElementById('profile-themes-preview-grid');
+            if(!container) return;
+            container.innerHTML = "";
+
+            Object.keys(APP_THEMES).forEach(themeKey => {
+                const theme = APP_THEMES[themeKey];
+                const isUnlocked = userData.inventory.includes(themeKey);
+                const isEquipped = userData.themeEquipped === themeKey;
+
+                let cardClass = "theme-preview-card";
+                if(!isUnlocked) cardClass += " locked";
+                if(isEquipped) cardClass += " equipped";
+
+                let btnHtml = "";
+                if(isEquipped) {
+                    btnHtml = `<button class="btn-preview-action" disabled>Équipé ✔️</button>`;
+                } else if(isUnlocked) {
+                    btnHtml = `<button class="btn-preview-action" onclick="handleThemeAction('${themeKey}', 0)">Équiper</button>`;
+                } else {
+                    btnHtml = `<button class="btn-preview-action" onclick="handleThemeAction('${themeKey}', ${theme.price})">Débloquer (${theme.price} p.)</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="theme-miniature" style="background: ${theme.style}; background-size: cover;">
+                            ${theme.icon}
+                            ${!isUnlocked ? `<span class="lock-indicator">🔒 Verrouillé</span>` : ''}
+                        </div>
+                        <div class="theme-preview-info">
+                            <div class="theme-preview-name">${theme.name}</div>
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        /* --- BOUTIQUE GENERALE DES THÈMES (SYNCHRONISÉE) --- */
+        function renderThemesShop() {
+            const container = document.getElementById('themes-shop-list');
+            if(!container) return;
+            container.innerHTML = "";
+
+            Object.keys(APP_THEMES).forEach(themeKey => {
+                const theme = APP_THEMES[themeKey];
+                const hasTheme = userData.inventory.includes(themeKey);
+                const isEquipped = userData.themeEquipped === themeKey;
+
+                let btnText = `Acheter (${theme.price} pts)`;
+                let btnClass = "btn-buy";
+
+                if (hasTheme) {
+                    btnText = isEquipped ? "Équipé ✔️" : "Équiper";
+                    if (isEquipped) btnClass += " equipped";
+                }
+
+                container.innerHTML += `
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">${theme.icon}</div>
+                            <div class="shop-details">
+                                <h4>${theme.name}</h4>
+                                <p>${theme.price === 0 ? 'Gratuit dès le départ' : 'Modifie l\'arrière-plan global de l\'application'}</p>
+                                ${!hasTheme ? `<div class="shop-cost">${theme.price} pts</div>` : '<div class="shop-cost" style="color:var(--success);">Débloqué</div>'}
+                            </div>
+                        </div>
+                        <button class="${btnClass}" onclick="handleThemeAction('${themeKey}', ${theme.price})">${btnText}</button>
+                    </div>
+                `;
+            });
+        }
+
+        function handleThemeAction(themeKey, price) {
+            const hasTheme = userData.inventory.includes(themeKey);
+
+            if (!hasTheme) {
+                if (userData.points < price) {
+                    alert("Pas assez de points pour débloquer ce fond d'application ! 😢");
+                    return;
+                }
+                userData.points -= price;
+                userData.inventory.push(themeKey);
+                userData.themeEquipped = themeKey;
+                alert(`Fond "${APP_THEMES[themeKey].name}" débloqué et appliqué ! 🎉`);
+            } else {
+                userData.themeEquipped = themeKey;
+            }
+
+            saveData();
+            applyCurrentTheme();
+            updateDOMValues();
+            renderThemesShop();
+            renderProfileThemesPreview(); // Garde les deux vues synchronisées
+        }
+
+        function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
+        function handleAvatarUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { userData.avatar = e.target.result; saveData(); updateDOMValues(); };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function getBadgesEmojisString(equippedList) {
+            let badgesHtml = "";
+            if(equippedList.includes('crown')) badgesHtml += "👑 ";
+            if(equippedList.includes('shaolin_title')) badgesHtml += "🧘 ";
+            if(equippedList.includes('veloce_title')) badgesHtml += "⚡ ";
+            if(equippedList.includes('vampire_badge')) badgesHtml += "🦇 ";
+            if(equippedList.includes('rage_badge')) badgesHtml += "🚫 ";
+            return badgesHtml;
+        }
+
+        function updateDOMValues() {
+            if(!currentUser) return;
+
+            const rank = getRank(userData.points, userData.role);
+            
+            document.getElementById('side-name').textContent = currentUser;
+            document.getElementById('prof-name').textContent = currentUser;
+            
+            let badgesHtml = getBadgesEmojisString(userData.equipped);
+
+            document.getElementById('side-badges').innerHTML = badgesHtml;
+            document.getElementById('prof-badges').innerHTML = badgesHtml;
+
+            document.getElementById('side-rank').textContent = rank;
+            document.getElementById('prof-rank').textContent = rank;
+
+            document.getElementById('side-pts').textContent = userData.points;
+            document.getElementById('card-pts').textContent = userData.points;
+            document.getElementById('val-branlettes').textContent = userData.branlettes;
+            document.getElementById('card-branlettes').textContent = userData.branlettes;
+            document.getElementById('val-ejaculations').textContent = userData.ejaculations;
+            document.getElementById('card-ejaculations').textContent = userData.ejaculations;
+            document.getElementById('side-ejaculations').textContent = userData.ejaculations;
+
+            const avatarMain = document.getElementById('profile-avatar-container');
+            if(userData.equipped.includes('aura')) avatarMain.classList.add('has-aura');
+            else avatarMain.classList.remove('has-aura');
+
+            if (userData.avatar) avatarMain.innerHTML = `<img src="${userData.avatar}" alt="Profil">`;
+            else avatarMain.innerHTML = userData.role === 'admin' ? "👑" : "😈";
+
+            const btnCrown = document.getElementById('btn-shop-crown');
+            if(userData.inventory.includes('crown')) {
+                btnCrown.textContent = userData.equipped.includes('crown') ? "Équipé (Retirer)" : "Possédé (Équiper)";
+                btnCrown.classList.add('equipped');
+            } else { btnCrown.textContent = "Acheter (30 pts)"; btnCrown.classList.remove('equipped'); }
+
+            const btnAura = document.getElementById('btn-shop-aura');
+            if(userData.inventory.includes('aura')) {
+                btnAura.textContent = userData.equipped.includes('aura') ? "Équipé (Retirer)" : "Possédé (Équiper)";
+                btnAura.classList.add('equipped');
+            } else { btnAura.textContent = "Acheter (50 pts)"; btnAura.classList.remove('equipped'); }
+
+            userData.achievements.forEach(achId => {
+                const card = document.getElementById('ach-' + achId); if(card) card.classList.add('unlocked');
+            });
+
+            const badgeKeys = ['shaolin_title', 'veloce_title', 'vampire_badge', 'rage_badge'];
+            badgeKeys.forEach(key => {
+                const badgeElement = document.getElementById('badge-' + key);
+                if(userData.inventory.includes(key)) {
+                    badgeElement.classList.add('unlocked');
+                    if(userData.equipped.includes(key)) {
+                        badgeElement.classList.add('equipped');
+                    } else {
+                        badgeElement.classList.remove('equipped');
+                    }
+                }
+            });
+
+            updateChallengesDOM();
+
+            const logsContainer = document.getElementById('logs-container');
+            if(userData.logs.length === 0) {
+                logsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.9rem;">Aucune note pour le moment.</div>`;
+            } else {
+                logsContainer.innerHTML = userData.logs.map(log => `
+                    <div class="log-item">
+                        <span>[${log.date}]</span> - Durée : ${log.duration || 'N/A'}<br>
+                        <p style="margin-top:4px; color:#fff;">${log.text}</p>
+                    </div>
+                `).join('');
+            }
+
+            renderProfileThemesPreview();
+        }
+
+        function updateChallengesDOM() {
+            const currentSeconds = Math.floor(elapsedTime / 1000);
+            const enduranceReady = currentSeconds >= 120;
+            updateSingleChallengeDOM('endurance', currentSeconds, 120, enduranceReady, "secondes");
+
+            const speedrunReady = userData.inventory.includes('speedrun_checked');
+            updateSingleChallengeDOM('speedrun', speedrunReady ? 1 : 0, 1, speedrunReady, "effectué");
+
+            const doubleReady = userData.branlettes >= 2;
+            updateSingleChallengeDOM('double', userData.branlettes, 2, doubleReady, "Branlettes");
+
+            const shaolinReady = userData.ejaculations >= 3;
+            updateSingleChallengeDOM('shaolin', userData.ejaculations, 3, shaolinReady, "Éjaculations");
+
+            const nightReady = userData.inventory.includes('night_checked');
+            updateSingleChallengeDOM('night', nightReady ? 1 : 0, 1, nightReady, "complété");
+        }
+
+        function updateSingleChallengeDOM(id, current, target, isReady, unit) {
+            const btn = document.getElementById('btn-claim-' + id);
+            const bar = document.getElementById('ch-progress-bar-' + id);
+            const txt = document.getElementById('ch-progress-text-' + id);
+
+            let pct = Math.min((current / target) * 100, 100);
+            if(bar) bar.style.width = pct + "%";
+            
+            if(txt) {
+                if(id === 'speedrun' || id === 'night') {
+                    txt.textContent = isReady ? "Accompli !" : "Verrouillé";
+                } else {
+                    txt.textContent = `${Math.min(current, target)} / ${target} ${unit}`;
+                }
+            }
+
+            if(btn) {
+                if(userData.claimedChallenges.includes(id)) {
+                    btn.textContent = "Récupéré ✔️";
+                    btn.className = "btn-claim claimed";
+                    btn.disabled = true;
+                } else if(isReady) {
+                    btn.textContent = "Réclamer !";
+                    btn.className = "btn-claim ready";
+                    btn.disabled = false;
+                } else {
+                    btn.textContent = "En cours...";
+                    btn.className = "btn-claim";
+                    btn.disabled = true;
+                }
+            }
+        }
+
         function toggleChrono() {
             const btn = document.getElementById('btn-chrono-toggle');
             if(!isChronoRunning) {
-                // Start
-                isChronoRunning = true;
-                btn.innerText = "CONCLURE ET ENREGISTRER";
-                btn.style.background = "rgba(46, 213, 115, 0.15)";
-                btn.style.borderColor = "var(--success)";
-                btn.style.color = "var(--success)";
-                
-                chronoTimer = setInterval(() => {
-                    chronoSeconds++;
-                    document.getElementById('chrono-display').innerText = formatTime(chronoSeconds);
-                }, 1000);
+                isChronoRunning = true; btn.textContent = "STOP";
+                btn.style.background = "rgba(214, 48, 49, 0.1)"; btn.style.borderColor = "#d63031"; btn.style.color = "#d63031";
+                startTime = Date.now() - elapsedTime;
+                chronoInterval = setInterval(updateChronoDisplay, 10);
             } else {
-                // Stop & Save
-                isChronoRunning = false;
-                clearInterval(chronoTimer);
-                
-                // Calcul bonus selon la durée
-                let gainedPoints = 5; 
-                if(chronoSeconds > 60) gainedPoints += Math.floor(chronoSeconds / 60) * 2; 
-
-                userData.branlettes += 1;
-                userData.points += gainedPoints;
-
-                alert(`Session validée ! Durée: ${formatTime(chronoSeconds)}. Vous gagnez +${gainedPoints} Points d'Aura.`);
-                
-                chronoSeconds = 0;
-                document.getElementById('chrono-display').innerText = "00:00:00";
-                
-                btn.innerText = "LANCER LA SESSION";
-                btn.style.background = "rgba(255, 159, 67, 0.15)";
-                btn.style.borderColor = "var(--primary)";
-                btn.style.color = "var(--primary)";
-                
-                saveData();
+                isChronoRunning = false; btn.textContent = "START";
+                btn.style.background = "rgba(255, 159, 67, 0.15)"; btn.style.borderColor = "var(--primary)"; btn.style.color = "var(--primary)";
+                clearInterval(chronoInterval);
+                if(elapsedTime >= 300000) { unlockAchievement('marathon', 10); }
                 updateDOMValues();
             }
         }
 
         function resetChrono() {
-            if(!isChronoRunning) return;
-            if(confirm("Annuler la session en cours ? Aucun point ne sera attribué.")) {
-                isChronoRunning = false;
-                clearInterval(chronoTimer);
-                chronoSeconds = 0;
-                document.getElementById('chrono-display').innerText = "00:00:00";
-                
-                const btn = document.getElementById('btn-chrono-toggle');
-                btn.innerText = "LANCER LA SESSION";
-                btn.style.background = "rgba(255, 159, 67, 0.15)";
-                btn.style.borderColor = "var(--primary)";
-                btn.style.color = "var(--primary)";
-            }
-        }
-
-        function formatTime(sec) {
-            const h = Math.floor(sec / 3600).toString().padStart(2, '0');
-            const m = Math.floor((sec % 3600) / 60).toString().padStart(2, '0');
-            const s = (sec % 60).toString().padStart(2, '0');
-            return `${h}:${m}:${s}`;
-        }
-
-        // VISU ET EQUIPEMENTS PERSONNALISATION (ONGLETS DU BAS)
-        function renderBadgesAndThemes() {
-            // Rendu des badges de profil
-            const container = document.getElementById('badges-container');
-            container.innerHTML = '';
-            BADGES.forEach(b => {
-                const unlocked = (b.id === 'b1' && userData.branlettes >= 5) ||
-                                 (b.id === 'b2' && userData.ejaculations >= 10) ||
-                                 (b.id === 'b3' && userData.points >= 350) ||
-                                 (b.id === 'b4' && userData.points >= 1500);
-
-                const div = document.createElement('div');
-                div.className = `badge-item ${unlocked ? 'unlocked' : ''}`;
-                div.innerHTML = `<span class="badge-icon">${b.icon}</span><strong>${b.name}</strong><br><span style="font-size:0.65rem;color:var(--text-muted);">${b.desc}</span>`;
-                container.appendChild(div);
-            });
-
-            // Rendu des thèmes possédés/équipables
-            const tContainer = document.getElementById('themes-container');
-            tContainer.innerHTML = '';
-
-            // Thème de Base par Défaut
-            const defEquipped = (userData.equippedTheme === 'default' && !userData.customBgBase64);
-            const defCard = document.createElement('div');
-            defCard.className = `theme-preview-card ${defEquipped ? 'equipped' : ''}`;
-            defCard.innerHTML = `
-                <div class="theme-miniature" style="background: radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%);">🔥</div>
-                <div class="theme-preview-info">
-                    <div class="theme-preview-name">Ambiance Cuivrée (Défaut)</div>
-                    <button class="btn-preview-action" onclick="equipTheme('default')">${defEquipped ? 'Équipé' : 'Équiper'}</button>
-                </div>
-            `;
-            tContainer.appendChild(defCard);
-
-            // Thèmes du magasin achetés
-            SHOP_THEMES.forEach(t => {
-                const purchased = userData.unlockedItems.includes(t.id);
-                const equipped = (userData.equippedTheme === t.id && !userData.customBgBase64);
-
-                const card = document.createElement('div');
-                card.className = `theme-preview-card ${!purchased ? 'locked' : ''} ${equipped ? 'equipped' : ''}`;
-                card.innerHTML = `
-                    <div class="theme-miniature" style="background: ${t.value};">
-                        ${t.icon}
-                        ${!purchased ? `<span class="lock-indicator">🔒 Boutique</span>` : ''}
-                    </div>
-                    <div class="theme-preview-info">
-                        <div class="theme-preview-name">${t.name}</div>
-                        <button class="btn-preview-action" ${!purchased ? 'disabled style="cursor:not-allowed;"' : `onclick="equipTheme('${t.id}')"`}>
-                            ${!purchased ? 'Bloqué' : (equipped ? 'Équipé' : 'Équiper')}
-                        </button>
-                    </div>
-                `;
-                tContainer.appendChild(card);
-            });
-
-            // Option Fond d'écran Perso via Image
-            const customEquipped = !!userData.customBgBase64;
-            const customCard = document.createElement('div');
-            customCard.className = `theme-preview-card ${customEquipped ? 'equipped' : ''}`;
-            
-            let miniatureStyle = `background: #111;`;
-            if(userData.customBgBase64) {
-                miniatureStyle = `background-image: url('${userData.customBgBase64}'); background-size: cover; background-position: center;`;
-            }
-
-            customCard.innerHTML = `
-                <div class="theme-miniature" style="${miniatureStyle}">
-                    🖼️
-                    <div class="btn-upload-bg-mini" onclick="triggerCustomBgUpload()">UPLOADER</div>
-                </div>
-                <div class="theme-preview-info">
-                    <div class="theme-preview-name">Fond Customisé (Image)</div>
-                    <button class="btn-preview-action" ${!userData.customBgBase64 ? 'disabled' : "onclick=\"equipTheme('custom')\""}>
-                        ${customEquipped ? 'Équipé' : (userData.customBgBase64 ? 'Équiper' : 'Aucune image')}
-                    </button>
-                </div>
-            `;
-            tContainer.appendChild(customCard);
-        }
-
-        function equipTheme(themeId) {
-            if(!userData) return;
-            if(themeId === 'custom') {
-                if(!userData.customBgBase64) return;
-                userData.equippedTheme = 'custom';
-            } else {
-                userData.equippedTheme = themeId;
-                // On n'efface pas l'image du localstorage, on décoche juste son activation active
-                if(themeId !== 'custom' && userData.equippedTheme !== 'custom') {
-                    // pour forcer le basculement on peut laisser l'image en cache
-                }
-            }
-            applyCurrentTheme();
-            renderBadgesAndThemes();
-            saveData();
-        }
-
-        function applyCurrentTheme() {
-            if(!userData) return;
-            const body = document.body;
-            
-            // Priorité absolue à l'image customisée si l'onglet adéquat est validé
-            if(userData.equippedTheme === 'custom' && userData.customBgBase64) {
-                body.style.background = `url('${userData.customBgBase64}')`;
-                body.style.backgroundSize = "cover";
-                body.style.backgroundPosition = "center";
-                body.style.backgroundRepeat = "no-repeat";
-                body.style.backgroundAttachment = "fixed";
-                return;
-            }
-
-            // Sinon application des dégradés css natifs ou achetés
-            if(userData.equippedTheme === 'default' || !userData.equippedTheme) {
-                body.style.background = "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)";
-            } else {
-                const found = SHOP_THEMES.find(t => t.id === userData.equippedTheme);
-                if(found) {
-                    body.style.background = found.value;
-                } else {
-                    body.style.background = "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)";
-                }
-            }
-            body.style.backgroundSize = "cover";
-            body.style.backgroundAttachment = "fixed";
-        }
-
-        // GESTION UPLOADS (AVATAR & FOND D'ÉCRAN IMAGE INTERNE)
-        function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
-        function handleAvatarUpload(input) {
-            if(!input.files || !input.files[0]) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imgHtml = `<img src="${e.target.result}">`;
-                userData.avatar = e.target.result; 
-                document.getElementById('profile-avatar-container').innerHTML = imgHtml;
-                saveData();
-                updateDOMValues();
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-
-        function triggerCustomBgUpload() { document.getElementById('custom-bg-upload-input').click(); }
-        function handleCustomBgUpload(input) {
-            if(!input.files || !input.files[0]) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                userData.customBgBase64 = e.target.result;
-                userData.equippedTheme = 'custom'; 
-                applyCurrentTheme();
-                renderBadgesAndThemes();
-                saveData();
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-
-        // GESTIONNAIRE ONGLETS BOUTIQUE
-        function renderShop() {
-            const itemContainer = document.getElementById('shop-items-container');
-            itemContainer.innerHTML = '';
-            
-            SHOP_ITEMS.forEach(item => {
-                const isBought = userData.unlockedItems.includes(item.id);
-                const isEquipped = userData.equippedAura === item.id;
-
-                const div = document.createElement('div');
-                div.className = 'shop-item';
-                div.innerHTML = `
-                    <div class="shop-info">
-                        <span class="shop-icon">${item.icon}</span>
-                        <div class="shop-details">
-                            <h4>${item.name}</h4>
-                            <p>${item.desc}</p>
-                        </div>
-                    </div>
-                    <div>
-                        ${isBought 
-                            ? `<button class="btn-buy ${isEquipped ? 'equipped' : ''}" onclick="toggleEquipAura('${item.id}')">${isEquipped ? 'Équipée' : 'Équiper'}</button>`
-                            : `<button class="btn-buy" onclick="buyPrestigeItem('${item.id}', ${item.cost})"><span class="shop-cost">${item.cost} PTS</span> — Acheter</button>`
-                        }
-                    </div>
-                `;
-                itemContainer.appendChild(div);
-            });
-
-            const themeContainer = document.getElementById('shop-themes-container');
-            themeContainer.innerHTML = '';
-            SHOP_THEMES.forEach(theme => {
-                const isBought = userData.unlockedItems.includes(theme.id);
-                div = document.createElement('div');
-                div.className = 'shop-item';
-                div.innerHTML = `
-                    <div class="shop-info">
-                        <span class="shop-icon">${theme.icon}</span>
-                        <div class="shop-details">
-                            <h4>${theme.name}</h4>
-                            <p>${theme.desc}</p>
-                        </div>
-                    </div>
-                    <div>
-                        ${isBought 
-                            ? `<span style="color:var(--success); font-weight:bold; font-size:0.85rem;">✓ Possédé</span>`
-                            : `<button class="btn-buy" onclick="buyPrestigeItem('${theme.id}', ${theme.cost})"><span class="shop-cost">${theme.cost} PTS</span> — Acheter</button>`
-                        }
-                    </div>
-                `;
-                themeContainer.appendChild(div);
-            });
-        }
-
-        function buyPrestigeItem(itemId, cost) {
-            if(userData.points < cost) {
-                alert("Solde de points d'Aura insuffisant pour acquérir cet apparat.");
-                return;
-            }
-            userData.points -= cost;
-            userData.unlockedItems.push(itemId);
-            saveData();
+            if(isChronoRunning) toggleChrono();
+            elapsedTime = 0; document.getElementById('chrono-display').textContent = "00:00:00.00";
             updateDOMValues();
-            renderShop();
         }
 
-        function toggleEquipAura(auraId) {
-            if(userData.equippedAura === auraId) {
-                userData.equippedAura = null; // Déséquiper
-            } else {
-                userData.equippedAura = auraId;
-            }
-            saveData();
-            updateDOMValues();
-            renderShop();
+        function updateChronoDisplay() {
+            elapsedTime = Date.now() - startTime;
+            let tempTime = elapsedTime;
+            const ms = Math.floor((tempTime % 1000) / 10); tempTime = Math.floor(tempTime / 1000);
+            const secs = tempTime % 60; tempTime = Math.floor(tempTime / 60);
+            const mins = tempTime % 60; const hrs = Math.floor(tempTime / 60);
+            document.getElementById('chrono-display').textContent = 
+                (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs) + "." + (ms < 10 ? "0" + ms : ms);
+            
+            updateChallengesDOM();
         }
 
-        // ONGLET DÉFIS (OBJECTIFS)
-        function renderChallenges() {
-            const container = document.getElementById('challenges-container');
-            container.innerHTML = '';
-
-            DEFIS_LIST.forEach(d => {
-                const isReady = d.check(userData);
-                const isClaimed = userData.claimedChallenges.includes(d.id);
-                
-                let progressPercent = 0;
-                let progressText = "0 / 1";
-                if(d.id === 'd1') {
-                    progressPercent = Math.min(100, ((userData.branlettes || 0) / 1) * 100);
-                    progressText = `${userData.branlettes || 0} / 1 session`;
-                } else if(d.id === 'd2') {
-                    progressPercent = Math.min(100, ((userData.ejaculations || 0) / 5) * 100);
-                    progressText = `${userData.ejaculations || 0} / 5 orgasmes`;
-                } else if(d.id === 'd3') {
-                    progressPercent = Math.min(100, ((userData.points || 0) / 400) * 100);
-                    progressText = `${userData.points || 0} / 400 Pts`;
-                }
-
-                let btnHtml = `<button class="btn-claim">Bloqué</button>`;
-                if(isClaimed) {
-                    btnHtml = `<button class="btn-claim claimed" disabled>Réclamé ✓</button>`;
-                } else if(isReady) {
-                    btnHtml = `<button class="btn-claim ready" onclick="claimChallenge('${d.id}', ${d.rewardPts})">Réclamer</button>`;
-                }
-
-                const card = document.createElement('div');
-                card.className = 'challenge-card';
-                card.innerHTML = `
-                    <div class="challenge-info">
-                        <span class="challenge-tag ${d.tag}">${d.tag}</span>
-                        <div class="challenge-title">${d.title}</div>
-                        <div class="challenge-desc">${d.desc}</div>
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${progressPercent}%;"></div>
-                        </div>
-                        <span class="progress-text">${progressText}</span>
-                        <div class="challenge-reward">+${d.rewardPts} Points d'Aura</div>
-                    </div>
-                    <div>${btnHtml}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function claimChallenge(id, reward) {
-            if(userData.claimedChallenges.includes(id)) return;
-            userData.claimedChallenges.push(id);
-            userData.points += reward;
-            saveData();
-            updateDOMValues();
-            renderChallenges();
-            alert(`Défi validé ! Votre Aura augmente de +${reward} points.`);
-        }
-
-        // LISTES ET STATS COMMUNAUTÉ GLOBALE
-        function getAllUsers() {
-            const users = [];
-            for(let i=0; i<localStorage.length; i++) {
+        /* --- LOGIQUE DE RECHERCHE & AMIS & BLOCAGE --- */
+        function getAllPlatformUsers() {
+            let users = [];
+            for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if(key.startsWith('user_')) {
-                    const username = key.replace('user_', '');
+                if (key.startsWith('user_')) {
+                    const uName = key.replace('user_', '');
                     try {
-                        const data = JSON.parse(localStorage.getItem(key));
-                        users.push({ username, data });
-                    } catch(e){}
+                        const uData = JSON.parse(localStorage.getItem(key));
+                        users.push({ username: uName, data: uData });
+                    } catch(e) {}
                 }
             }
             return users;
         }
 
-        function renderCommunityUsers() {
-            const list = document.getElementById('community-users-list');
-            list.innerHTML = '';
-            const query = document.getElementById('user-search').value.toLowerCase().trim();
+        function renderCommunitySearch() {
+            const query = document.getElementById('comm-search').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('search-results-list');
+            if(!resultsContainer) return;
+            resultsContainer.innerHTML = "";
 
-            const all = getAllUsers();
-            all.forEach(u => {
-                if(query && !u.username.toLowerCase().includes(query)) return;
+            const allUsers = getAllPlatformUsers();
+            const filteredUsers = allUsers.filter(u => u.username !== currentUser);
 
-                const rankStr = getRankTitle(u.data.points || 0);
-                const item = document.createElement('div');
-                item.className = 'user-card-item';
+            let matchingUsers = filteredUsers;
+            if(query !== "") {
+                matchingUsers = filteredUsers.filter(u => u.username.toLowerCase().includes(query));
+            }
 
-                let avHtml = u.data.avatar && u.data.avatar.length > 5 
-                    ? `<img src="${u.data.avatar}">` 
-                    : (u.data.avatar || '😈');
+            if(matchingUsers.length === 0) {
+                resultsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding: 2rem;">Aucun utilisateur trouvé.</div>`;
+                return;
+            }
 
-                item.innerHTML = `
+            matchingUsers.forEach(u => {
+                const isFriend = userData.friends.includes(u.username);
+                const isBlocked = userData.blocked.includes(u.username);
+                const uRank = getRank(u.data.points || 0, u.data.role);
+
+                let avatarHtml = "😈";
+                if(u.data.avatar) avatarHtml = `<img src="${u.data.avatar}">`;
+                else if(u.data.role === 'admin') avatarHtml = "👑";
+
+                const card = document.createElement('div');
+                card.className = "user-card-item";
+                
+                let actionButtons = "";
+                if(isBlocked) {
+                    actionButtons = `<button class="btn-action-sm remove" onclick="toggleBlockUser('${u.username}')">Débloquer</button>`;
+                } else {
+                    actionButtons = `
+                        <button class="btn-action-sm ${isFriend ? 'remove':'add'}" onclick="toggleFriendUser('${u.username}')">
+                            ${isFriend ? 'Retirer':'Ajouter'}
+                        </button>
+                        <button class="btn-action-sm block" onclick="toggleBlockUser('${u.username}')">Bloquer</button>
+                    `;
+                }
+
+                card.innerHTML = `
                     <div class="user-card-info">
-                        <div class="user-card-avatar">${avHtml}</div>
+                        <div class="user-card-avatar ${u.data.equipped && u.data.equipped.includes('aura') ? 'has-aura':''}">${avatarHtml}</div>
                         <div class="user-card-details">
-                            <div class="username-click" onclick="openUserProfile('${u.username}')">${u.username}</div>
-                            <div class="sub">${rankStr}</div>
+                            <div class="username-click" onclick="viewUserUserProfile('${u.username}')">${u.username}</div>
+                            <div class="sub">${uRank} • ${u.data.points || 0} PTS</div>
                         </div>
                     </div>
-                    <div class="user-card-actions">
-                        <button class="btn-action-sm remove" onclick="openUserProfile('${u.username}')">Inspecter</button>
-                    </div>
+                    <div class="user-card-actions">${actionButtons}</div>
                 `;
-                list.appendChild(item);
+                resultsContainer.appendChild(card);
             });
         }
 
-        function switchLeaderboard(tab) {
-            currentLeaderboardTab = tab;
-            document.getElementById('lead-tab-pts').classList.remove('active');
-            document.getElementById('lead-tab-ej').classList.remove('active');
-            
-            if(tab === 'points') {
-                document.getElementById('lead-tab-pts').classList.add('active');
-                document.getElementById('lead-th-val').innerText = 'Points';
+        function toggleFriendUser(targetUser) {
+            const index = userData.friends.indexOf(targetUser);
+            if(index > -1) {
+                userData.friends.splice(index, 1);
             } else {
-                document.getElementById('lead-tab-ej').classList.add('active');
-                document.getElementById('lead-th-val').innerText = 'Orgasmes';
+                const blockIdx = userData.blocked.indexOf(targetUser);
+                if(blockIdx > -1) userData.blocked.splice(blockIdx, 1);
+                userData.friends.push(targetUser);
             }
+            saveData();
+            renderCommunitySearch();
+            renderLeaderboard();
+        }
+
+        function toggleBlockUser(targetUser) {
+            const index = userData.blocked.indexOf(targetUser);
+            if(index > -1) {
+                userData.blocked.splice(index, 1);
+            } else {
+                const friendIdx = userData.friends.indexOf(targetUser);
+                if(friendIdx > -1) userData.friends.splice(friendIdx, 1);
+                userData.blocked.push(targetUser);
+            }
+            saveData();
+            renderCommunitySearch();
+            renderLeaderboard();
+        }
+
+        /* --- GESTION DU LEADERBOARD --- */
+        function toggleLeadTab(tabType) {
+            activeLeadTab = tabType;
+            document.getElementById('btn-lead-global').classList.toggle('active', tabType === 'global');
+            document.getElementById('btn-lead-friends').classList.toggle('active', tabType === 'friends');
             renderLeaderboard();
         }
 
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-tbody');
-            tbody.innerHTML = '';
+            if(!tbody) return;
+            tbody.innerHTML = "";
 
-            const all = getAllUsers();
-            // Tri décroissant
-            all.sort((a, b) => {
-                const valA = a.data[currentLeaderboardTab] || 0;
-                const valB = b.data[currentLeaderboardTab] || 0;
-                return valB - valA;
-            });
+            let allUsers = getAllPlatformUsers();
+            allUsers = allUsers.filter(u => !userData.blocked.includes(u.username));
 
-            all.forEach((u, index) => {
-                const tr = document.createElement('tr');
-                const rankNum = index + 1;
-                let rankClass = '';
-                if(rankNum === 1) rankClass = 'top1';
-                else if(rankNum === 2) rankClass = 'top2';
-                else if(rankNum === 3) rankClass = 'top3';
+            if(activeLeadTab === 'friends') {
+                allUsers = allUsers.filter(u => u.username === currentUser || userData.friends.includes(u.username));
+            }
 
-                const displayVal = u.data[currentLeaderboardTab] || 0;
+            allUsers.sort((a, b) => (b.data.points || 0) - (a.data.points || 0));
 
-                let avHtml = u.data.avatar && u.data.avatar.length > 5 
-                    ? `<img src="${u.data.avatar}">` 
-                    : (u.data.avatar || '😈');
+            allUsers.forEach((u, index) => {
+                const position = index + 1;
+                let rankClass = "lead-rank-num";
+                if(position === 1) rankClass += " top1";
+                if(position === 2) rankClass += " top2";
+                if(position === 3) rankClass += " top3";
 
-                tr.innerHTML = `
-                    <td class="lead-rank-num ${rankClass}">#${rankNum}</td>
-                    <td>
-                        <div class="lead-user-cell">
-                            <div class="user-card-avatar" style="width:24px; height:24px; font-size:0.8rem;">${avHtml}</div>
-                            <span style="font-weight:600; cursor:pointer;" onclick="openUserProfile('${u.username}')">${u.username}</span>
-                        </div>
-                    </td>
-                    <td style="text-align: right; font-weight: bold; color: var(--primary);">${displayVal}</td>
+                let nameStyle = "";
+                if(u.username === currentUser) nameStyle = "color:var(--primary); font-weight:900;";
+
+                let subBadgesString = getBadgesEmojisString(u.data.equipped || []);
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="${rankClass}">${position}</td>
+                        <td>
+                            <div class="lead-user-cell">
+                                <span class="username-click" style="${nameStyle}" onclick="viewUserUserProfile('${u.username}')">${u.username}</span>
+                                <span style="font-size:0.8rem; opacity:0.8;">${subBadgesString}</span>
+                            </div>
+                        </td>
+                        <td style="font-weight:600; color:var(--accent-orange);">${u.data.points || 0}</td>
+                        <td>${u.data.ejaculations || 0}</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
             });
         }
 
-        // FENÊTRE MODALE D'INSPECTION COMMU
-        function openUserProfile(username) {
-            const stored = localStorage.getItem('user_' + username);
-            if(!stored) return;
-            const data = JSON.parse(stored);
-
-            document.getElementById('modal-name').innerText = username;
-            document.getElementById('modal-rank').innerText = getRankTitle(data.points || 0);
-            document.getElementById('modal-stat-pts').innerText = data.points || 0;
-            document.getElementById('modal-stat-br').innerText = data.branlettes || 0;
-            document.getElementById('modal-stat-ej').innerText = data.ejaculations || 0;
-
-            const mAvatar = document.getElementById('modal-avatar-container');
-            mAvatar.innerHTML = data.avatar && data.avatar.length > 5 ? `<img src="${data.avatar}">` : (data.avatar || '😈');
-            
-            // Halo de l'inspecté
-            mAvatar.className = "avatar-main";
-            if(data.equippedAura) {
-                mAvatar.classList.add('has-aura');
-                if(data.equippedAura === 'aura_purple') mAvatar.style.borderColor = '#b873ff';
-                else if(data.equippedAura === 'aura_rainbow') mAvatar.style.borderColor = '#2ed573';
-                else mAvatar.style.borderColor = '#ff9f43';
+        /* --- FENÊTRE MODALE PROFIL TIERS --- */
+        function viewUserUserProfile(username) {
+            let targetData = null;
+            if(username === currentUser) {
+                targetData = userData;
             } else {
-                mAvatar.style.borderColor = 'var(--primary)';
+                const stored = localStorage.getItem('user_' + username);
+                if(!stored) return;
+                targetData = JSON.parse(stored);
             }
 
-            // Affichage miniatures des badges de la cible
-            const bContainer = document.getElementById('modal-badges');
-            bContainer.innerHTML = '';
-            BADGES.forEach(b => {
-                const unlocked = (b.id === 'b1' && data.branlettes >= 5) ||
-                                 (b.id === 'b2' && data.ejaculations >= 10) ||
-                                 (b.id === 'b3' && data.points >= 350) ||
-                                 (b.id === 'b4' && data.points >= 1500);
-                if(unlocked) {
-                    const s = document.createElement('span'); s.innerText = b.icon; s.title = b.name; bContainer.appendChild(s);
-                }
-            });
+            document.getElementById('modal-name').textContent = username;
+            document.getElementById('modal-rank').textContent = getRank(targetData.points || 0, targetData.role);
+            document.getElementById('modal-stat-pts').textContent = targetData.points || 0;
+            document.getElementById('modal-stat-br').textContent = targetData.branlettes || 0;
+            document.getElementById('modal-stat-ej').textContent = targetData.ejaculations || 0;
 
-            // Succès Passifs cochés
+            document.getElementById('modal-badges').innerHTML = getBadgesEmojisString(targetData.equipped || []);
+
+            const modalAvatar = document.getElementById('modal-avatar-container');
+            if(targetData.equipped && targetData.equipped.includes('aura')) modalAvatar.classList.add('has-aura');
+            else modalAvatar.classList.remove('has-aura');
+
+            if(targetData.avatar) modalAvatar.innerHTML = `<img src="${targetData.avatar}">`;
+            else modalAvatar.innerHTML = targetData.role === 'admin' ? "👑" : "😈";
+
             const achContainer = document.getElementById('modal-achievements-container');
-            achContainer.innerHTML = '';
-            BADGES.forEach(b => {
-                const unlocked = (b.id === 'b1' && data.branlettes >= 5) ||
-                                 (b.id === 'b2' && data.ejaculations >= 10) ||
-                                 (b.id === 'b3' && data.points >= 350) ||
-                                 (b.id === 'b4' && data.points >= 1500);
-                const card = document.createElement('div');
-                card.className = `ach-card ${unlocked ? 'unlocked' : ''}`;
-                card.style.padding = "0.5rem";
-                card.innerHTML = `<span style="font-size:1.2rem;">${b.icon}</span><div><h4 style="font-size:0.75rem;">${b.name}</h4></div>`;
-                achContainer.appendChild(card);
-            });
-
-            // Notes publiques rédigées par la cible
-            const logContainer = document.getElementById('modal-logs-container');
-            logContainer.innerHTML = '';
-            if(data.journal && data.journal.trim().length > 0) {
-                logContainer.innerHTML = `<div class="log-item">"${data.journal}"</div>`;
+            achContainer.innerHTML = "";
+            const tAch = targetData.achievements || [];
+            if(tAch.length === 0) {
+                achContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.75rem; grid-column: span 2;">Aucun succès débloqué.</div>`;
             } else {
-                logContainer.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">Aucune note publique consignée.</div>`;
+                tAch.forEach(id => {
+                    const info = ALL_ACHIEVEMENTS[id];
+                    if(info) {
+                        achContainer.innerHTML += `
+                            <div class="ach-card unlocked" style="padding:0.5rem; gap:8px;">
+                                <div style="font-size:1.2rem;">${info.icon}</div>
+                                <div>
+                                    <h5 style="font-size:0.8rem;">${info.title}</h5>
+                                    <p style="font-size:0.65rem; color:var(--text-muted);">${info.desc}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            const logsContainer = document.getElementById('modal-logs-container');
+            const tLogs = targetData.logs || [];
+            if(tLogs.length === 0) {
+                logsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.8rem;">Aucune note publique.</div>`;
+            } else {
+                logsContainer.innerHTML = tLogs.slice(0, 3).map(log => `
+                    <div class="log-item" style="padding:0.4rem; font-size:0.75rem;">
+                        <span>[${log.date}]</span> - ${log.duration || 'N/A'}<br>
+                        <p style="margin-top:2px; color:#fff; font-style:italic;">"${log.text}"</p>
+                    </div>
+                `).join('');
             }
 
             document.getElementById('profile-modal').classList.add('active');
         }
 
-        function closeModal(e) {
-            if(!e || e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
+        function closeModal(event) {
+            if(!event || event.target === document.getElementById('profile-modal')) {
                 document.getElementById('profile-modal').classList.remove('active');
             }
         }
 
-        // PANEL ADMINISTRATEUR DE SÉCURITÉ
+        /* --- ADMIN PANEL --- */
         function loadAdminPanelData() {
-            if(currentUser !== ADMIN_USERNAME) return;
-            const tbody = document.getElementById('admin-tbody');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = "";
+            const allUsers = getAllPlatformUsers();
 
-            const all = getAllUsers();
-            all.forEach(u => {
+            allUsers.forEach(u => {
                 const tr = document.createElement('tr');
-                
-                const deleteButtonHtml = u.username !== ADMIN_USERNAME 
-                    ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${u.username}')">Bannir</button>` 
-                    : '';
+                let deleteButtonHtml = '';
+                if (u.username !== ADMIN_USERNAME) {
+                    deleteButtonHtml = `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${u.username}')">Bannir</button>`;
+                }
 
                 tr.innerHTML = `
-                    <td style="font-weight:bold;">${u.username}</td>
+                    <td style="font-weight:bold; color:${u.username === ADMIN_USERNAME ? '#ff4757':'white'}">${u.username}</td>
                     <td><input type="number" class="admin-input" id="adm-pts-${u.username}" value="${u.data.points || 0}"></td>
                     <td><input type="number" class="admin-input" id="adm-br-${u.username}" value="${u.data.branlettes || 0}"></td>
                     <td><input type="number" class="admin-input" id="adm-ej-${u.username}" value="${u.data.ejaculations || 0}"></td>
