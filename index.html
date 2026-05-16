@@ -30,68 +30,13 @@
         body {
             background: var(--app-background);
             background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             color: var(--text-main);
             overflow-x: hidden;
             height: 100vh;
-            position: relative;
             transition: background 0.5s ease; /* Transition fluide lors du changement de fond */
-        }
-
-        /* --- CANVASES & DYNAMIC EFFECTS --- */
-        #bg-particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* --- THEMES DYNAMIQUES ANIMÉS EN CSS --- */
-        @keyframes cosmicNebula {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        body.theme-nebula {
-            background: linear-gradient(-45deg, #0f0c1b, #201335, #0b2545, #000000) !important;
-            background-size: 400% 400% !important;
-            animation: cosmicNebula 15s ease infinite !important;
-        }
-
-        @keyframes volcanicLava {
-            0% { background-position: 50% 0%; }
-            50% { background-position: 50% 100%; }
-            100% { background-position: 50% 0%; }
-        }
-        body.theme-lava {
-            background: linear-gradient(180deg, #140505, #2d0b0b, #4a0e17, #000000) !important;
-            background-size: 100% 200% !important;
-            animation: volcanicLava 12s ease infinite !important;
-        }
-
-        @keyframes auroraBorealis {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        body.theme-aurora {
-            background: linear-gradient((135deg, #05161a, #072e27, #0f4c3a, #02080c)) !important;
-            background: linear-gradient(135deg, #020c0f, #05261e, #134e3a, #030b14) !important;
-            background-size: 300% 300% !important;
-            animation: auroraBorealis 20s ease infinite !important;
-        }
-
-        @keyframes cyberpunkStorm {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
-        }
-        body.theme-cyberpunk {
-            background: linear-gradient(45deg, #0d0114, #1a0826, #051923, #020005) !important;
-            background-size: 200% 200% !important;
-            animation: cyberpunkStorm 8s ease infinite !important;
         }
 
         /* --- AUTHENTICATION --- */
@@ -743,7 +688,6 @@
         .leaderboard-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
         .leaderboard-table th { color: var(--text-muted); font-weight: 600; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .leaderboard-table td { padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        
         .lead-rank-num { font-weight: bold; width: 30px; color: var(--text-muted); }
         .lead-rank-num.top1 { color: #f1c40f; }
         .lead-rank-num.top2 { color: #b2bec3; }
@@ -759,8 +703,6 @@
     </style>
 </head>
 <body>
-    <canvas id="bg-particles-canvas"></canvas>
-
     <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this)">
 
     <div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
@@ -801,7 +743,7 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label>Pseudo</label>
-                    <input type="text" id="login-username" required placeholder="Ex: JeanSinge">
+                    <input type="text" id="login-username" required placeholder="Ex: zzhhr">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
@@ -809,15 +751,15 @@
                 </div>
                 <button type="submit" class="auth-btn">SE CONNECTER</button>
             </form>
-            <div class="auth-toggle">Pas de compte ? <span onclick="toggleAuth(false)">S'inscrire</span></div>
+            <div class="auth-toggle">Pas de compte ? <span onclick="toggleAuthCard(false)">Créer un profil</span></div>
         </div>
 
         <div class="auth-card" id="register-card" style="display: none;">
             <h2>INSCRIPTION</h2>
             <form id="registerForm">
                 <div class="form-group">
-                    <label>Pseudo unique</label>
-                    <input type="text" id="reg-username" required placeholder="Ex: CoqSportif">
+                    <label>Pseudo</label>
+                    <input type="text" id="reg-username" required placeholder="Ex: zzhhr" maxlength="15">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
@@ -825,83 +767,52 @@
                 </div>
                 <button type="submit" class="auth-btn">CRÉER LE COMPTE</button>
             </form>
-            <div class="auth-toggle">Déjà inscrit ? <span onclick="toggleAuth(true)">Se connecter</span></div>
+            <div class="auth-toggle">Déjà inscrit ? <span onclick="toggleAuthCard(true)">Se connecter</span></div>
         </div>
     </div>
 
     <div id="main-app">
         <div class="sidebar">
             <div class="brand">🍆 DASHBOARD</div>
-            
             <div class="user-summary">
                 <div class="user-block">
-                    <div class="name" id="side-username">Chargement...</div>
-                    <div class="equipped-badges-sub" id="side-badges-row"></div>
-                    <div class="rank" id="side-rank">Novice</div>
+                    <div class="name" id="side-username">Pseudo</div>
+                    <div class="equipped-badges-sub" id="side-badges"></div>
                 </div>
+                <div class="rank" id="side-rank">Rang</div>
                 <div class="mini-stats">
-                    <div class="mini-box">Pts<span id="side-pts">0</span></div>
-                    <div class="mini-box">Br<span id="side-br">0</span></div>
-                    <div class="mini-box">Ej<span id="side-ej">0</span></div>
+                    <div class="mini-box">PTS<span id="side-pts">0</span></div>
+                    <div class="mini-box">BR<span id="side-br">0</span></div>
+                    <div class="mini-box">EJ<span id="side-ej">0</span></div>
                 </div>
             </div>
-
             <div class="menu-items">
-                <button class="menu-btn active" onclick="switchPage('profil')">👤 Profil & Custom</button>
-                <button class="menu-btn" onclick="switchPage('compteurs')">🧮 Compteurs</button>
-                <button class="menu-btn" onclick="switchPage('defis')">🎯 Défis du Jour</button>
-                <button class="menu-btn" onclick="switchPage('commu')">🤝 Communauté</button>
-                <button class="menu-btn" onclick="switchPage('shop')">🛒 Boutique</button>
-                <button class="menu-btn" id="menu-admin-btn" style="display:none;" onclick="switchPage('admin')">👑 Admin Panel</button>
+                <button class="menu-btn active" onclick="switchPage('chrono', this)">⏱️ Chronomètre</button>
+                <button class="menu-btn" onclick="switchPage('compteurs', this)">🔢 Compteurs</button>
+                <button class="menu-btn" onclick="switchPage('defis', this)">🎯 Défis du Jour</button>
+                <button class="menu-btn" onclick="switchPage('profil', this)">👤 Personnalisation</button>
+                <button class="menu-btn" onclick="switchPage('commu', this)">👥 Communauté</button>
+                <button class="menu-btn" id="menu-btn-admin" style="display:none;" onclick="switchPage('admin', this)">⚙️ Modération</button>
             </div>
-            
-            <button class="btn-logout" style="margin-top: auto;" onclick="logout()">Déconnexion</button>
+            <button class="btn-logout" style="margin-top:auto;" onclick="logout()">Se Déconnecter</button>
         </div>
 
         <div class="content-container">
             <div class="page-header">
-                <div class="page-title" id="current-page-title">Profil & Custom</div>
-                <div>Édition Légendaire v2.0</div>
+                <div class="page-title" id="current-page-title">CHRONOMÈTRE</div>
             </div>
 
-            <div id="page-profil" class="page active">
+            <div id="page-chrono" class="page active">
                 <div class="profile-centered">
-                    <div class="avatar-container">
-                        <div class="avatar-main" id="avatar-display-main" onclick="triggerAvatarUpload()">😈</div>
-                        <div class="avatar-badge" title="Changer l'Aura de l'avatar" onclick="event.stopPropagation(); toggleAvatarAura()">✨</div>
+                    <p style="color: var(--text-muted);">Mesurez la pureté de votre session de stimulation intense.</p>
+                    <div class="chrono-circle" id="chrono-display">00:00.00</div>
+                    <div class="chrono-actions">
+                        <button class="btn-chrono start" id="btn-chrono-toggle" onclick="toggleChrono()">LANCER LE CHRONO</button>
+                        <button class="btn-chrono reset" onclick="resetChrono()">RAZ</button>
                     </div>
-                    <div class="profile-name" id="prof-username">User</div>
-                    <div class="profile-rank" id="prof-rank">Rang standard</div>
-
-                    <div class="stats-row">
-                        <div class="stat-card"><div class="val" id="prof-pts">0</div><div class="lbl">Points globaux</div></div>
-                        <div class="stat-card"><div class="val" id="prof-br">0</div><div class="lbl">Branlettes</div></div>
-                        <div class="stat-card"><div class="val" id="prof-ej">0</div><div class="lbl">Éjaculations</div></div>
-                    </div>
-
-                    <div class="history-card">
-                        <h3>📜 Notice de l'Édition Légendaire</h3>
-                        <p>Personnalise ton profil public en équipant tes badges débloqués ou tes thèmes achetés dans la boutique. Clique sur ton avatar pour téléverser une image de profil personnalisée.</p>
-                    </div>
-
-                    <div class="badges-section">
-                        <div class="customization-tabs">
-                            <button class="custom-tab-btn active" onclick="switchCustomTab('badges')">🏅 Vos Badges</button>
-                            <button class="custom-tab-btn" onclick="switchCustomTab('themes')">🖼️ Vos Fonds Boutique</button>
-                        </div>
-
-                        <div id="custom-panel-badges" class="custom-panel active">
-                            <div class="badges-grid" id="inventory-badges-container"></div>
-                        </div>
-
-                        <div id="custom-panel-themes" class="custom-panel">
-                            <div class="themes-preview-grid" id="inventory-themes-container"></div>
-                        </div>
-                    </div>
-
                     <div class="journal-box">
-                        <label>📓 Note personnelle ou Journal de bord (Public dans ton profil)</label>
-                        <textarea id="journal-textarea" placeholder="Raconte ton combat ou tes exploits du jour..." oninput="saveJournalText()"></textarea>
+                        <label>📓 Journal de Session Intime (Optionnel - Public sur votre profil)</label>
+                        <textarea id="chrono-note" placeholder="Comment s'est passée cette expérience ? Des sensations particulières à partager ?"></textarea>
                     </div>
                 </div>
             </div>
@@ -912,14 +823,14 @@
                         <div class="compteur-header">
                             <span style="font-size: 1.5rem;">✊</span>
                             <div>
-                                <div class="compteur-title">Session de Branlette Rapide</div>
-                                <div class="compteur-subtitle">+10 Points par unité accumulée</div>
+                                <div class="compteur-title">Séances Tactiques Réalisées</div>
+                                <div class="compteur-subtitle">+10 Points par action enregistrée</div>
                             </div>
                         </div>
                         <div class="big-number" id="count-br">0<span>/ ∞</span></div>
                         <div class="counter-actions">
-                            <button class="btn-count minus" onclick="modifyCounter('branlettes', -1)">-</button>
-                            <button class="btn-count plus" onclick="modifyCounter('branlettes', 1)">+</button>
+                            <button class="btn-count minus" onclick="adjustValue('branlettes', -1)">-</button>
+                            <button class="btn-count plus" onclick="adjustValue('branlettes', 1)">+</button>
                         </div>
                     </div>
 
@@ -927,36 +838,75 @@
                         <div class="compteur-header">
                             <span style="font-size: 1.5rem;">💦</span>
                             <div>
-                                <div class="compteur-title">Éjaculations Totales</div>
-                                <div class="compteur-subtitle">+25 Points par libération sauvage</div>
+                                <div class="compteur-title">Libérations Accomplies</div>
+                                <div class="compteur-subtitle">+25 Points par action enregistrée</div>
                             </div>
                         </div>
                         <div class="big-number" id="count-ej">0<span>/ ∞</span></div>
                         <div class="counter-actions">
-                            <button class="btn-count minus" onclick="modifyCounter('ejaculations', -1)">-</button>
-                            <button class="btn-count plus" onclick="modifyCounter('ejaculations', 1)">+</button>
+                            <button class="btn-count minus" onclick="adjustValue('ejaculations', -1)">-</button>
+                            <button class="btn-count plus" onclick="adjustValue('ejaculations', 1)">+</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="page-defis" class="page">
-                <div class="challenge-list" id="challenges-container"></div>
+                <div class="challenge-list" id="defis-list-container"></div>
+            </div>
+
+            <div id="page-profil" class="page">
+                <div class="profile-centered">
+                    <div class="avatar-container">
+                        <div class="avatar-main" id="profile-avatar-container" onclick="triggerAvatarUpload()">😈</div>
+                        <div class="avatar-badge" onclick="triggerAvatarUpload()">✏️</div>
+                    </div>
+                    <div class="profile-name" id="profile-display-name">User</div>
+                    <div class="profile-rank" id="profile-display-rank">Novice</div>
+
+                    <div class="stats-row">
+                        <div class="stat-card"><div class="val" id="prof-stat-pts">0</div><div class="lbl">Points Totaux</div></div>
+                        <div class="stat-card"><div class="val" id="prof-stat-br">0</div><div class="lbl">Branlettes</div></div>
+                        <div class="stat-card"><div class="val" id="prof-stat-ej">0</div><div class="lbl">Éjaculations</div></div>
+                    </div>
+
+                    <div class="badges-section">
+                        <div class="customization-tabs">
+                            <button class="custom-tab-btn active" onclick="switchCustomTab('badges', this)">🏅 Badges Recueillis</button>
+                            <button class="custom-tab-btn" onclick="switchCustomTab('themes', this)">🎨 Ambiances visuelles</button>
+                        </div>
+                        
+                        <div class="custom-panel active" id="custom-panel-badges">
+                            <div class="badges-grid" id="profile-badges-grid"></div>
+                        </div>
+                        
+                        <div class="custom-panel" id="custom-panel-themes">
+                            <div class="themes-preview-grid" id="profile-themes-grid"></div>
+                        </div>
+                    </div>
+
+                    <div class="logs-section">
+                        <h3>📓 Mon Historique Récent</h3>
+                        <div class="logs-container" id="profile-logs-container"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="page-commu" class="page">
-                <input type="text" class="search-box" id="comm-search-input" placeholder="🔍 Rechercher un utilisateur dans la base de données..." oninput="renderCommunityData()">
-                
                 <div class="comm-grid">
                     <div class="comm-section">
-                        <h3>🏆 Classement Général (Top Points)</h3>
+                        <h3>🔥 Classement Mondial</h3>
+                        <div class="lead-tabs">
+                            <button class="lead-tab-btn active" onclick="switchLeaderboardTab('points', this)">Points</button>
+                            <button class="lead-tab-btn" onclick="switchLeaderboardTab('branlettes', this)">Séances</button>
+                            <button class="lead-tab-btn" onclick="switchLeaderboardTab('ejaculations', this)">Libérations</button>
+                        </div>
                         <table class="leaderboard-table">
                             <thead>
                                 <tr>
                                     <th style="width: 40px;">#</th>
-                                    <th>Compétiteur</th>
-                                    <th style="text-align: right;">Branlettes</th>
-                                    <th style="text-align: right;">Points</th>
+                                    <th>Compagnon</th>
+                                    <th style="text-align: right;" id="leaderboard-value-header">Points</th>
                                 </tr>
                             </thead>
                             <tbody id="leaderboard-tbody"></tbody>
@@ -964,697 +914,638 @@
                     </div>
 
                     <div class="comm-section">
-                        <h3>👥 Tous les Utilisateurs</h3>
-                        <div class="user-list" id="global-users-list"></div>
+                        <h3>🔍 Rechercher un compagnon</h3>
+                        <input type="text" class="search-box" id="community-search-input" placeholder="Saisir un pseudo..." oninput="loadCommunityUsers()">
+                        <div class="user-list" id="community-users-list"></div>
                     </div>
                 </div>
             </div>
 
-            <div id="page-shop" class="page">
-                <div class="shop-list">
-                    <div class="shop-list-title">🎭 Titres et Badges Légendaires</div>
-                    <div id="shop-badges-container"></div>
-
-                    <div class="shop-list-title">🌌 Nouveaux Fonds Écrans Dynamiques Animés</div>
-                    <div id="shop-themes-container"></div>
-                </div>
-            </div>
-
             <div id="page-admin" class="page">
-                <h3 style="color: var(--primary);">Gestion globale des comptes utilisateurs</h3>
+                <p style="color:var(--text-muted); margin-bottom:1rem;">Panneau de contrôle suprême réservé aux Administrateurs du Hub.</p>
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Utilisateur</th>
+                            <th>Compagnon</th>
                             <th>Points</th>
                             <th>Branlettes</th>
                             <th>Éjaculations</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="admin-table-tbody"></tbody>
+                    <tbody id="admin-tbody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        // --- DATA DE BASE ---
-        const ADMIN_USERNAME = "admin";
-        
-        // Liste enrichie des Badges
-        const AVAILABLE_BADGES = [
-            { id: 'b_soldat', name: 'Soldat de l\'Ombre', icon: '🥷', cost: 50, desc: 'Un combattant discret.' },
-            { id: 'b_singe', name: 'Le Singe Éveillé', icon: '🐒', cost: 120, desc: 'Agile et rapide dans l\'exécution.' },
-            { id: 'b_guerrier', name: 'Guerrier Divin', icon: '🔱', cost: 300, desc: 'Niveau d\'endurance impressionnant.' },
-            { id: 'b_dieu', name: 'Dieu de la Semence', icon: '🌌', cost: 800, desc: 'Contrôle absolu sur la matière.' }
-        ];
-
-        // Liste enrichie des Fonds Écrans Dynamiques d'Élite
-        const AVAILABLE_THEMES = [
-            { id: 't_classic', name: 'Crépuscule Sombre (Défaut)', icon: '🌅', cost: 0, desc: 'Le fond dégradé orange et noir classique.', cssClass: '' },
-            { id: 't_nebula', name: 'Nébuleuse Cosmique 🌌', icon: '✨', cost: 150, desc: 'Un vide spatial mouvant et coloré hyper immersif.', cssClass: 'theme-nebula' },
-            { id: 't_lava', name: 'Enfer Volcanique 🔥', icon: '🌋', cost: 250, desc: 'Lave fluide en fusion pulsant en arrière-plan.', cssClass: 'theme-lava' },
-            { id: 't_aurora', name: 'Aurore Boréale ❄️', icon: '🌌', cost: 400, desc: 'Vagues lumineuses vertes d\'une nuit nordique pure.', cssClass: 'theme-aurora' },
-            { id: 't_cyberpunk', name: 'Tempête Cyberpunk ⚡', icon: '🔮', cost: 600, desc: 'Matrice néon violette et cyan ultra-stylée et rythmée.', cssClass: 'theme-cyberpunk' }
-        ];
-
-        const PASSIVE_ACHIEVEMENTS = [
-            { id: 'ach_1', name: 'Premier Pas', desc: 'Avoir au moins 1 branlette au compteur.', req: (d) => d.branlettes >= 1, icon: '🌱' },
-            { id: 'ach_5', name: 'Cadence Honorable', desc: 'Atteindre un total de 5 branlettes.', req: (d) => d.branlettes >= 5, icon: '🔥' },
-            { id: 'ach_15', name: 'Machine de Guerre', desc: 'Atteindre un total de 15 branlettes.', req: (d) => d.branlettes >= 15, icon: '🤖' },
-            { id: 'ach_ej1', name: 'Délivrance', desc: 'Enregistrer votre première éjaculation.', req: (d) => d.ejaculations >= 1, icon: '🌊' },
-            { id: 'ach_rich', name: 'Capitaliste', desc: 'Accumuler plus de 500 points au total.', req: (d) => d.points >= 500, icon: '💰' }
-        ];
-
-        const STATIC_CHALLENGES = [
-            { id: 'ch_daily_1', title: 'Échauffement matinal', desc: 'Faire grimper le compteur de branlettes d\'au moins 1 unité aujourd\'hui.', points: 15, tag: 'daily' },
-            { id: 'ch_daily_2', title: 'Explosion contrôlée', desc: 'Atteindre 2 éjaculations de manière sécurisée.', points: 30, tag: 'epic' },
-            { id: 'ch_secret', title: 'Secret : Endurance Absolue', desc: 'Accéder au tableau de bord sans craquer pendant 2 heures.', points: 75, tag: 'hidden' }
-        ];
-
+        const ADMIN_USERNAME = "zzhhr";
         let currentUser = null;
         let userData = null;
 
-        // --- BACKGROUND INTERACTIF PARTICULES (EFFET GLOBAL DYNAMIQUE) ---
-        const canvas = document.getElementById('bg-particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particlesArray = [];
+        // Configuration Globale des Thèmes
+        const ALL_THEMES = [
+            { id: 'default', name: 'Ambre Originel', gradient: 'radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)', icon: '🔥', unlockCost: 0 },
+            { id: 'cyber', name: 'Néon Cyberpunk', gradient: 'radial-gradient(circle at 50% 30%, #002b3d 0%, #010a14 50%, #000000 100%)', icon: '⚡', unlockCost: 350 },
+            { id: 'darkness', name: 'Abysse Obscur', gradient: 'radial-gradient(circle at 50% 30%, #1a002c 0%, #07000e 50%, #000000 100%)', icon: '🌌', unlockCost: 750 },
+            { id: 'toxic', name: 'Fluide Toxique', gradient: 'radial-gradient(circle at 50% 30%, #003813 0%, #020f05 50%, #000000 100%)', icon: '🤢', unlockCost: 1500 },
+            { id: 'god', name: 'Éclat Divin', gradient: 'radial-gradient(circle at 50% 30%, #6e5200 0%, #1f1700 50%, #000000 100%)', icon: '👑', unlockCost: 3000 }
+        ];
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        const ALL_BADGES = [
+            { id: 'novice', name: 'Débutant Docile', desc: 'Premiers pas timides.', icon: '👶' },
+            { id: 'regular', name: 'Pratiquant Régulier', desc: 'Sait s\'occuper de ses soirées.', icon: '💪' },
+            { id: 'expert', name: 'Cadence de Feu', desc: 'Une endurance remarquable.', icon: '⚡' },
+            { id: 'legend', name: 'Dieu de la Secousse', desc: 'Niveau divin atteint.', icon: '👑' },
+            { id: 'marathon', name: 'Endurance Infinie', desc: 'Session chrono de plus de 15 minutes.', icon: '🏃' },
+            { id: 'flash', name: 'Éclair Lubrique', desc: 'Session chrono bouclée en moins d\'une minute.', icon: '⏱️' }
+        ];
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 0.5;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2;
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+        const CHALLENGES_CONFIG = [
+            { id: 'daily_3br', title: 'Entraînement Intensif', desc: 'Enregistrer 3 séances tactiques aujourd\'hui.', points: 30, target: 3, type: 'daily', metric: 'branlettes' },
+            { id: 'epic_2ej', title: 'Explosion Sacrée', desc: 'Atteindre 2 libérations complètes.', points: 60, target: 2, type: 'epic', metric: 'ejaculations' },
+            { id: 'hidden_pts', title: 'Objectif de Valeur', desc: 'Gagner un total de 150 points d\'expérience.', points: 100, target: 150, type: 'hidden', metric: 'points' }
+        ];
 
-                if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-                if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.fillStyle = '#ff9f43';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
+        // Chronomètre variables
+        let chronoInterval = null;
+        let chronoStartTime = 0;
+        let chronoElapsedTime = 0;
+        let isChronoRunning = false;
 
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < 65; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-            requestAnimationFrame(animateParticles);
-        }
-        initParticles();
-        animateParticles();
-
-
-        // --- AUTH & INITIALISATION APP ---
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e){
             e.preventDefault();
             const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value;
-            if(!u || !p) return;
-
             const stored = localStorage.getItem('user_' + u);
-            if(stored) {
-                const data = JSON.parse(stored);
-                if(data.password === p) { loginSuccess(u, data); } 
-                else { alert('Mot de passe incorrect.'); }
-            } else {
-                if(u === ADMIN_USERNAME && p === "admin") {
-                    const adminData = { password: "admin", points: 0, branlettes: 0, ejaculations: 0, unlockedBadges: [], equippedBadges: [], unlockedThemes: ['t_classic'], equippedTheme: 't_classic', hasAura: true, journal: "Je supervise ce monde." };
-                    localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify(adminData));
-                    loginSuccess(ADMIN_USERNAME, adminData);
-                } else { alert('Utilisateur introuvable. Veuillez vous inscrire.'); }
-            }
+            if(!stored) { alert('Utilisateur introuvable.'); return; }
+            
+            // Simple simulation d'auth
+            currentUser = u;
+            userData = JSON.parse(stored);
+            validateUserArrays();
+            initApp();
         });
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', function(e){
             e.preventDefault();
             const u = document.getElementById('reg-username').value.trim();
-            const p = document.getElementById('reg-password').value;
-            if(!u || !p) return;
-            if(localStorage.getItem('user_' + u)) { alert('Ce pseudonyme est déjà pris.'); return; }
+            if(!u) return;
+            if(localStorage.getItem('user_' + u)) { alert('Ce pseudo est déjà pris.'); return; }
 
-            const newUser = {
-                password: p, points: 0, branlettes: 0, ejaculations: 0,
-                unlockedBadges: [], equippedBadges: [],
-                unlockedThemes: ['t_classic'], equippedTheme: 't_classic',
-                hasAura: false, avatarData: null, journal: "", claimedChallenges: []
+            const defaultData = {
+                username: u,
+                points: 0,
+                branlettes: 0,
+                ejaculations: 0,
+                avatar: null,
+                equippedBadges: [],
+                unlockedThemes: ['default'],
+                activeTheme: 'default',
+                logs: [],
+                challengesClaimed: [],
+                friends: [],
+                blocked: []
             };
-            localStorage.setItem('user_' + u, JSON.stringify(newUser));
-            alert('Inscription réussie ! Connectez-vous.');
-            toggleAuth(true);
+
+            localStorage.setItem('user_' + u, JSON.stringify(defaultData));
+            alert('Compte créé avec succès ! Connectez-vous.');
+            toggleAuthCard(true);
         });
 
-        function toggleAuth(toLogin) {
-            document.getElementById('login-card').style.display = toLogin ? 'block' : 'none';
-            document.getElementById('register-card').style.display = toLogin ? 'none' : 'block';
+        function validateUserArrays() {
+            if (!userData.unlockedThemes) userData.unlockedThemes = ['default'];
+            if (!userData.activeTheme) userData.activeTheme = 'default';
+            if (!userData.equippedBadges) userData.equippedBadges = [];
+            if (!userData.logs) userData.logs = [];
+            if (!userData.challengesClaimed) userData.challengesClaimed = [];
+            if (!userData.friends) userData.friends = [];
+            if (!userData.blocked) userData.blocked = [];
         }
 
-        function loginSuccess(username, data) {
-            currentUser = username;
-            userData = data;
-            validateUserArrays();
+        function toggleAuthCard(showLogin) {
+            document.getElementById('login-card').style.display = showLogin ? 'block' : 'none';
+            document.getElementById('register-card').style.display = showLogin ? 'none' : 'block';
+        }
 
+        function initApp() {
             document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'block';
             
-            if(currentUser === ADMIN_USERNAME) { document.getElementById('menu-admin-btn').style.display = 'block'; }
-            
+            if(currentUser === ADMIN_USERNAME) {
+                document.getElementById('menu-btn-admin').style.display = 'block';
+            } else {
+                document.getElementById('menu-btn-admin').style.display = 'none';
+            }
+
             applyCurrentTheme();
             updateDOMValues();
-            switchPage('profil');
-        }
-
-        function validateUserArrays() {
-            if(!userData.unlockedBadges) userData.unlockedBadges = [];
-            if(!userData.equippedBadges) userData.equippedBadges = [];
-            if(!userData.unlockedThemes) userData.unlockedThemes = ['t_classic'];
-            if(!userData.equippedTheme) userData.equippedTheme = 't_classic';
-            if(!userData.claimedChallenges) userData.claimedChallenges = [];
+            switchPage('chrono', document.querySelector('.menu-btn'));
         }
 
         function logout() {
             saveData();
+            if(isChronoRunning) resetChrono();
             currentUser = null; userData = null;
-            document.body.className = ''; // reset theme
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('auth-container').style.display = 'flex';
-            document.getElementById('menu-admin-btn').style.display = 'none';
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
+            // Reset background par défaut
+            document.documentElement.style.setProperty('--app-background', 'radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)');
         }
 
-        // --- NAVIGATION OSTELES ---
-        function switchPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            
-            const targetPage = document.getElementById('page-' + pageId);
-            if(targetPage) targetPage.classList.add('active');
-            
-            const btn = Array.from(document.querySelectorAll('.menu-btn')).find(b => b.getAttribute('onclick').includes(`'${pageId}'`));
-            if(btn) btn.classList.add('active');
-
-            const titleMap = { profil: "Profil & Customisation", compteurs: "Vos Compteurs", defis: "Tableau des Défis", commu: "Communauté & Classements", shop: "Boutique Légendaire", admin: "Administration suprême" };
-            document.getElementById('current-page-title').innerText = titleMap[pageId] || "Dashboard";
-
-            if(pageId === 'profil') { renderProfilCustomization(); }
-            if(pageId === 'shop') { renderShopItems(); }
-            if(pageId === 'defis') { renderChallenges(); }
-            if(pageId === 'commu') { renderCommunityData(); }
-            if(pageId === 'admin') { loadAdminPanelData(); }
-        }
-
-        function switchCustomTab(tab) {
-            document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.custom-panel').forEach(p => p.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('custom-panel-' + tab).classList.add('active');
-        }
-
-        // --- APPLICATION DU THÈME DYNAMIQUE SELECTIONNÉ ---
         function applyCurrentTheme() {
-            document.body.className = ''; // On vide les anciennes classes de thèmes animés
-            const currentThemeId = userData.equippedTheme || 't_classic';
-            const themeConfig = AVAILABLE_THEMES.find(t => t.id === currentThemeId);
-            if(themeConfig && themeConfig.cssClass) {
-                document.body.classList.add(themeConfig.cssClass);
-            }
+            if (!userData || !userData.activeTheme) return;
+            const current = ALL_THEMES.find(t => t.id === userData.activeTheme) || ALL_THEMES[0];
+            document.documentElement.style.setProperty('--app-background', current.gradient);
         }
 
-        // --- COMPTEURS ACTION ---
-        function modifyCounter(field, amount) {
-            if(!userData) return;
-            if(amount < 0 && userData[field] <= 0) return;
-            
-            userData[field] += amount;
-            // Attribution des points : +10 par branlette, +25 par éjaculation
-            if(amount > 0) {
-                userData.points += (field === 'branlettes') ? 10 : 25;
-            } else {
-                userData.points -= (field === 'branlettes') ? 10 : 25;
-                if(userData.points < 0) userData.points = 0;
-            }
-
-            updateDOMValues();
-            saveData();
-        }
-
-        function saveJournalText() {
-            if(!userData) return;
-            userData.journal = document.getElementById('journal-textarea').value;
-            saveData();
-        }
-
-        // --- ENREGISTREMENT ET RAFRAICHISSEMENT DOM ---
         function updateDOMValues() {
-            if(!userData) return;
+            if(!currentUser) return;
             
-            const calculRank = (pts) => {
-                if(pts >= 1200) return "🌌 Maître Suprême de la Semence";
-                if(pts >= 600) return "🔱 Guerrier d'Élite Cosmique";
-                if(pts >= 250) return "🔥 Vétéran Endurci";
-                if(pts >= 80) return "🌱 Compétiteur Actif";
-                return "🥚 Novice Vulnérable";
-            };
+            // Calculs dynamiques de rang
+            let r = "Novice Limité";
+            if(userData.points >= 3000) r = "Divinité Souveraine 👑";
+            else if(userData.points >= 1500) r = "Archange Érotique ☄️";
+            else if(userData.points >= 600) r = "Maître Praticien 👑";
+            else if(userData.points >= 200) r = "Initié Assidu 📿";
 
-            const currentRank = calculRank(userData.points);
-
-            // Remplissage Sidebar
-            document.getElementById('side-username').innerText = currentUser;
-            document.getElementById('side-rank').innerText = currentRank;
+            // Sidebar
+            document.getElementById('side-username').innerText = userData.username;
+            document.getElementById('side-rank').innerText = r;
             document.getElementById('side-pts').innerText = userData.points;
             document.getElementById('side-br').innerText = userData.branlettes;
             document.getElementById('side-ej').innerText = userData.ejaculations;
 
-            // Remplissage Onglet Profil principal
-            document.getElementById('prof-username').innerText = currentUser;
-            document.getElementById('prof-rank').innerText = currentRank;
-            document.getElementById('prof-pts').innerText = userData.points;
-            document.getElementById('prof-br').innerText = userData.branlettes;
-            document.getElementById('prof-ej').innerText = userData.ejaculations;
-            document.getElementById('journal-textarea').value = userData.journal || "";
+            // Render badges side
+            const sB = document.getElementById('side-badges'); sB.innerHTML = '';
+            userData.equippedBadges.forEach(bid => {
+                const bObj = ALL_BADGES.find(b => b.id === bid);
+                if(bObj) sB.innerHTML += `<span title="${bObj.name}">${bObj.icon}</span>`;
+            });
 
-            // Compteurs numériques
+            // Page Compteurs
             document.getElementById('count-br').innerHTML = `${userData.branlettes}<span>/ ∞</span>`;
             document.getElementById('count-ej').innerHTML = `${userData.ejaculations}<span>/ ∞</span>`;
 
-            // Rendu des badges équipés dans la sidebar
-            const sideBadgesRow = document.getElementById('side-badges-row');
-            sideBadgesRow.innerHTML = "";
-            userData.equippedBadges.forEach(bId => {
-                const bConf = AVAILABLE_BADGES.find(x => x.id === bId);
-                if(bConf) {
-                    const span = document.createElement('span');
-                    span.innerText = bConf.icon;
-                    span.title = bConf.name;
-                    sideBadgesRow.appendChild(span);
-                }
-            });
+            // Page Profil
+            document.getElementById('profile-display-name').innerText = userData.username;
+            document.getElementById('profile-display-rank').innerText = r;
+            document.getElementById('prof-stat-pts').innerText = userData.points;
+            document.getElementById('prof-stat-br').innerText = userData.branlettes;
+            document.getElementById('prof-stat-ej').innerText = userData.ejaculations;
 
-            // Gestion de l'aura visuelle de l'avatar
-            const avatarDiv = document.getElementById('avatar-display-main');
-            if(userData.avatarData) {
-                avatarDiv.innerHTML = `<img src="${userData.avatarData}">`;
-            } else { avatarDiv.innerText = "😈"; }
+            const pAv = document.getElementById('profile-avatar-container');
+            if(userData.avatar) { pAv.innerHTML = `<img src="${userData.avatar}">`; } else { pAv.innerHTML = "😈"; }
+            if(userData.points >= 1000) pAv.className = "avatar-main has-aura"; else pAv.className = "avatar-main";
 
-            if(userData.hasAura) { avatarDiv.classList.add('has-aura'); } 
-            else { avatarDiv.classList.remove('has-aura'); }
+            loadProfileBadgesGrid();
+            loadProfileThemesGrid();
+            loadProfileLogs();
         }
 
-        // --- SYSTEME AVATAR ET AURA ---
+        function switchPage(pageId, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('page-' + pageId).classList.add('active');
+            if(btn) btn.classList.add('active');
+
+            const titleMap = { chrono:'⏱️ CHRONOMÈTRE DE SESSION', compteurs:'🔢 COMPTEURS D\'ACTIVITÉ', defis:'🎯 DÉFIS & RÉCOMPENSES', profil:'👤 PERSONNALISATION DU COMPAGNON', commu:'👥 HUB COMMUNAUTAIRE', admin:'⚙️ HAUTE MODÉRATION' };
+            document.getElementById('current-page-title').innerText = titleMap[pageId] || "TABLEAU DE BORD";
+
+            if(pageId === 'defis') loadChallenges();
+            if(pageId === 'commu') { loadLeaderboard(); loadCommunityUsers(); }
+            if(pageId === 'admin') loadAdminPanelData();
+            if(pageId === 'profil') { loadProfileBadgesGrid(); loadProfileThemesGrid(); }
+        }
+
+        function switchCustomTab(tabId, btn) {
+            document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.custom-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('custom-panel-' + tabId).classList.add('active');
+        }
+
+        // --- CORE ACTION COMPTEURS ---
+        function adjustValue(metric, amount) {
+            if(!userData) return;
+            if(metric === 'branlettes') {
+                userData.branlettes = Math.max(0, userData.branlettes + amount);
+                if(amount > 0) { userData.points += 10; addLog("Enregistrement manuel d'une séance active (+10 PTS)"); }
+            } else if(metric === 'ejaculations') {
+                userData.ejaculations = Math.max(0, userData.ejaculations + amount);
+                if(amount > 0) { userData.points += 25; addLog("Enregistrement manuel d'une libération accomplie (+25 PTS)"); }
+            }
+            saveData(); updateDOMValues();
+        }
+
+        function addLog(text) {
+            const time = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+            userData.logs.unshift(`[${time}] ${text}`);
+            if(userData.logs.length > 40) userData.logs.pop();
+        }
+
+        // --- MANAGEMENT CHRONO ---
+        function toggleChrono() {
+            const btn = document.getElementById('btn-chrono-toggle');
+            if(!isChronoRunning) {
+                isChronoRunning = true;
+                chronoStartTime = Date.now() - chronoElapsedTime;
+                chronoInterval = setInterval(updateChronoDisplay, 10);
+                btn.innerText = "ARRÊTER ET ENREGISTRER";
+                btn.style.background = "rgba(255, 71, 87, 0.15)";
+                btn.style.borderColor = "var(--danger)";
+                btn.style.color = "var(--danger)";
+            } else {
+                isChronoRunning = false;
+                clearInterval(chronoInterval);
+                btn.innerText = "LANCER LE CHRONO";
+                btn.style.background = "rgba(255, 159, 67, 0.15)";
+                btn.style.borderColor = "var(--primary)";
+                btn.style.color = "var(--primary)";
+                saveChronoSession();
+            }
+        }
+
+        function resetChrono() {
+            isChronoRunning = false;
+            clearInterval(chronoInterval);
+            chronoElapsedTime = 0;
+            document.getElementById('chrono-display').innerText = "00:00.00";
+            const btn = document.getElementById('btn-chrono-toggle');
+            btn.innerText = "LANCER LE CHRONO";
+            btn.style.background = "rgba(255, 159, 67, 0.15)";
+            btn.style.borderColor = "var(--primary)";
+            btn.style.color = "var(--primary)";
+        }
+
+        function updateChronoDisplay() {
+            chronoElapsedTime = Date.now() - chronoStartTime;
+            let totalSeconds = Math.floor(chronoElapsedTime / 1000);
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            let centiseconds = Math.floor((chronoElapsedTime % 1000) / 10);
+
+            document.getElementById('chrono-display').innerText = 
+                (minutes < 10 ? '0' : '') + minutes + ':' + 
+                (seconds < 10 ? '0' : '') + seconds + '.' + 
+                (centiseconds < 10 ? '0' : '') + centiseconds;
+        }
+
+        function saveChronoSession() {
+            const durationSec = Math.floor(chronoElapsedTime / 1000);
+            if(durationSec < 5) { alert("Session trop brève pour être considérée comme valide."); resetChrono(); return; }
+
+            let earned = 15; // Base fixe pour utilisation chrono
+            let logMsg = `Séance chronométrée de ${Math.floor(durationSec/60)}m ${durationSec%60}s`;
+            
+            const note = document.getElementById('chrono-note').value.trim();
+            if(note) { logMsg += ` — Note: "${note}"`; document.getElementById('chrono-note').value = ''; }
+
+            userData.branlettes += 1;
+            userData.points += earned;
+            addLog(`${logMsg} (+${earned} PTS)`);
+
+            // Badges bonus chrono
+            if(durationSec >= 900 && !userData.equippedBadges.includes('marathon')) {
+                alert("🏅 Badge débloqué : Endurance Infinie (Plus de 15 minutes) !");
+            }
+            if(durationSec <= 60 && !userData.equippedBadges.includes('flash')) {
+                alert("🏅 Badge débloqué : Éclair Lubrique (Moins d'une minute) !");
+            }
+
+            resetChrono(); saveData(); updateDOMValues();
+            alert(`Session enregistrée ! +${earned} Points d'expérience.`);
+        }
+
+        // --- AVATAR ASSET UPLOAD ---
         function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
         function handleAvatarUpload(input) {
             if(input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    userData.avatarData = e.target.result;
-                    updateDOMValues();
-                    saveData();
+                    userData.avatar = e.target.result;
+                    saveData(); updateDOMValues();
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
-        function toggleAvatarAura() {
-            if(!userData) return;
-            userData.hasAura = !userData.hasAura;
-            updateDOMValues();
-            saveData();
+
+        // --- RENDER DYNAMIQUE DES BADGES ---
+        function loadProfileBadgesGrid() {
+            const grid = document.getElementById('profile-badges-grid'); grid.innerHTML = '';
+            ALL_BADGES.forEach(b => {
+                let isUnlocked = false;
+                if(b.id === 'novice') isUnlocked = true;
+                if(b.id === 'regular' && userData.branlettes >= 10) isUnlocked = true;
+                if(b.id === 'expert' && userData.branlettes >= 30) isUnlocked = true;
+                if(b.id === 'legend' && userData.points >= 2000) isUnlocked = true;
+                if(b.id === 'marathon' && userData.logs.some(l => l.includes('15m') || l.includes('16m') || l.includes('17m'))) isUnlocked = true;
+                if(b.id === 'flash' && userData.logs.some(l => l.includes(' 0m ') && !l.includes('0m 0s') && !l.includes('0m 1s') && !l.includes('0m 2s') && !l.includes('0m 3s') && !l.includes('0m 4s'))) isUnlocked = true;
+
+                const isEquipped = userData.equippedBadges.includes(b.id);
+                let cls = "badge-item";
+                if(isUnlocked) cls += " unlocked";
+                if(isEquipped) cls += " equipped";
+
+                const div = document.createElement('div'); div.className = cls;
+                div.innerHTML = `<span class="badge-icon">${b.icon}</span><strong>${b.name}</strong><br><span style="font-size:0.7rem;color:var(--text-muted);">${b.desc}</span>`;
+                if(isUnlocked) { div.onclick = () => toggleEquipBadge(b.id); }
+                grid.appendChild(div);
+            });
         }
 
-        // --- RENDER : PERSONNALISATION DU PROFIL (INVENTAIRE) ---
-        function renderProfilCustomization() {
-            // Rendu des badges possédés
-            const badgeContainer = document.getElementById('inventory-badges-container');
-            badgeContainer.innerHTML = "";
-            AVAILABLE_BADGES.forEach(b => {
-                const isUnlocked = userData.unlockedBadges.includes(b.id);
-                const isEquipped = userData.equippedBadges.includes(b.id);
-                
-                const div = document.createElement('div');
-                div.className = `badge-item ${isUnlocked ? 'unlocked' : 'locked'} ${isEquipped ? 'equipped' : ''}`;
-                div.innerHTML = `<span class="badge-icon">${b.icon}</span><strong>${b.name}</strong>`;
-                
-                if(isUnlocked) {
-                    div.onclick = () => {
-                        if(isEquipped) {
-                            userData.equippedBadges = userData.equippedBadges.filter(id => id !== b.id);
-                        } else {
-                            if(userData.equippedBadges.length >= 3) { alert('Maximum 3 badges équipés simultanément.'); return; }
-                            userData.equippedBadges.push(b.id);
-                        }
-                        renderProfilCustomization();
-                        updateDOMValues();
-                        saveData();
-                    };
-                } else { div.title = "Verrouillé - Achetez-le dans la boutique."; }
-                badgeContainer.appendChild(div);
-            });
+        function toggleEquipBadge(bid) {
+            const idx = userData.equippedBadges.indexOf(bid);
+            if(idx > -1) { userData.equippedBadges.splice(idx, 1); }
+            else { if(userData.equippedBadges.length >= 3) { alert("3 Badges maximum."); return; } userData.equippedBadges.push(bid); }
+            saveData(); updateDOMValues();
+        }
 
-            // Rendu des fonds d'écran achetés
-            const themesContainer = document.getElementById('inventory-themes-container');
-            themesContainer.innerHTML = "";
-            AVAILABLE_THEMES.forEach(t => {
+        // --- RENDER DYNAMIQUE DES THEMES (Correction visuelle complète) ---
+        function loadProfileThemesGrid() {
+            const grid = document.getElementById('profile-themes-grid'); 
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            ALL_THEMES.forEach(t => {
                 const isUnlocked = userData.unlockedThemes.includes(t.id);
-                const isEquipped = userData.equippedTheme === t.id;
+                const isEquipped = (userData.activeTheme === t.id);
+
+                let cardCls = "theme-preview-card";
+                if (!isUnlocked) cardCls += " locked";
+                if (isEquipped) cardCls += " equipped";
 
                 const card = document.createElement('div');
-                card.className = `theme-preview-card ${isUnlocked ? 'unlocked' : 'locked'} ${isEquipped ? 'equipped' : ''}`;
-                
-                // Mini conteneur pour simuler le rendu visuel
-                let previewStyle = "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)";
-                if(t.id === 't_nebula') previewStyle = "linear-gradient(-45deg, #0f0c1b, #201335, #0b2545, #000000)";
-                if(t.id === 't_lava') previewStyle = "linear-gradient(180deg, #140505, #2d0b0b, #4a0e17, #000000)";
-                if(t.id === 't_aurora') previewStyle = "linear-gradient(135deg, #020c0f, #05261e, #134e3a, #030b14)";
-                if(t.id === 't_cyberpunk') previewStyle = "linear-gradient(45deg, #0d0114, #1a0826, #051923, #020005)";
+                card.className = cardCls;
+
+                // Génération de la structureHTML pour la carte de prévisualisation
+                let lockBadgeHtml = !isUnlocked ? `<div class="lock-indicator">🔒 ${t.unlockCost} PTS</div>` : '';
+                let actionBtnHtml = '';
+
+                if (isEquipped) {
+                    actionBtnHtml = `<button class="btn-preview-action" disabled>ÉQUIPÉ</button>`;
+                } else if (isUnlocked) {
+                    actionBtnHtml = `<button class="btn-preview-action" onclick="equipTheme('${t.id}')">ACTIVER</button>`;
+                } else {
+                    const canAfford = userData.points >= t.unlockCost;
+                    actionBtnHtml = `<button class="btn-preview-action" ${canAfford ? '' : 'disabled'} onclick="unlockTheme('${t.id}', ${t.unlockCost})">DEBLOQUER</button>`;
+                }
 
                 card.innerHTML = `
-                    <div class="theme-miniature" style="background: ${previewStyle}; background-size: cover;">
+                    <div class="theme-miniature" style="background: ${t.gradient};">
                         ${t.icon}
-                        ${!isUnlocked ? `<span class="lock-indicator">🔒</span>` : ''}
+                        ${lockBadgeHtml}
                     </div>
                     <div class="theme-preview-info">
                         <div class="theme-preview-name">${t.name}</div>
-                        <button class="btn-preview-action" ${!isUnlocked ? 'disabled' : ''}>${isEquipped ? 'Équipé' : 'Activer'}</button>
+                        ${actionBtnHtml}
                     </div>
                 `;
-
-                if(isUnlocked && !isEquipped) {
-                    card.querySelector('.btn-preview-action').onclick = () => {
-                        userData.equippedTheme = t.id;
-                        applyCurrentTheme();
-                        renderProfilCustomization();
-                        saveData();
-                    };
-                }
-                themesContainer.appendChild(card);
+                grid.appendChild(card);
             });
         }
 
-        // --- RENDER : BOUTIQUE (ACHATS) ---
-        function renderShopItems() {
-            // Section Badges/Titres
-            const badgesShop = document.getElementById('shop-badges-container');
-            badgesShop.innerHTML = "";
-            AVAILABLE_BADGES.forEach(b => {
-                const alreadyOwned = userData.unlockedBadges.includes(b.id);
-                const item = document.createElement('div');
-                item.className = "shop-item";
-                item.innerHTML = `
-                    <div class="shop-info">
-                        <span class="shop-icon">${b.icon}</span>
-                        <div class="shop-details">
-                            <h4>${b.name}</h4>
-                            <p>${b.desc}</p>
-                        </div>
-                    </div>
-                    <div>
-                        ${alreadyOwned ? '<span style="color:var(--success); font-size:0.85rem; font-weight:bold;">Possédé</span>' : `
-                            <button class="btn-buy" onclick="buyItem('badge', '${b.id}', ${b.cost})">
-                                Acheter <span class="shop-cost">(${b.cost} pts)</span>
-                            </button>
-                        `}
-                    </div>
-                `;
-                badgesShop.appendChild(item);
-            });
-
-            // Section Nouveaux Thèmes Dynamiques Animés
-            const themesShop = document.getElementById('shop-themes-container');
-            themesShop.innerHTML = "";
-            AVAILABLE_THEMES.forEach(t => {
-                if(t.cost === 0) return; // Ignore le thème par défaut
-                const alreadyOwned = userData.unlockedThemes.includes(t.id);
-                const item = document.createElement('div');
-                item.className = "shop-item";
-                item.innerHTML = `
-                    <div class="shop-info">
-                        <span class="shop-icon">${t.icon}</span>
-                        <div class="shop-details">
-                            <h4>${t.name}</h4>
-                            <p>${t.desc}</p>
-                        </div>
-                    </div>
-                    <div>
-                        ${alreadyOwned ? '<span style="color:var(--success); font-size:0.85rem; font-weight:bold;">Débloqué</span>' : `
-                            <button class="btn-buy" onclick="buyItem('theme', '${t.id}', ${t.cost})">
-                                Débloquer <span class="shop-cost">(${t.cost} pts)</span>
-                            </button>
-                        `}
-                    </div>
-                `;
-                themesShop.appendChild(item);
-            });
-        }
-
-        function buyItem(type, id, cost) {
-            if(userData.points < cost) { alert('Points insuffisants pour finaliser cet achat.'); return; }
+        function unlockTheme(themeId, cost) {
+            if (userData.points < cost) { alert("Expérience insuffisante."); return; }
+            if (userData.unlockedThemes.includes(themeId)) return;
             
-            userData.points -= cost;
-            if(type === 'badge') {
-                userData.unlockedBadges.push(id);
-            } else if(type === 'theme') {
-                userData.unlockedThemes.push(id);
+            if (confirm(`Débloquer le thème pour ${cost} Points ?`)) {
+                userData.points -= cost;
+                userData.unlockedThemes.push(themeId);
+                addLog(`Ambiance débloquée au profil : ${themeId} (-${cost} PTS)`);
+                saveData();
+                updateDOMValues();
             }
-
-            updateDOMValues();
-            renderShopItems();
-            saveData();
-            alert('Achat validé avec succès ! Rendez-vous sur votre profil pour l\'équiper.');
         }
 
-        // --- RENDER : DÉFIS DU JOUR ---
-        function renderChallenges() {
-            const container = document.getElementById('challenges-container');
-            container.innerHTML = "";
+        function equipTheme(themeId) {
+            if (!userData.unlockedThemes.includes(themeId)) return;
+            userData.activeTheme = themeId;
+            addLog(`Nouvelle ambiance visuelle équipée : ${themeId}`);
+            saveData();
+            applyCurrentTheme();
+            updateDOMValues();
+        }
 
-            STATIC_CHALLENGES.forEach(c => {
-                const isClaimed = userData.claimedChallenges.includes(c.id);
-                
-                // Simulation dynamique de progression
+        function loadProfileLogs() {
+            const container = document.getElementById('profile-logs-container'); container.innerHTML = '';
+            if(userData.logs.length === 0) { container.innerHTML = '<div class="log-item">Aucune activité enregistrée.</div>'; return; }
+            userData.logs.forEach(l => {
+                container.innerHTML += `<div class="log-item">${l}</div>`;
+            });
+        }
+
+        // --- SYSTEME DE DEFIS DYNAMIQUES ---
+        function loadChallenges() {
+            const container = document.getElementById('defis-list-container'); container.innerHTML = '';
+            CHALLENGES_CONFIG.forEach(c => {
                 let currentProgress = 0;
-                let targetProgress = 1;
-                if(c.id === 'ch_daily_1') { currentProgress = userData.branlettes >= 1 ? 1 : 0; }
-                if(c.id === 'ch_daily_2') { currentProgress = userData.ejaculations; targetProgress = 2; }
-                if(c.id === 'ch_secret') { currentProgress = userData.points >= 80 ? 1 : 0; } // Condition alternative
+                if(c.metric === 'branlettes') currentProgress = userData.branlettes;
+                else if(c.metric === 'ejaculations') currentProgress = userData.ejaculations;
+                else if(c.metric === 'points') currentProgress = userData.points;
 
-                if(currentProgress > targetProgress) currentProgress = targetProgress;
-                const percent = Math.floor((currentProgress / targetProgress) * 100);
-                const isReady = (currentProgress >= targetProgress) && !isClaimed;
+                const isReady = currentProgress >= c.target;
+                const isClaimed = userData.challengesClaimed.includes(c.id);
 
-                const card = document.createElement('div');
-                card.className = "challenge-card";
-                card.innerHTML = `
+                let pct = Math.min(100, Math.floor((currentProgress / c.target) * 100));
+                
+                let btnHtml = `<button class="btn-claim">VERROUILLÉ</button>`;
+                if(isClaimed) { btnHtml = `<button class="btn-claim claimed" disabled>RÉCOMPENSÉ</button>`; }
+                else if(isReady) { btnHtml = `<button class="btn-claim ready" onclick="claimChallenge('${c.id}', ${c.points})">RÉCUPÉRER</button>`; }
+
+                const div = document.createElement('div'); div.className = "challenge-card";
+                div.innerHTML = `
                     <div class="challenge-info">
-                        <span class="challenge-tag ${c.tag}">${c.tag}</span>
+                        <span class="challenge-tag ${c.type}">${c.type === 'daily' ? 'Quotidien' : c.type === 'epic' ? 'Épique' : 'Secret'}</span>
                         <div class="challenge-title">${c.title}</div>
                         <div class="challenge-desc">${c.desc}</div>
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${percent}%;"></div>
-                        </div>
-                        <span class="progress-text">Progression : ${currentProgress}/${targetProgress} (${percent}%)</span>
-                        <div class="challenge-reward">+${c.points} Points de Victoire</div>
+                        <div class="progress-container"><div class="progress-bar" style="width: ${pct}%;"></div></div>
+                        <span class="progress-text">Progression : ${currentProgress} / ${c.target} (${pct}%)</span>
+                        <div class="challenge-reward">+${c.points} XP Récompense</div>
                     </div>
-                    <div>
-                        ${isClaimed ? '<button class="btn-claim claimed" disabled>Récupéré</button>' : `
-                            <button class="btn-claim ${isReady ? 'ready' : ''}" ${!isReady ? 'disabled' : ''} onclick="claimChallenge('${c.id}', ${c.points})">
-                                Réclamer
-                            </button>
-                        `}
-                    </div>
+                    ${btnHtml}
                 `;
-                container.appendChild(card);
+                container.appendChild(div);
             });
         }
 
-        function claimChallenge(id, pts) {
-            if(userData.claimedChallenges.includes(id)) return;
-            userData.claimedChallenges.push(id);
+        function claimChallenge(cid, pts) {
+            if(userData.challengesClaimed.includes(cid)) return;
+            userData.challengesClaimed.push(cid);
             userData.points += pts;
-            updateDOMValues();
-            renderChallenges();
-            saveData();
-            alert(`Défi validé ! +${pts} points ajoutés à votre compte.`);
+            addLog(`Défi validé : ${cid} (+${pts} PTS)`);
+            saveData(); updateDOMValues(); loadChallenges();
+            alert(`Félicitations ! Votre compte a été crédité de +${pts} Points.`);
         }
 
-        // --- RENDER : COMMUNAUTÉ & CLASSEMENT ---
-        function renderCommunityData() {
-            const query = document.getElementById('comm-search-input').value.toLowerCase().trim();
-            
-            // Collecte et filtrage de tous les profils de la base locale
-            let list = [];
-            for (let i = 0; i < localStorage.length; i++){
+        // --- HUB COMMUNAUTAIRE ET CLASSEMENT ---
+        let currentLeaderboardTab = "points";
+        function switchLeaderboardTab(tab, btn) {
+            currentLeaderboardTab = tab;
+            document.querySelectorAll('#page-commu .lead-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('leaderboard-value-header').innerText = tab.charAt(0).toUpperCase() + tab.slice(1);
+            loadLeaderboard();
+        }
+
+        function getAllUsers() {
+            const list = [];
+            for(let i=0; i<localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if(key.startsWith('user_')) {
-                    const uName = key.replace('user_', '');
-                    try {
-                        const uData = JSON.parse(localStorage.getItem(key));
-                        list.push({ username: uName, data: uData });
-                    } catch(e){}
+                    try { list.push(JSON.parse(localStorage.getItem(key))); } catch(e){}
                 }
             }
+            return list;
+        }
 
-            // Tri pour le classement (Top Points décroissant)
-            const sortedLeaderboard = [...list].sort((a, b) => (b.data.points || 0) - (a.data.points || 0));
-            
-            // Rendu Leaderboard
-            const leadTbody = document.getElementById('leaderboard-tbody');
-            leadTbody.innerHTML = "";
-            sortedLeaderboard.slice(0, 10).forEach((user, index) => {
+        function loadLeaderboard() {
+            const tbody = document.getElementById('leaderboard-tbody'); tbody.innerHTML = '';
+            let users = getAllUsers();
+
+            // Tri
+            users.sort((a,b) => (b[currentLeaderboardTab] || 0) - (a[currentLeaderboardTab] || 0));
+
+            users.forEach((u, index) => {
                 const rankNum = index + 1;
-                let rankClass = "";
-                if(rankNum === 1) rankClass = "top1";
-                if(rankNum === 2) rankClass = "top2";
-                if(rankNum === 3) rankClass = "top3";
+                let rankCls = "lead-rank-num";
+                if(rankNum === 1) rankCls += " top1";
+                else if(rankNum === 2) rankCls += " top2";
+                else if(rankNum === 3) rankCls += " top3";
+
+                let avHtml = u.avatar ? `<img src="${u.avatar}">` : "😈";
+                let val = u[currentLeaderboardTab] || 0;
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="lead-rank-num ${rankClass}">#${rankNum}</td>
+                    <td class="${rankCls}">#${rankNum}</td>
                     <td>
                         <div class="lead-user-cell">
-                            <div class="user-card-avatar" style="width:26px; height:26px; font-size:0.8rem;">
-                                ${user.data.avatarData ? `<img src="${user.data.avatarData}">` : '😈'}
-                            </div>
-                            <span class="username-click" onclick="openUserProfileModal('${user.username}')">${user.username}</span>
+                            <div class="user-card-avatar">${avHtml}</div>
+                            <span class="username-click" onclick="openProfileModal('${u.username}')">${u.username}</span>
                         </div>
                     </td>
-                    <td style="text-align: right; color: var(--text-muted);">${user.data.branlettes || 0}</td>
-                    <td style="text-align: right; font-weight: bold; color: var(--primary);">${user.data.points || 0}</td>
+                    <td style="text-align: right; font-weight: bold; color: var(--primary);">${val}</td>
                 `;
-                leadTbody.appendChild(tr);
-            });
-
-            // Filtrage liste globale selon la recherche
-            const filteredUsers = list.filter(u => u.username.toLowerCase().includes(query));
-            const globalUsersContainer = document.getElementById('global-users-list');
-            globalUsersContainer.innerHTML = "";
-
-            filteredUsers.forEach(u => {
-                const div = document.createElement('div');
-                div.className = "user-card-item";
-                div.innerHTML = `
-                    <div class="user-card-info">
-                        <div class="user-card-avatar">
-                            ${u.data.avatarData ? `<img src="${u.data.avatarData}">` : '😈'}
-                        </div>
-                        <div class="user-card-details">
-                            <div class="username-click" onclick="openUserProfileModal('${u.username}')">${u.username}</div>
-                            <div class="sub">Points: ${u.data.points || 0} | Session: ${u.data.branlettes || 0}</div>
-                        </div>
-                    </div>
-                `;
-                globalUsersContainer.appendChild(div);
+                tbody.appendChild(tr);
             });
         }
 
-        // --- INTERACTION PROFIL MODAL (PUBLIC VIEW) ---
-        function openUserProfileModal(username) {
-            const stored = localStorage.getItem('user_' + username);
-            if(!stored) return;
-            const uData = JSON.parse(stored);
+        function loadCommunityUsers() {
+            const listContainer = document.getElementById('community-users-list'); listContainer.innerHTML = '';
+            const q = document.getElementById('community-search-input').value.toLowerCase().trim();
+            let users = getAllUsers();
 
-            document.getElementById('modal-name').innerText = username;
-            document.getElementById('modal-rank').innerText = (uData.points >= 250) ? "🔱 Guerrier Vétéran" : "🥚 Novice Standard";
-            document.getElementById('modal-stat-pts').innerText = uData.points || 0;
-            document.getElementById('modal-stat-br').innerText = uData.branlettes || 0;
-            document.getElementById('modal-stat-ej').innerText = uData.ejaculations || 0;
+            users.forEach(u => {
+                if(u.username === currentUser) return;
+                if(q && !u.username.toLowerCase().includes(q)) return;
 
-            const avContainer = document.getElementById('modal-avatar-container');
-            if(uData.avatarData) { avContainer.innerHTML = `<img src="${uData.avatarData}">`; } 
-            else { avContainer.innerText = "😈"; }
-            if(uData.hasAura) { avContainer.className = "avatar-main has-aura"; } 
-            else { avContainer.className = "avatar-main"; }
+                let avHtml = u.avatar ? `<img src="${u.avatar}">` : "😈";
+                const div = document.createElement('div'); div.className = "user-card-item";
+                
+                let isFriend = userData.friends.includes(u.username);
+                let isBlocked = userData.blocked.includes(u.username);
 
-            // Badges modal
-            const mBadges = document.getElementById('modal-badges');
-            mBadges.innerHTML = "";
-            (uData.equippedBadges || []).forEach(bId => {
-                const bConf = AVAILABLE_BADGES.find(x => x.id === bId);
-                if(bConf) mBadges.innerHTML += `<span title="${bConf.name}">${bConf.icon}</span>`;
-            });
+                let actionsHtml = `
+                    <button class="btn-action-sm add" onclick="toggleFriend('${u.username}')">${isFriend ? 'Ami ✓' : 'Suivre'}</button>
+                    <button class="btn-action-sm block" onclick="toggleBlock('${u.username}')">${isBlocked ? 'Débloquer' : 'Bloquer'}</button>
+                `;
 
-            // Succès Modal
-            const achContainer = document.getElementById('modal-achievements-container');
-            achContainer.innerHTML = "";
-            PASSIVE_ACHIEVEMENTS.forEach(ach => {
-                const reached = ach.req(uData);
-                achContainer.innerHTML += `
-                    <div class="ach-card ${reached ? 'unlocked' : ''}" style="opacity: ${reached ? '1':'0.3'}; padding:0.5rem; gap:10px;">
-                        <span style="font-size:1.3rem;">${ach.icon}</span>
-                        <div>
-                            <h4 style="font-size:0.8rem;">${ach.name}</h4>
-                            <p style="font-size:0.65rem; color:var(--text-muted);">${ach.desc}</p>
+                div.innerHTML = `
+                    <div class="user-card-info">
+                        <div class="user-card-avatar">${avHtml}</div>
+                        <div class="user-card-details">
+                            <div class="username-click" onclick="openProfileModal('${u.username}')">${u.username}</div>
+                            <div class="sub">${u.points} PTS — ${u.branlettes} BR</div>
                         </div>
                     </div>
+                    <div class="user-card-actions">${actionsHtml}</div>
                 `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        function toggleFriend(target) {
+            const idx = userData.friends.indexOf(target);
+            if(idx > -1) userData.friends.splice(idx, 1); else userData.friends.push(target);
+            saveData(); loadCommunityUsers();
+        }
+
+        function toggleBlock(target) {
+            const idx = userData.blocked.indexOf(target);
+            if(idx > -1) userData.blocked.splice(idx, 1); else userData.blocked.push(target);
+            saveData(); loadCommunityUsers();
+        }
+
+        // --- PROFILE INSPECTION DIALOG (MODAL) ---
+        function openProfileModal(username) {
+            const stored = localStorage.getItem('user_' + username); if(!stored) return;
+            const targetData = JSON.parse(stored);
+
+            document.getElementById('modal-name').innerText = targetData.username;
+            
+            let r = "Novice Limité";
+            if(targetData.points >= 3000) r = "Divinité Souveraine 👑";
+            else if(targetData.points >= 1500) r = "Archange Érotique ☄️";
+            else if(targetData.points >= 600) r = "Maître Praticien 👑";
+            else if(targetData.points >= 200) r = "Initié Assidu 📿";
+            document.getElementById('modal-rank').innerText = r;
+
+            document.getElementById('modal-stat-pts').innerText = targetData.points || 0;
+            document.getElementById('modal-stat-br').innerText = targetData.branlettes || 0;
+            document.getElementById('modal-stat-ej').innerText = targetData.ejaculations || 0;
+
+            const mAv = document.getElementById('modal-avatar-container');
+            if(targetData.avatar) mAv.innerHTML = `<img src="${targetData.avatar}">`; else mAv.innerHTML = "😈";
+
+            // Render badges
+            const mB = document.getElementById('modal-badges'); mB.innerHTML = '';
+            (targetData.equippedBadges || []).forEach(bid => {
+                const bObj = ALL_BADGES.find(b => b.id === bid);
+                if(bObj) mB.innerHTML += `<span title="${bObj.name}">${bObj.icon}</span>`;
             });
 
-            // Notes / Journal de bord public
-            const logContainer = document.getElementById('modal-logs-container');
-            logContainer.innerHTML = uData.journal ? `<div class="log-item">"${uData.journal}"</div>` : `<div class="log-item" style="color:var(--text-muted);">Aucune note publique rédigée.</div>`;
+            // Render logs publics
+            const mLogs = document.getElementById('modal-logs-container'); mLogs.innerHTML = '';
+            const publicLogs = (targetData.logs || []).filter(l => l.includes('Session chronométrée') || l.includes('Libérations Accomplies'));
+            if(publicLogs.length === 0) { mLogs.innerHTML = '<div class="log-item">Aucune donnée publique récente.</div>'; }
+            else {
+                publicLogs.slice(0, 10).forEach(l => { mLogs.innerHTML += `<div class="log-item">${l}</div>`; });
+            }
 
             document.getElementById('profile-modal').classList.add('active');
         }
 
         function closeModal(e) {
-            if(!e || e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
+            if(!e || e.target.classList.contains('modal-overlay')) {
                 document.getElementById('profile-modal').classList.remove('active');
             }
         }
 
-        // --- BACKYARD INTERNALS : PANEL ADMIN ---
+        // --- ESPACE SUBLIME DE MODERATION ---
         function loadAdminPanelData() {
-            const tbody = document.getElementById('admin-table-tbody');
-            tbody.innerHTML = "";
+            const tbody = document.getElementById('admin-tbody'); tbody.innerHTML = '';
+            const users = getAllUsers();
 
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('user_')) {
-                    const username = key.replace('user_', '');
-                    const uData = JSON.parse(localStorage.getItem(key));
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="font-weight:bold;">${username}</td>
-                        <td><input type="number" class="admin-input" id="adm-pts-${username}" value="${uData.points || 0}"></td>
-                        <td><input type="number" class="admin-input" id="adm-br-${username}" value="${uData.branlettes || 0}"></td>
-                        <td><input type="number" class="admin-input" id="adm-ej-${username}" value="${uData.ejaculations || 0}"></td>
-                        <td>
-                            <button class="btn-admin-action btn-admin-save" onclick="saveUserFromAdmin('${username}')">Sauver</button>
-                            ${username !== ADMIN_USERNAME ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${username}')">Bannir</button>` : ''}
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                }
-            }
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                let deleteButtonHtml = u.username !== ADMIN_USERNAME ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${u.username}')">Bannir</button>` : '';
+                
+                tr.innerHTML = `
+                    <td style="font-weight:bold;">${u.username} ${u.username === ADMIN_USERNAME ? '<span style="color:var(--primary); font-size:0.75rem;">(FONDATEUR)</span>':''}</td>
+                    <td><input type="number" class="admin-input" id="adm-pts-${u.username}" value="${u.points || 0}"></td>
+                    <td><input type="number" class="admin-input" id="adm-br-${u.username}" value="${u.branlettes || 0}"></td>
+                    <td><input type="number" class="admin-input" id="adm-ej-${u.username}" value="${u.ejaculations || 0}"></td>
+                    <td>
+                        <button class="btn-admin-action btn-admin-save" onclick="saveUserFromAdmin('${u.username}')">Sauver</button>
+                        ${deleteButtonHtml}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         function saveUserFromAdmin(username) {
@@ -1665,14 +1556,24 @@
             data.ejaculations = parseInt(document.getElementById(`adm-ej-${username}`).value) || 0;
             localStorage.setItem('user_' + username, JSON.stringify(data));
             alert('Données mises à jour.');
-            if (username === currentUser) { userData = data; validateUserArrays(); applyCurrentTheme(); updateDOMValues(); }
+            if (username === currentUser) { 
+                userData = data; 
+                validateUserArrays(); 
+                applyCurrentTheme(); 
+                updateDOMValues(); 
+            }
         }
 
         function deleteUserFromAdmin(username) {
-            if (confirm(`Bannir définitivement ${username} ?`)) { localStorage.removeItem('user_' + username); loadAdminPanelData(); }
+            if (confirm(`Bannir définitivement ${username} ?`)) { 
+                localStorage.removeItem('user_' + username); 
+                loadAdminPanelData(); 
+            }
         }
 
-        function saveData() { if(currentUser) localStorage.setItem('user_' + currentUser, JSON.stringify(userData)); }
+        function saveData() { 
+            if(currentUser) localStorage.setItem('user_' + currentUser, JSON.stringify(userData)); 
+        }
     </script>
 </body>
 </html>
