@@ -29,6 +29,9 @@
 
         body {
             background: var(--app-background);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             background-attachment: fixed;
             color: var(--text-main);
             overflow-x: hidden;
@@ -558,9 +561,10 @@
             width: 100%;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             position: relative;
         }
         .theme-miniature .lock-indicator {
@@ -607,6 +611,23 @@
             color: black;
             border-color: var(--success);
             cursor: default;
+        }
+
+        /* Petit bouton d'upload sur la miniature du fond personnalisé */
+        .btn-upload-bg-mini {
+            background: rgba(0,0,0,0.75);
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+        .btn-upload-bg-mini:hover {
+            background: var(--primary);
+            color: black;
         }
 
         /* --- SHOP / SUCCESS / OTHER --- */
@@ -702,6 +723,7 @@
 <body>
 
     <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this)">
+    <input type="file" id="custom-bg-upload-input" accept="image/*" style="display: none;" onchange="handleCustomBgUpload(this)">
 
     <div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
         <div class="modal-wrapper" onclick="event.stopPropagation()">
@@ -984,7 +1006,7 @@
                         </div>
 
                         <div class="custom-panel" id="custom-panel-themes">
-                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Gérez l'apparence générale de votre application. Achetez ou équipez directement les thèmes ci-dessous.</p>
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Gérez l'apparence générale de votre application. L'arrière-plan ultime vous laisse uploader vos images !</p>
                             <div class="themes-preview-grid" id="profile-themes-preview-grid">
                                 </div>
                         </div>
@@ -1057,7 +1079,7 @@
         let userData = { 
             points: 0, branlettes: 0, ejaculations: 0, avatar: "", role: "user",
             inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], 
-            friends: [], blocked: [], themeEquipped: "classic" 
+            friends: [], blocked: [], themeEquipped: "classic", customBgData: "" 
         };
         
         let chronoInterval = null;
@@ -1070,13 +1092,14 @@
         const ADMIN_USERNAME = "admin";
         const ADMIN_PASSWORD = "admin123";
 
-        // Définition globale de tous les thèmes/fonds disponibles
+        // Définition globale de tous les thèmes/fonds disponibles (Ajout du thème custom ULTIME)
         const APP_THEMES = {
-            classic: { name: "Sombre Classique", style: "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)", price: 0, icon: "🔥" },
-            pitchblack: { name: "Nuit Profonde", style: "linear-gradient(135deg, #050505 0%, #000000 100%)", price: 0, icon: "🌑" },
-            sunrise: { name: "Aube Orangée", style: "radial-gradient(circle at 50% 10%, #3a1c00 0%, #1a0b00 50%, #050200 100%)", price: 0, icon: "🌅" },
-            cyberpunk: { name: "Néon Cyberpunk", style: "linear-gradient(135deg, #1f0326 0%, #05010d 100%)", price: 40, icon: "🔮" },
-            royal: { name: "Or Impérial Royal", style: "radial-gradient(circle at 50% 30%, #362903 0%, #120e01 60%, #000000 100%)", price: 75, icon: "🔱" }
+            classic: { name: "Sombre Classique", style: "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)", price: 0, icon: "🔥", isCustom: false },
+            pitchblack: { name: "Nuit Profonde", style: "linear-gradient(135deg, #050505 0%, #000000 100%)", price: 0, icon: "🌑", isCustom: false },
+            sunrise: { name: "Aube Orangée", style: "radial-gradient(circle at 50% 10%, #3a1c00 0%, #1a0b00 50%, #050200 100%)", price: 0, icon: "🌅", isCustom: false },
+            cyberpunk: { name: "Néon Cyberpunk", style: "linear-gradient(135deg, #1f0326 0%, #05010d 100%)", price: 40, icon: "🔮", isCustom: false },
+            royal: { name: "Or Impérial Royal", style: "radial-gradient(circle at 50% 30%, #362903 0%, #120e01 60%, #000000 100%)", price: 75, icon: "🔱", isCustom: false },
+            custom: { name: "🌌 ARRIÈRE-PLAN ULTIME (Perso)", style: "rgba(30, 30, 30, 0.4)", price: 150, icon: "🖼️", isCustom: true }
         };
 
         const ALL_ACHIEVEMENTS = {
@@ -1088,7 +1111,7 @@
 
         if (!localStorage.getItem('user_' + ADMIN_USERNAME)) {
             localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify({
-                points: 100, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], friends: [], blocked: [], themeEquipped: "classic"
+                points: 500, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], friends: [], blocked: [], themeEquipped: "classic", customBgData: ""
             }));
         }
 
@@ -1110,7 +1133,7 @@
                 points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", 
                 inventory: ["classic", "pitchblack", "sunrise"], 
                 equipped: [], logs: [], achievements: [], claimedChallenges: [] , friends: [], blocked: [], 
-                themeEquipped: "classic"
+                themeEquipped: "classic", customBgData: ""
             };
             localStorage.setItem('user_' + user, JSON.stringify(initialData));
             alert('Compte créé !'); toggleAuth(true);
@@ -1146,6 +1169,7 @@
             if(!userData.friends) userData.friends = [];
             if(!userData.blocked) userData.blocked = [];
             if(!userData.themeEquipped) userData.themeEquipped = "classic";
+            if(!userData.customBgData) userData.customBgData = "";
         }
 
         function launchApp() {
@@ -1166,7 +1190,11 @@
 
         function applyCurrentTheme() {
             const currentThemeKey = userData.themeEquipped || "classic";
-            if (APP_THEMES[currentThemeKey]) {
+            
+            if(currentThemeKey === "custom" && userData.customBgData) {
+                // Si l'utilisateur a configuré son fond d'écran perso, on charge son image enregistrée
+                document.documentElement.style.setProperty('--app-background', `url(${userData.customBgData})`);
+            } else if (APP_THEMES[currentThemeKey]) {
                 document.documentElement.style.setProperty('--app-background', APP_THEMES[currentThemeKey].style);
             }
         }
@@ -1182,7 +1210,6 @@
             if (pageId === 'profil-view') { renderProfileThemesPreview(); }
         }
 
-        // Changement d'onglet à l'intérieur du Profil (Sous-navigation)
         function switchCustomTab(tab) {
             document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.custom-panel').forEach(p => p.classList.remove('active'));
@@ -1304,7 +1331,29 @@
             saveData(); updateDOMValues();
         }
 
-        /* --- RENDU DE LA GALERIE DES FONDS DANS LE PROFIL (AVEC APERÇU MINIATURE DYNAMIQUE) --- */
+        /* --- LOGIQUE DE L'IMAGE PERSO DU FOND ULTIME --- */
+        function triggerCustomBgUpload() {
+            document.getElementById('custom-bg-upload-input').click();
+        }
+
+        function handleCustomBgUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userData.customBgData = e.target.result; // Sauvegarde l'image en base64
+                    saveData();
+                    if(userData.themeEquipped === "custom") {
+                        applyCurrentTheme();
+                    }
+                    renderProfileThemesPreview();
+                    alert("Image personnalisée chargée avec succès ! 🔥 Atteint l'infini.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /* --- RENDU DE LA GALERIE DES FONDS DANS LE PROFIL (MIS À JOUR POUR LE FOND ULTIME) --- */
         function renderProfileThemesPreview() {
             const container = document.getElementById('profile-themes-preview-grid');
             if(!container) return;
@@ -1328,10 +1377,21 @@
                     btnHtml = `<button class="btn-preview-action" onclick="handleThemeAction('${themeKey}', ${theme.price})">Débloquer (${theme.price} p.)</button>`;
                 }
 
+                // Aperçu spécifique si c'est le fond personnalisé
+                let backgroundStyle = theme.style;
+                let uploadButtonHtml = "";
+                if (theme.isCustom && isUnlocked) {
+                    if (userData.customBgData) {
+                        backgroundStyle = `url(${userData.customBgData})`;
+                    }
+                    uploadButtonHtml = `<button class="btn-upload-bg-mini" onclick="event.stopPropagation(); triggerCustomBgUpload();">📁 Choisir une image</button>`;
+                }
+
                 container.innerHTML += `
                     <div class="${cardClass}">
-                        <div class="theme-miniature" style="background: ${theme.style}; background-size: cover;">
-                            ${theme.icon}
+                        <div class="theme-miniature" style="background: ${backgroundStyle}; background-size: cover; background-position: center;">
+                            <span>${theme.icon}</span>
+                            ${uploadButtonHtml}
                             ${!isUnlocked ? `<span class="lock-indicator">🔒 Verrouillé</span>` : ''}
                         </div>
                         <div class="theme-preview-info">
@@ -1343,7 +1403,7 @@
             });
         }
 
-        /* --- BOUTIQUE GENERALE DES THÈMES (SYNCHRONISÉE) --- */
+        /* --- BOUTIQUE GENERALE DES THÈMES SYNCHRONISÉE --- */
         function renderThemesShop() {
             const container = document.getElementById('themes-shop-list');
             if(!container) return;
@@ -1362,13 +1422,16 @@
                     if (isEquipped) btnClass += " equipped";
                 }
 
+                let descText = theme.price === 0 ? 'Gratuit dès le départ' : 'Modifie l\'arrière-plan global de l\'application';
+                if(theme.isCustom) descText = "🔥 BONUS ULTIME : Importez l'image de votre choix depuis votre appareil et changez-en quand vous le souhaitez !";
+
                 container.innerHTML += `
                     <div class="shop-item">
                         <div class="shop-info">
                             <div class="shop-icon">${theme.icon}</div>
                             <div class="shop-details">
                                 <h4>${theme.name}</h4>
-                                <p>${theme.price === 0 ? 'Gratuit dès le départ' : 'Modifie l\'arrière-plan global de l\'application'}</p>
+                                <p style="max-width:350px;">${descText}</p>
                                 ${!hasTheme ? `<div class="shop-cost">${theme.price} pts</div>` : '<div class="shop-cost" style="color:var(--success);">Débloqué</div>'}
                             </div>
                         </div>
@@ -1389,7 +1452,7 @@
                 userData.points -= price;
                 userData.inventory.push(themeKey);
                 userData.themeEquipped = themeKey;
-                alert(`Fond "${APP_THEMES[themeKey].name}" débloqué et appliqué ! 🎉`);
+                alert(`Fond "${APP_THEMES[themeKey].name}" débloqué ! S'il s'agit du fond ultime, allez dans votre Profil pour y ajouter votre photo ! 🎉`);
             } else {
                 userData.themeEquipped = themeKey;
             }
@@ -1398,7 +1461,7 @@
             applyCurrentTheme();
             updateDOMValues();
             renderThemesShop();
-            renderProfileThemesPreview(); // Garde les deux vues synchronisées
+            renderProfileThemesPreview();
         }
 
         function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
@@ -1583,7 +1646,6 @@
             updateChallengesDOM();
         }
 
-        /* --- LOGIQUE DE RECHERCHE & AMIS & BLOCAGE --- */
         function getAllPlatformUsers() {
             let users = [];
             for (let i = 0; i < localStorage.length; i++) {
@@ -1684,7 +1746,6 @@
             renderLeaderboard();
         }
 
-        /* --- GESTION DU LEADERBOARD --- */
         function toggleLeadTab(tabType) {
             activeLeadTab = tabType;
             document.getElementById('btn-lead-global').classList.toggle('active', tabType === 'global');
@@ -1734,7 +1795,6 @@
             });
         }
 
-        /* --- FENÊTRE MODALE PROFIL TIERS --- */
         function viewUserUserProfile(username) {
             let targetData = null;
             if(username === currentUser) {
@@ -1804,7 +1864,6 @@
             }
         }
 
-        /* --- ADMIN PANEL --- */
         function loadAdminPanelData() {
             const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = "";
             const allUsers = getAllPlatformUsers();
