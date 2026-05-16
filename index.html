@@ -340,7 +340,7 @@
         .stat-card .lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
 
         /* --- JOURNAL DE BORD --- */
-        .journal-box { background: var(--bg-card); border: 1px solid rgba(255,159,67,0.1); padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: left; }
+        .journal-box { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,159,67,0.1); padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: left; }
         .journal-box label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; }
         .journal-box textarea {
             width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #331b07; padding: 0.6rem; color: white; border-radius: 6px; resize: none; height: 60px; outline: none;
@@ -357,7 +357,50 @@
             font-size: 4.5rem; font-weight: 900; text-align: center; margin: 1rem 0; color: var(--primary); text-shadow: 0 0 20px var(--primary-glow);
         }
         .big-number span { font-size: 1.5rem; color: var(--text-muted); font-weight: 400; }
-        .counter-actions { display: flex; gap: 15px; }
+        
+        /* FIX ET STYLE RESTAURÉ DES BOUTONS PLUS / MOINS */
+        .counter-actions { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+            margin-top: 1.5rem;
+        }
+        .btn-count { 
+            flex: 1; 
+            max-width: 200px; 
+            height: 48px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 1.6rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.2s ease-in-out; 
+        }
+        /* Boutons Moins (-) */
+        .btn-count.minus { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #b2bec3; 
+        }
+        .btn-count.minus:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            color: #fff; 
+            transform: translateY(-2px); 
+        }
+        /* Boutons Plus (+) */
+        .btn-count.plus { 
+            background: var(--primary); 
+            color: #050807; 
+        }
+        .btn-count.plus:hover { 
+            background: #ffb061; 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px var(--primary-glow); 
+        }
+        .btn-count:active { transform: translateY(0); }
 
         /* --- ONGLER DEFIS (CHALLENGES) --- */
         .challenge-list { display: flex; flex-direction: column; gap: 1.2rem; max-width: 650px; margin: 0 auto; }
@@ -507,6 +550,7 @@
             <div id="page-compteurs" class="page">
                 <div class="page-header"><div class="page-title">Compteurs</div></div>
                 <div class="compteur-wrapper">
+                    
                     <div class="compteur-card">
                         <div class="compteur-header"><span>🍆</span><div class="compteur-title">Branlettes</div></div>
                         <div class="compteur-subtitle">Friction de base (+1 PT)</div>
@@ -527,7 +571,7 @@
                             <textarea id="session-note" placeholder="Décris ton état d'esprit ou ta résistance..."></textarea>
                         </div>
 
-                        <div class="counter-actions" style="margin-top:1rem;">
+                        <div class="counter-actions">
                             <button class="btn-count minus" onclick="updateCount('ejaculations', -1)">-</button>
                             <button class="btn-count plus" onclick="updateCount('ejaculations', 1)">+</button>
                         </div>
@@ -736,7 +780,6 @@
             return "🌱 Novice Souple";
         }
 
-        // --- COMPTEURS & VALIDATIONS ---
         function updateCount(type, amount) {
             if((userData[type] + amount) < 0) return;
             userData[type] += amount;
@@ -771,14 +814,13 @@
             }
         }
 
-        // --- INTERACTION LOGIQUE DES DEFIS ---
         function claimChallenge(id, bonusPts, specialReward = null) {
             if(userData.claimedChallenges.includes(id)) return;
 
             userData.points += bonusPts;
             if(specialReward) {
                 userData.inventory.push(specialReward);
-                userData.equipped.push(specialReward); // Équipé d'office
+                userData.equipped.push(specialReward); 
                 alert(`🎯 Défi Validé ! Tu as débloqué la récompense exclusive : ${specialReward === 'shaolin_title' ? '[Moine Shaolin]' : specialReward} !`);
             } else {
                 alert(`🎯 Défi Validé ! Tu récupères +${bonusPts} points !`);
@@ -789,7 +831,6 @@
             updateDOMValues();
         }
 
-        // --- SHOPPING ---
         function handleShopAction(itemKey, cost) {
             if(!userData.inventory.includes(itemKey)) {
                 if(userData.points < cost) { alert("Pas assez de points ! 😢"); return; }
@@ -813,16 +854,13 @@
             }
         }
 
-        // --- MISE À JOUR DOM ---
         function updateDOMValues() {
             if(!currentUser) return;
 
             const rank = getRank(userData.points);
             let finalName = currentUser;
             
-            // Équipement Couronne
             if(userData.equipped.includes('crown')) finalName = "👑 " + finalName;
-            // Équipement Titre Exclusif Défi Shaolin
             if(userData.equipped.includes('shaolin_title')) finalName = finalName + " [Moine Shaolin]";
 
             document.getElementById('side-name').textContent = finalName;
@@ -845,7 +883,6 @@
             if (userData.avatar) avatarMain.innerHTML = `<img src="${userData.avatar}" alt="Profil">`;
             else avatarMain.innerHTML = userData.role === 'admin' ? "👑" : "😈";
 
-            // BOUTIQUE STATUS
             const btnCrown = document.getElementById('btn-shop-crown');
             if(userData.inventory.includes('crown')) {
                 btnCrown.textContent = userData.equipped.includes('crown') ? "Équipé (Retirer)" : "Possédé (Équiper)";
@@ -862,10 +899,8 @@
                 const card = document.getElementById('ach-' + achId); if(card) card.classList.add('unlocked');
             });
 
-            // LOGIQUE DE CALCUL DU REFRESH DES DEFIS EN DIRECT
             updateChallengesDOM();
 
-            // HISTORIQUE JOURNAL
             const logsContainer = document.getElementById('logs-container');
             if(userData.logs.length === 0) {
                 logsContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.9rem;">Aucune note pour le moment.</div>`;
@@ -879,18 +914,14 @@
             }
         }
 
-        // --- CALCULS ET PROGRESSION DES DÉFIS ---
         function updateChallengesDOM() {
-            // 1. Défi Endurance (Basé sur elapsedTime / 1000 pour les secondes)
             const currentSeconds = Math.floor(elapsedTime / 1000);
             const enduranceReady = currentSeconds >= 120;
             updateSingleChallengeDOM('endurance', currentSeconds, 120, enduranceReady, "secondes");
 
-            // 2. Défi Branlettes
             const doubleReady = userData.branlettes >= 2;
             updateSingleChallengeDOM('double', userData.branlettes, 2, doubleReady, "Branlettes");
 
-            // 3. Défi Épique Shaolin
             const shaolinReady = userData.ejaculations >= 3;
             updateSingleChallengeDOM('shaolin', userData.ejaculations, 3, shaolinReady, "Éjaculations");
         }
@@ -919,7 +950,6 @@
             }
         }
 
-        // --- CHRONO ---
         function toggleChrono() {
             const btn = document.getElementById('btn-chrono-toggle');
             if(!isChronoRunning) {
@@ -951,7 +981,6 @@
             document.getElementById('chrono-display').textContent = 
                 (hrs < 10 ? "0" + hrs : hrs) + ":" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs) + "." + (ms < 10 ? "0" + ms : ms);
             
-            // Rafraîchir les défis en même temps que le chrono tourne pour voir la barre grandir
             updateChallengesDOM();
         }
 
