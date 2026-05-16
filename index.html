@@ -15,8 +15,6 @@
             --accent-orange: #ff9f43; 
             --success: #2ed573;
             --danger: #ff4757;
-
-            /* Fond dynamique par défaut */
             --app-background: radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%);
         }
 
@@ -42,6 +40,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
 
         .auth-card {
@@ -121,6 +120,18 @@
             cursor: pointer;
             text-decoration: underline;
         }
+
+        .btn-emergency {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            font-size: 0.75rem;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            text-decoration: underline;
+            opacity: 0.6;
+        }
+        .btn-emergency:hover { opacity: 1; }
 
         /* --- SIDEBAR --- */
         #main-app {
@@ -417,7 +428,7 @@
         }
         .btn-count:active { transform: translateY(0); }
 
-        /* --- ONGLETS DEFIS --- */
+        /* --- DEFIS --- */
         .challenge-list { display: flex; flex-direction: column; gap: 1.2rem; max-width: 650px; margin: 0 auto; }
         .challenge-card {
             background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 14px; padding: 1.5rem;
@@ -439,7 +450,6 @@
         .challenge-tag.epic ~ .progress-container .progress-bar { background: #b873ff; }
         .challenge-tag.hidden ~ .progress-container .progress-bar { background: #eb5e28; }
         .progress-text { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block; }
-        
         .challenge-reward { font-size: 0.8rem; color: var(--success); font-weight: bold; margin-top: 5px; }
 
         .btn-claim {
@@ -451,7 +461,7 @@
         }
         .btn-claim.claimed { background: rgba(0,0,0,0.3); border-color: transparent; color: var(--text-muted); cursor: not-allowed; }
 
-        /* --- SYSTEME DE PERSONNALISATION PROFIL (ONGLETS) --- */
+        /* --- CUSTOMIZATION --- */
         .badges-section {
             text-align: left;
             margin-top: 2rem;
@@ -478,135 +488,43 @@
             transition: color 0.2s;
             position: relative;
         }
-        .custom-tab-btn.active {
-            color: var(--primary);
-        }
+        .custom-tab-btn.active { color: var(--primary); }
         .custom-tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -9px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--primary);
+            content: ''; position: absolute; bottom: -9px; left: 0; width: 100%; height: 2px; background: var(--primary);
         }
         .custom-panel { display: none; }
         .custom-panel.active { display: block; }
 
-        .badges-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 12px;
-        }
+        .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
         .badge-item {
-            background: rgba(20, 20, 20, 0.8);
-            border: 1px solid #222;
-            padding: 0.8rem 0.5rem;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.8rem;
-            cursor: pointer;
-            opacity: 0.3;
-            transition: all 0.2s;
+            background: rgba(20, 20, 20, 0.8); border: 1px solid #222; padding: 0.8rem 0.5rem; border-radius: 8px;
+            text-align: center; font-size: 0.8rem; cursor: pointer; opacity: 0.3; transition: all 0.2s;
         }
-        .badge-item.unlocked {
-            opacity: 1;
-            border-color: rgba(255, 159, 67, 0.3);
-            background: rgba(40, 25, 10, 0.3);
-        }
-        .badge-item.unlocked:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
-        }
-        .badge-item.equipped {
-            border-color: var(--success);
-            background: rgba(46, 213, 115, 0.1);
-            box-shadow: inset 0 0 8px rgba(46, 213, 115, 0.2);
-        }
-        .badge-icon {
-            font-size: 1.8rem;
-            display: block;
-            margin-bottom: 4px;
-        }
+        .badge-item.unlocked { opacity: 1; border-color: rgba(255, 159, 67, 0.3); background: rgba(40, 25, 10, 0.3); }
+        .badge-item.unlocked:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .badge-item.equipped { border-color: var(--success); background: rgba(46, 213, 115, 0.1); box-shadow: inset 0 0 8px rgba(46, 213, 115, 0.2); }
+        .badge-icon { font-size: 1.8rem; display: block; margin-bottom: 4px; }
 
-        /* --- APERÇU DE BANNIÈRES DANS LE PROFIL --- */
-        .themes-preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
-        }
+        .themes-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
         .theme-preview-card {
-            background: rgba(10, 10, 10, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.2s;
-            position: relative;
+            background: rgba(10, 10, 10, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px;
+            overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; position: relative;
         }
-        .theme-preview-card.locked {
-            opacity: 0.5;
-        }
-        .theme-preview-card.equipped {
-            border-color: var(--success);
-            box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
-        }
+        .theme-preview-card.locked { opacity: 0.5; }
+        .theme-preview-card.equipped { border-color: var(--success); box-shadow: 0 0 10px rgba(46, 213, 115, 0.2); }
         .theme-miniature {
-            height: 65px;
-            width: 100%;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            position: relative;
+            height: 65px; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex;
+            align-items: center; justify-content: center; font-size: 1.8rem; position: relative;
         }
-        .theme-miniature .lock-indicator {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0,0,0,0.7);
-            font-size: 0.75rem;
-            padding: 2px 5px;
-            border-radius: 4px;
-        }
-        .theme-preview-info {
-            padding: 0.6rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 8px;
-        }
-        .theme-preview-name {
-            font-size: 0.8rem;
-            font-weight: bold;
-            line-height: 1.2;
-        }
+        .theme-miniature .lock-indicator { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); font-size: 0.75rem; padding: 2px 5px; border-radius: 4px; }
+        .theme-preview-info { padding: 0.6rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+        .theme-preview-name { font-size: 0.8rem; font-weight: bold; line-height: 1.2; }
         .btn-preview-action {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            font-size: 0.75rem;
-            padding: 4px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;
+            font-size: 0.75rem; padding: 4px; border-radius: 4px; cursor: pointer; font-weight: 600; transition: all 0.2s;
         }
-        .btn-preview-action:hover {
-            background: var(--primary);
-            color: black;
-            border-color: var(--primary);
-        }
-        .theme-preview-card.equipped .btn-preview-action {
-            background: var(--success);
-            color: black;
-            border-color: var(--success);
-            cursor: default;
-        }
+        .btn-preview-action:hover { background: var(--primary); color: black; border-color: var(--primary); }
+        .theme-preview-card.equipped .btn-preview-action { background: var(--success); color: black; border-color: var(--success); cursor: default; }
 
         /* --- LOGS / SUCCESS --- */
         .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 700px; margin: 0 auto; }
@@ -715,7 +633,7 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label>Pseudo</label>
-                    <input type="text" id="login-username" required placeholder="Ex: zzhhr">
+                    <input type="text" id="login-username" required placeholder="Ex: admin">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
@@ -724,6 +642,7 @@
                 <button type="submit" class="auth-btn">Se connecter</button>
             </form>
             <div class="auth-toggle">Pas de compte ? <span onclick="toggleAuthCards(false)">S'inscrire</span></div>
+            <button class="btn-emergency" onclick="emergencyResetAdmin()">⚠️ Forcer la réinitialisation de l'Admin</button>
         </div>
 
         <div class="auth-card" id="register-card" style="display: none;">
@@ -806,11 +725,9 @@
                             <button class="custom-tab-btn active" onclick="switchCustomTab('tab-badges', this)">🏆 Badges</button>
                             <button class="custom-tab-btn" onclick="switchCustomTab('tab-themes', this)">🎨 Thèmes de Fond</button>
                         </div>
-
                         <div id="tab-badges" class="custom-panel active">
                             <div class="badges-grid" id="badges-grid-container"></div>
                         </div>
-
                         <div id="tab-themes" class="custom-panel">
                             <div class="themes-preview-grid" id="themes-grid-container"></div>
                         </div>
@@ -890,7 +807,7 @@
             </div>
 
             <div id="page-admin" class="page">
-                <h3 style="color: var(--primary); text-transform: uppercase;">Supervision Générale (Données locales)</h3>
+                <h3 style="color: var(--primary); text-transform: uppercase;">Supervision Générale</h3>
                 <table class="admin-table">
                     <thead>
                         <tr>
@@ -904,7 +821,6 @@
                     <tbody id="admin-users-tbody"></tbody>
                 </table>
             </div>
-
         </div>
     </div>
 
@@ -954,6 +870,7 @@
 
         function initApp() {
             if (currentUser) {
+                currentUser = currentUser.toLowerCase().trim();
                 const stored = localStorage.getItem('user_' + currentUser);
                 if (stored) {
                     userData = JSON.parse(stored);
@@ -964,6 +881,8 @@
                     
                     if(userData.role === 'admin') {
                         document.getElementById('menu-admin-btn').style.display = 'flex';
+                    } else {
+                        document.getElementById('menu-admin-btn').style.display = 'none';
                     }
                     
                     if (userData.chronoStartTime && userData.isChronoRunning) {
@@ -1066,6 +985,30 @@
             initApp();
         }
 
+        function emergencyResetAdmin() {
+            if(confirm("Voulez-vous forcer la création/réinitialisation d'un compte administrateur ? \n\nPseudo : admin\nMot de passe : admin")) {
+                const adminUser = {
+                    username: 'admin',
+                    password: simpleHash('admin'),
+                    role: 'admin',
+                    points: 100,
+                    branlettes: 0,
+                    ejaculations: 0,
+                    unlockedBadges: ['b_novice'],
+                    equippedBadges: ['b_novice'],
+                    claimedChallenges: [],
+                    currentTheme: 't_default',
+                    avatar: '👑',
+                    note: 'Compte admin réinitialisé.',
+                    chronoStartTime: 0,
+                    chronoElapsedTime: 0,
+                    isChronoRunning: false
+                };
+                localStorage.setItem('user_admin', JSON.stringify(adminUser));
+                alert("Le compte 'admin' a été réinitialisé avec succès ! Connecte-toi maintenant.");
+            }
+        }
+
         function logout() {
             if (isChronoRunning) { toggleChrono(); }
             localStorage.removeItem('loggedUser');
@@ -1126,6 +1069,7 @@
         }
 
         function refreshBackgroundData() {
+            if(!currentUser) return;
             const stored = localStorage.getItem('user_' + currentUser);
             if(stored) {
                 const parsed = JSON.parse(stored);
@@ -1139,7 +1083,7 @@
 
         function saveData() {
             if(currentUser && userData) {
-                localStorage.setItem('user_' + currentUser, JSON.stringify(userData));
+                localStorage.setItem('user_' + currentUser.toLowerCase(), JSON.stringify(userData));
             }
         }
 
@@ -1420,7 +1364,7 @@
             let allUsers = getAllUsersData();
 
             if(filterText) {
-                allUsers = allUsers.filter(u => u.username.includes(filterText));
+                allUsers = allUsers.filter(u => u.username.toLowerCase().includes(filterText));
             }
 
             if(allUsers.length === 0) {
@@ -1508,7 +1452,7 @@
 
             users.forEach(u => {
                 const tr = document.createElement('tr');
-                const isSelf = u.username === currentUser;
+                const isSelf = u.username.toLowerCase() === currentUser.toLowerCase();
                 const deleteButtonHtml = isSelf ? '' : `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${u.username}')">Bannir</button>`;
 
                 tr.innerHTML = `
@@ -1526,17 +1470,17 @@
         }
 
         function saveUserFromAdmin(username) {
-            const stored = localStorage.getItem('user_' + username); if (!stored) return;
+            const stored = localStorage.getItem('user_' + username.toLowerCase()); if (!stored) return;
             const data = JSON.parse(stored);
             
             data.points = parseInt(document.getElementById(`adm-pts-${username}`).value) || 0;
             data.branlettes = parseInt(document.getElementById(`adm-br-${username}`).value) || 0;
             data.ejaculations = parseInt(document.getElementById(`adm-ej-${username}`).value) || 0;
             
-            localStorage.setItem('user_' + username, JSON.stringify(data));
+            localStorage.setItem('user_' + username.toLowerCase(), JSON.stringify(data));
             alert('Données mises à jour avec succès.');
             
-            if (username === currentUser) { 
+            if (username.toLowerCase() === currentUser.toLowerCase()) { 
                 userData = data; 
                 validateUserArrays(); 
                 applyCurrentTheme(); 
@@ -1546,13 +1490,13 @@
 
         function deleteUserFromAdmin(username) {
             if (confirm(`Bannir définitivement l'utilisateur ${username} ?`)) { 
-                localStorage.removeItem('user_' + username); 
+                localStorage.removeItem('user_' + username.toLowerCase()); 
                 loadAdminPanelData(); 
             }
         }
 
         function openUserProfileModal(username) {
-            const stored = localStorage.getItem('user_' + username);
+            const stored = localStorage.getItem('user_' + username.toLowerCase());
             if(!stored) return;
             const targetUser = JSON.parse(stored);
 
