@@ -358,7 +358,6 @@
         }
         .big-number span { font-size: 1.5rem; color: var(--text-muted); font-weight: 400; }
         
-        /* FIX ET STYLE RESTAURÉ DES BOUTONS PLUS / MOINS */
         .counter-actions { 
             display: flex; 
             justify-content: center; 
@@ -379,7 +378,6 @@
             justify-content: center; 
             transition: all 0.2s ease-in-out; 
         }
-        /* Boutons Moins (-) */
         .btn-count.minus { 
             background: rgba(255, 255, 255, 0.05); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
@@ -390,7 +388,6 @@
             color: #fff; 
             transform: translateY(-2px); 
         }
-        /* Boutons Plus (+) */
         .btn-count.plus { 
             background: var(--primary); 
             color: #050807; 
@@ -402,7 +399,7 @@
         }
         .btn-count:active { transform: translateY(0); }
 
-        /* --- ONGLER DEFIS (CHALLENGES) --- */
+        /* --- ONGLETS DEFIS (CHALLENGES) --- */
         .challenge-list { display: flex; flex-direction: column; gap: 1.2rem; max-width: 650px; margin: 0 auto; }
         .challenge-card {
             background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 14px; padding: 1.5rem;
@@ -415,12 +412,14 @@
         }
         .challenge-tag.daily { background: rgba(255, 159, 67, 0.2); color: var(--primary); border: 1px solid var(--primary); }
         .challenge-tag.epic { background: rgba(162, 62, 255, 0.2); color: #b873ff; border: 1px solid #b873ff; }
+        .challenge-tag.hidden { background: rgba(235, 94, 40, 0.2); color: #eb5e28; border: 1px solid #eb5e28; }
         .challenge-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
         .challenge-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
         
         .progress-container { width: 100%; max-width: 250px; background: rgba(0,0,0,0.4); height: 6px; border-radius: 3px; position: relative; }
         .progress-bar { background: var(--primary); height: 100%; border-radius: 3px; width: 0%; transition: width 0.3s; }
         .challenge-tag.epic ~ .progress-container .progress-bar { background: #b873ff; }
+        .challenge-tag.hidden ~ .progress-container .progress-bar { background: #eb5e28; }
         .progress-text { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block; }
         
         .challenge-reward { font-size: 0.8rem; color: #2ed573; font-weight: bold; margin-top: 5px; }
@@ -433,6 +432,52 @@
             background: #2ed573; border-color: #2ed573; color: black; cursor: pointer; box-shadow: 0 0 10px rgba(46, 213, 115, 0.4);
         }
         .btn-claim.claimed { background: rgba(0,0,0,0.3); border-color: transparent; color: var(--text-muted); cursor: not-allowed; }
+
+        /* --- SYSTEME DE BADGES DANS LE PROFIL --- */
+        .badges-section {
+            text-align: left;
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 159, 67, 0.05);
+        }
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 1rem;
+        }
+        .badge-item {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #222;
+            padding: 0.8rem 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: all 0.2s;
+        }
+        .badge-item.unlocked {
+            opacity: 1;
+            border-color: rgba(255, 159, 67, 0.3);
+            background: rgba(40, 25, 10, 0.3);
+        }
+        .badge-item.unlocked:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        .badge-item.equipped {
+            border-color: #2ed573;
+            background: rgba(46, 213, 115, 0.1);
+            box-shadow: inset 0 0 8px rgba(46, 213, 115, 0.2);
+        }
+        .badge-icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 4px;
+        }
 
         /* --- SHOP / SUCCESS / OTHER --- */
         .shop-list { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
@@ -582,6 +627,7 @@
             <div id="page-challenges" class="page">
                 <div class="page-header"><div class="page-title">Missions & Défis</div></div>
                 <div class="challenge-list">
+                    
                     <div class="challenge-card">
                         <div class="challenge-info">
                             <span class="challenge-tag daily">Quotidien</span>
@@ -592,6 +638,18 @@
                             <div class="challenge-reward">🎁 Récompense : +15 PTS</div>
                         </div>
                         <button class="btn-claim" id="btn-claim-endurance" onclick="claimChallenge('endurance', 15)">Récupérer</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag daily">Quotidien</span>
+                            <div class="challenge-title">L'Éclair Éclatant</div>
+                            <div class="challenge-desc">Lancer le chrono et terminer une éjaculation en moins de 90 secondes.</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-speedrun"></div></div>
+                            <span class="progress-text" id="ch-progress-text-speedrun">Non accompli</span>
+                            <div class="challenge-reward" style="color:#ff9f43">🎁 Récompense UNIQUE : Titre Équipable [⚡ Véloce] & +10 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-speedrun" onclick="claimChallenge('speedrun', 10, 'veloce_title')">Récupérer</button>
                     </div>
 
                     <div class="challenge-card">
@@ -617,6 +675,19 @@
                         </div>
                         <button class="btn-claim" id="btn-claim-shaolin" onclick="claimChallenge('shaolin', 0, 'shaolin_title')">Récupérer</button>
                     </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-info">
+                            <span class="challenge-tag hidden">Secret</span>
+                            <div class="challenge-title">Créature de la Nuit</div>
+                            <div class="challenge-desc">Incrémenter n'importe quel compteur durant les heures interdites (entre 2h et 5h du matin).</div>
+                            <div class="progress-container"><div class="progress-bar" id="ch-progress-bar-night"></div></div>
+                            <span class="progress-text" id="ch-progress-text-night">Verrouillé</span>
+                            <div class="challenge-reward" style="color:#eb5e28;">🎁 Récompense SECRÈTE : Badge exclusif [🦇 Vampire] & +15 PTS</div>
+                        </div>
+                        <button class="btn-claim" id="btn-claim-night" onclick="claimChallenge('night', 15, 'vampire_badge')">Récupérer</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -636,7 +707,26 @@
                         <div class="stat-card"><div class="val" id="card-ejaculations">0</div><div class="lbl">Éjaculations</div></div>
                     </div>
 
-                    <div style="text-align:left; margin-bottom:2rem;">
+                    <div class="badges-section">
+                        <h3 style="color:var(--primary); font-size:0.95rem; text-transform:uppercase;">🎖️ Vos Titres & Badges Débloqués</h3>
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Cliquez sur un badge ou un titre acquis pour l'équiper/déséquiper de votre pseudo.</p>
+                        <div class="badges-grid" id="badges-inventory-grid">
+                            <div class="badge-item" id="badge-shaolin_title" onclick="toggleEquipBadge('shaolin_title')">
+                                <span class="badge-icon">🧘</span><strong>[Moine Shaolin]</strong>
+                            </div>
+                            <div class="badge-item" id="badge-veloce_title" onclick="toggleEquipBadge('veloce_title')">
+                                <span class="badge-icon">⚡</span><strong>[⚡ Véloce]</strong>
+                            </div>
+                            <div class="badge-item" id="badge-vampire_badge" onclick="toggleEquipBadge('vampire_badge')">
+                                <span class="badge-icon">🦇</span><strong>[🦇 Vampire]</strong>
+                            </div>
+                            <div class="badge-item" id="badge-rage_badge" onclick="toggleEquipBadge('rage_badge')">
+                                <span class="badge-icon">🚫</span><strong>[🚫 Rageux]</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align:left; margin-top:2rem; margin-bottom:2rem;">
                         <h3 style="color:var(--primary); font-size:0.9rem; text-transform:uppercase; margin-bottom:1rem;">🏆 Succès passifs</h3>
                         <div class="achievements-grid">
                             <div class="ach-card" id="ach-marathon"><div class="ach-icon">⏱️</div><div class="ach-info"><h4>Le Marathonien</h4><p>Chrono supérieur à 5 minutes (+10 pts)</p></div></div>
@@ -700,6 +790,7 @@
         let startTime = 0;
         let elapsedTime = 0;
         let isChronoRunning = false;
+        let rageClicks = 0; // Compteur pour le défi secret rageux
 
         const ADMIN_USERNAME = "admin";
         const ADMIN_PASSWORD = "admin123";
@@ -781,14 +872,37 @@
         }
 
         function updateCount(type, amount) {
+            // Défi secret : Clic répétitif dans le vide (Rageux)
+            if (type === 'branlettes' && amount === -1 && userData.branlettes === 0) {
+                rageClicks++;
+                if (rageClicks >= 10 && !userData.inventory.includes('rage_badge')) {
+                    userData.inventory.push('rage_badge');
+                    alert("🚫 DÉFI SECRET VALIDÉ ! Tu as débloqué le badge [🚫 Rageux] pour avoir spammé le bouton moins dans le vide.");
+                    saveData();
+                    updateDOMValues();
+                }
+                return;
+            }
+
             if((userData[type] + amount) < 0) return;
             userData[type] += amount;
+
+            const hours = new Date().getHours();
+
+            // Défi secret : Créature de la nuit
+            if (amount > 0 && (hours >= 2 && hours <= 5) && !userData.inventory.includes('night_checked')) {
+                userData.inventory.push('night_checked'); // Marqueur temporaire de condition remplie
+            }
 
             if(amount > 0) {
                 if(type === 'ejaculations') {
                     userData.points += 2;
-                    const hours = new Date().getHours();
                     if(hours >= 2 && hours <= 5) unlockAchievement('vampire', 15);
+                    
+                    // Vérification Speedrun (-90 sec)
+                    if(elapsedTime > 0 && elapsedTime <= 90000 && !userData.inventory.includes('speedrun_checked')) {
+                        userData.inventory.push('speedrun_checked');
+                    }
                     if(elapsedTime > 0 && elapsedTime < 30000) unlockAchievement('sprinter', 5);
 
                     const noteInput = document.getElementById('session-note');
@@ -821,12 +935,29 @@
             if(specialReward) {
                 userData.inventory.push(specialReward);
                 userData.equipped.push(specialReward); 
-                alert(`🎯 Défi Validé ! Tu as débloqué la récompense exclusive : ${specialReward === 'shaolin_title' ? '[Moine Shaolin]' : specialReward} !`);
+                let label = specialReward;
+                if(specialReward === 'shaolin_title') label = '[Moine Shaolin]';
+                if(specialReward === 'veloce_title') label = '[⚡ Véloce]';
+                if(specialReward === 'vampire_badge') label = '[🦇 Vampire]';
+                alert(`🎯 Défi Validé ! Tu as débloqué et équipé la récompense : ${label} !`);
             } else {
                 alert(`🎯 Défi Validé ! Tu récupères +${bonusPts} points !`);
             }
             
             userData.claimedChallenges.push(id);
+            saveData();
+            updateDOMValues();
+        }
+
+        function toggleEquipBadge(badgeKey) {
+            if (!userData.inventory.includes(badgeKey)) return; // Pas encore débloqué
+
+            const index = userData.equipped.indexOf(badgeKey);
+            if (index > -1) {
+                userData.equipped.splice(index, 1); // Retire le badge
+            } else {
+                userData.equipped.push(badgeKey); // Équipe le badge
+            }
             saveData();
             updateDOMValues();
         }
@@ -861,7 +992,12 @@
             let finalName = currentUser;
             
             if(userData.equipped.includes('crown')) finalName = "👑 " + finalName;
-            if(userData.equipped.includes('shaolin_title')) finalName = finalName + " [Moine Shaolin]";
+            
+            // Concaténation des titres/badges équipés dans le pseudo
+            if(userData.equipped.includes('shaolin_title')) finalName += " [Moine Shaolin]";
+            if(userData.equipped.includes('veloce_title')) finalName += " [⚡ Véloce]";
+            if(userData.equipped.includes('vampire_badge')) finalName += " [🦇 Vampire]";
+            if(userData.equipped.includes('rage_badge')) finalName += " [🚫 Rageux]";
 
             document.getElementById('side-name').textContent = finalName;
             document.getElementById('prof-name').textContent = finalName;
@@ -899,6 +1035,20 @@
                 const card = document.getElementById('ach-' + achId); if(card) card.classList.add('unlocked');
             });
 
+            // Mise à jour visuelle de la grille des badges
+            const badgeKeys = ['shaolin_title', 'veloce_title', 'vampire_badge', 'rage_badge'];
+            badgeKeys.forEach(key => {
+                const badgeElement = document.getElementById('badge-' + key);
+                if(userData.inventory.includes(key)) {
+                    badgeElement.classList.add('unlocked');
+                    if(userData.equipped.includes(key)) {
+                        badgeElement.classList.add('equipped');
+                    } else {
+                        badgeElement.classList.remove('equipped');
+                    }
+                }
+            });
+
             updateChallengesDOM();
 
             const logsContainer = document.getElementById('logs-container');
@@ -919,11 +1069,17 @@
             const enduranceReady = currentSeconds >= 120;
             updateSingleChallengeDOM('endurance', currentSeconds, 120, enduranceReady, "secondes");
 
+            const speedrunReady = userData.inventory.includes('speedrun_checked');
+            updateSingleChallengeDOM('speedrun', speedrunReady ? 1 : 0, 1, speedrunReady, "effectué");
+
             const doubleReady = userData.branlettes >= 2;
             updateSingleChallengeDOM('double', userData.branlettes, 2, doubleReady, "Branlettes");
 
             const shaolinReady = userData.ejaculations >= 3;
             updateSingleChallengeDOM('shaolin', userData.ejaculations, 3, shaolinReady, "Éjaculations");
+
+            const nightReady = userData.inventory.includes('night_checked');
+            updateSingleChallengeDOM('night', nightReady ? 1 : 0, 1, nightReady, "complété");
         }
 
         function updateSingleChallengeDOM(id, current, target, isReady, unit) {
@@ -933,7 +1089,12 @@
 
             let pct = Math.min((current / target) * 100, 100);
             bar.style.width = pct + "%";
-            txt.textContent = `${Math.min(current, target)} / ${target} ${unit}`;
+            
+            if(id === 'speedrun' || id === 'night') {
+                txt.textContent = isReady ? "Accompli !" : "Verrouillé";
+            } else {
+                txt.textContent = `${Math.min(current, target)} / ${target} ${unit}`;
+            }
 
             if(userData.claimedChallenges.includes(id)) {
                 btn.textContent = "Récupéré ✔️";
@@ -997,8 +1158,8 @@
                         <td><input type="number" class="admin-input" id="adm-br-${username}" value="${data.branlettes}"></td>
                         <td><input type="number" class="admin-input" id="adm-ej-${username}" value="${data.ejaculations}"></td>
                         <td>
-                            <button class="btn-admin-action btn-admin-save" onclick="saveUserFromAdmin('${username}')">Sauver</button>
-                            ${username !== ADMIN_USERNAME ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${username}')">Bannir</button>` : ''}
+                            <button class="btn-admin-action btn-admin-save" onclick=\"saveUserFromAdmin('${username}')\">Sauver</button>
+                            \${username !== ADMIN_USERNAME ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('\${username}')">Bannir</button>` : ''}
                         </td>
                     `;
                     tbody.appendChild(tr);
