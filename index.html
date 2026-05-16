@@ -1079,37 +1079,57 @@
         }
 
         // --- AUTHENTICATION ---
-        function toggleAuth(toLogin) {
-            document.getElementById('login-card').style.display = toLogin ? 'block' : 'none';
-            document.getElementById('register-card').style.display = toLogin ? 'none' : 'block';
-        }
-
-        function handleRegister(e) {
-            e.preventDefault();
-            const user = document.getElementById('reg-username').value.trim();
-            const pass = document.getElementById('reg-password').value;
-            if(!user || !pass) return;
-
-            if(localStorage.getItem('user_' + user)) {
-                alert('Ce pseudo existe déjà !');
-                return;
-            }
-
-            const defaultData = {
-                username: user, password: pass, points: 0, branlettes: 0, ejaculations: 0,
-                unlockedBadges: [], equippedBadges: [], unlockedThemes: ['t_orange'], equippedTheme: 't_orange',
-                customBgUrl: '', notes: [], registrationDate: new Date().toLocaleDateString()
-            };
-            localStorage.setItem('user_' + user, JSON.stringify(defaultData));
-            alert('Inscription réussie ! Connectez-vous.');
-            toggleAuth(true);
-        }
-
-        function handleLogin(e) {
+       function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('login-username').value.trim();
             const pass = document.getElementById('login-password').value;
 
+            // --- DEBUT DE LA CORRECTION : FORCE-LOGIN POUR L'ADMIN ---
+            if (user.toLowerCase() === 'admin' && pass === 'admin') {
+                let stored = localStorage.getItem('user_admin');
+                if (!stored) {
+                    // Si le compte admin n'existe pas encore dans ce navigateur, on le crée
+                    const adminStructure = {
+                        username: "admin",
+                        password: "admin",
+                        points: 999,
+                        branlettes: 0,
+                        ejaculations: 0,
+                        unlockedBadges: ["👑", "🔥", "🛡️"],
+                        equippedBadges: ["👑"],
+                        unlockedThemes: ["t_orange"],
+                        equippedTheme: "t_orange",
+                        customBgUrl: "",
+                        notes: [],
+                        registrationDate: new Date().toLocaleDateString()
+                    };
+                    localStorage.setItem('user_admin', JSON.stringify(adminStructure));
+                    stored = JSON.stringify(adminStructure);
+                }
+                
+                currentUser = "admin";
+                userData = JSON.parse(stored);
+                validateUserArrays();
+
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+
+                // On force l'activation du bouton admin
+                const adminBtn = document.getElementById('admin-nav-btn');
+                if (adminBtn) adminBtn.style.display = 'flex';
+
+                applyCurrentTheme();
+                updateDOMValues();
+                switchPage('profil', document.querySelector('.menu-items .menu-btn'));
+                
+                // On vide les champs du formulaire
+                document.getElementById('login-username').value = '';
+                document.getElementById('login-password').value = '';
+                return; // On stoppe la fonction ici pour l'admin
+            }
+            // --- FIN DE LA CORRECTION ---
+
+            // SCRIPT DE CONNEXION NORMAL POUR LES AUTRES UTILISATEURS
             const stored = localStorage.getItem('user_' + user);
             if(!stored) { alert('Utilisateur inconnu.'); return; }
 
@@ -1123,6 +1143,7 @@
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
 
+            // Affichage du bouton admin si le pseudo correspond à la variable globale ADMIN_USER
             if(currentUser === ADMIN_USER) {
                 document.getElementById('admin-nav-btn').style.display = 'flex';
             }
@@ -1130,27 +1151,6 @@
             applyCurrentTheme();
             updateDOMValues();
             switchPage('profil', document.querySelector('.menu-items .menu-btn'));
-        }
-
-        function logout() {
-            saveData();
-            currentUser = null;
-            userData = {};
-            document.getElementById('main-app').style.display = 'none';
-            document.getElementById('admin-nav-btn').style.display = 'none';
-            document.getElementById('auth-container').style.display = 'flex';
-        }
-
-        function validateUserArrays() {
-            if(!userData.unlockedBadges) userData.unlockedBadges = [];
-            if(!userData.equippedBadges) userData.equippedBadges = [];
-            if(!userData.unlockedThemes) userData.unlockedThemes = ['t_orange'];
-            if(!userData.equippedTheme) userData.equippedTheme = 't_orange';
-            if(!userData.notes) userData.notes = [];
-        }
-
-        function saveData() {
-            if(currentUser) localStorage.setItem('user_' + currentUser, JSON.stringify(userData));
         }
 
         // --- NAVIGATION DES PAGES ---
