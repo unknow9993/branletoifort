@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Niglo Sandwich - Mon Profil</title>
+    <title>Niglo Dashboard</title>
     <style>
         :root {
-            --primary: #ff6b6b;
-            --primary-hover: #fa5252;
-            --dark: #2c2c54;
-            --light: #f8f9fa;
-            --gray: #84817a;
-            --success: #2ecc71;
+            --bg-dark: #050807;
+            --bg-card: #0a0f0d;
+            --primary: #00b894;
+            --primary-glow: rgba(0, 184, 148, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #636e72;
+            --accent-orange: #ff9f43;
         }
 
         * {
@@ -22,137 +23,58 @@
         }
 
         body {
-            background-color: #f1f2f6;
-            color: var(--dark);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            height: 100vh;
         }
 
-        /* Navbar */
-        nav {
-            background-color: white;
-            padding: 1rem 2rem;
+        /* --- ÉCRAN DE CONNEXION / INSCRIPTION --- */
+        #auth-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 100vh;
+            background-color: var(--bg-dark);
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            margin-left: 1.5rem;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--primary);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1100px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Cartes / Box */
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        /* Sidebar Profil */
-        .profile-sidebar {
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid #14211d;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
-        .avatar {
-            width: 120px;
-            height: 120px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 0 auto 1rem auto;
-            border: 4px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .profile-sidebar h2 {
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-sidebar p {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            border-top: 1px solid #eee;
-            padding-top: 1rem;
-        }
-
-        .stat-box text {
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-
-        .stat-box div {
-            font-size: 1.4rem;
-            font-weight: bold;
+        .auth-card h2 {
             color: var(--primary);
-        }
-
-        /* Formulaire & Commandes */
-        .tabs-content h3 {
             margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--light);
+            font-size: 1.8rem;
+            letter-spacing: 1px;
         }
 
         .form-group {
             margin-bottom: 1.2rem;
+            text-align: left;
         }
 
         .form-group label {
             display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
             margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
         }
 
         .form-group input {
             width: 100%;
+            background: #0f1815;
+            border: 1px solid #1e332d;
             padding: 0.8rem;
-            border: 1px solid #ddd;
             border-radius: 8px;
+            color: white;
             outline: none;
             transition: border-color 0.3s;
         }
@@ -161,152 +83,829 @@
             border-color: var(--primary);
         }
 
-        btn {
-            display: inline-block;
+        .auth-btn {
             background: var(--primary);
-            color: white;
+            color: black;
+            font-weight: bold;
             border: none;
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: #00dcaf;
+            transform: translateY(-2px);
+        }
+
+        .auth-toggle {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .auth-toggle span {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* --- INTERFACE PRINCIPALE (DASHBOARD) --- */
+        #main-app {
+            display: none; /* Masqué par défaut tant qu'on est pas connecté */
+            height: 100vh;
+        }
+
+        /* Sidebar Gauche */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100%;
+            background: #040706;
+            border-right: 1px solid #0e1613;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 1.5px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-summary {
+            background: var(--bg-card);
+            border: 1px solid #0e1613;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .user-summary .name {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .user-summary .rank {
+            font-size: 0.75rem;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
+
+        .mini-stats {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mini-box {
+            flex: 1;
+            background: #0f1614;
+            padding: 0.5rem;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .mini-box span {
+            display: block;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .mini-box span.orange {
+            color: var(--accent-orange);
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .menu-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.8rem 1rem;
+            text-align: left;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: background 0.3s;
-            width: 100%;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        btn:hover {
-            background: var(--primary-hover);
+        .menu-btn:hover, .menu-btn.active {
+            color: var(--primary);
+            background: rgba(0, 184, 148, 0.05);
         }
 
-        /* Liste des commandes récurrentes / historiques */
-        .order-item {
+        .menu-btn.active {
+            border-left: 3px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Conteneur de Contenu */
+        .content-container {
+            margin-left: 240px;
+            padding: 2rem;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            background: var(--light);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border-left: 4px solid var(--primary);
+            margin-bottom: 2.5rem;
         }
 
-        .order-details h4 {
-            font-size: 1rem;
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid #d63031;
+            color: #d63031;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #d63031;
+            color: white;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* --- DESIGN PAGE : PROFIL --- */
+        .profile-centered {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .avatar-main {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-card);
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+        }
+
+        .avatar-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid var(--bg-dark);
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            font-weight: 700;
             margin-bottom: 0.2rem;
         }
 
-        .order-details span {
-            font-size: 0.8rem;
-            color: var(--gray);
+        .profile-rank {
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2.5rem;
         }
 
-        .order-price {
-            font-weight: bold;
-            color: var(--dark);
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
         }
 
-        .badge {
-            background: var(--success);
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid #0f1614;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .val {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .val.orange { color: var(--accent-orange); }
+
+        .stat-card .lbl {
             font-size: 0.75rem;
-            margin-left: 0.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+
+        .decorations-section {
+            text-align: left;
+        }
+
+        .decorations-section h3 {
+            font-size: 0.9rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .empty-box {
+            border: 1px dashed #1e332d;
+            background: rgba(10, 15, 13, 0.4);
+            padding: 2rem;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- DESIGN PAGE : COMPTEURS --- */
+        .compteur-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .compteur-card {
+            background: var(--bg-card);
+            border: 1px solid #111a17;
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .compteur-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
+        }
+
+        .compteur-title { font-weight: bold; font-size: 1.1rem;}
+        .compteur-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem;}
+
+        .big-number {
+            font-size: 4.5rem;
+            font-weight: 900;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--primary);
+        }
+        .big-number span { font-size: 1.5rem; color: var(--text-muted); font-weight: 400;}
+        .big-number.orange { color: var(--accent-orange); }
+
+        .counter-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-count {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 10px;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-count.minus { background: #131c19; color: var(--text-muted); }
+        .btn-count.minus:hover { background: #1c2a26; }
+        .btn-count.plus { background: var(--primary); color: black; }
+        .btn-count.plus:hover { background: #00dcaf; }
+        .btn-count.plus.orange { background: var(--accent-orange); }
+        .btn-count.plus.orange:hover { background: #ffb061; }
+
+        /* --- DESIGN PAGE : CHRONO --- */
+        .chrono-circle {
+            width: 260px;
+            height: 260px;
+            border: 4px solid #101c18;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            margin: 3rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--primary);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .chrono-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .btn-chrono {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-chrono.start { background: rgba(0, 184, 148, 0.1); border: 1px solid var(--primary); color: var(--primary); }
+        .btn-chrono.reset { background: #181717; border: 1px solid #333; color: #aaa; }
+
+        /* --- DESIGN PAGE : BOUTIQUE --- */
+        .shop-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .shop-item {
+            background: var(--bg-card);
+            border: 1px solid #151e1b;
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shop-info { display: flex; align-items: center; gap: 15px; }
+        .shop-icon { font-size: 2rem; }
+        .shop-details h4 { font-size: 1rem; margin-bottom: 2px;}
+        .shop-details p { font-size: 0.8rem; color: var(--text-muted); }
+        .shop-cost { color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; margin-top: 2px;}
+
+        .btn-buy {
+            background: #14211d;
+            color: var(--text-main);
+            border: 1px solid #223a33;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .btn-buy:hover { background: #1e332d; }
+
+        /* --- DESIGN PAGE : HISTOIRE --- */
+        .history-card {
+            background: var(--bg-card);
+            border: 1px solid #111a17;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            max-width: 700px;
+            margin: 0 auto 1.5rem auto;
+        }
+        .history-card h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 0.8rem; font-size: 1.1rem; }
+        .history-card p { color: #b2bec3; font-size: 0.9rem; line-height: 1.6; }
+
     </style>
 </head>
 <body>
 
-    <!-- Barre de Navigation -->
-    <nav>
-        <div class="logo">🦔 Niglo Sandwich</div>
-        <div class="nav-links">
-            <a href="#">Carte</a>
-            <a href="#">Commander</a>
-            <a href="#" class="active">Mon Profil</a>
-        </div>
-    </nav>
-
-    <!-- Contenu Principal -->
-    <div class="container">
-        
-        <!-- Colonne Gauche : Résumé Profil -->
-        <div class="card profile-sidebar">
-            <div class="avatar" id="avatarTitle">JD</div>
-            <h2 id="profileName">Jean Dupont</h2>
-            <p id="profileEmail">jean.dupont@email.com</p>
-            
-            <div class="stats">
-                <div class="stat-box">
-                    <div>12</div>
-                    <text>Commandes</text>
-                </div>
-                <div class="stat-box">
-                    <div>Niglo d'Or</div>
-                    <text>Statut Fidélité</text>
-                </div>
-            </div>
-        </div>
-
-        <!-- Colonne Droite : Paramètres et Historique -->
-        <div class="card tabs-content">
-            <h3>Mes Informations</h3>
-            <form id="profileForm">
+    <div id="auth-container">
+        <div class="auth-card" id="login-card">
+            <h2>CONNEXION</h2>
+            <form id="loginForm">
                 <div class="form-group">
-                    <label for="username">Nom complet</label>
-                    <input type="text" id="username" value="Jean Dupont" required>
+                    <label>Pseudo</label>
+                    <input type="text" id="login-username" required placeholder="Ex: zzhhr">
                 </div>
                 <div class="form-group">
-                    <label for="email">Adresse Email</label>
-                    <input type="email" id="email" value="jean.dupont@email.com" required>
+                    <label>Mot de passe</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
                 </div>
-                <div class="form-group">
-                    <label for="phone">Numéro de téléphone</label>
-                    <input type="tel" id="phone" value="06 12 34 56 78">
-                </div>
-                <button type="submit" class="btn">Enregistrer les modifications</button>
+                <button type="submit" class="auth-btn">Se connecter</button>
             </form>
-
-            <h3 style="margin-top: 2.5rem;">Dernières commandes</h3>
-            
-            <div class="order-item">
-                <div class="order-details">
-                    <h4>Menu Menu Niglo Américain <span class="badge">Livré</span></h4>
-                    <span>Commandé le 15 Mai 2026</span>
-                </div>
-                <div class="order-price">12,50 €</div>
-            </div>
-
-            <div class="order-item">
-                <div class="order-details">
-                    <h4>Le Spécial Poulet Curry <span class="badge">Livré</span></h4>
-                    <span>Commandé le 02 Mai 2026</span>
-                </div>
-                <div class="order-price">8,90 €</div>
-            </div>
+            <div class="auth-toggle">Pas de compte ? <span onclick="toggleAuth(false)">S'inscrire</span></div>
         </div>
 
+        <div class="auth-card" id="register-card" style="display: none;">
+            <h2>INSCRIPTION</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Choisissez un Pseudo</label>
+                    <input type="text" id="reg-username" required placeholder="Ex: zzhhr">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="reg-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="auth-btn">Créer mon compte</button>
+            </form>
+            <div class="auth-toggle">Déjà inscrit ? <span onclick="toggleAuth(true)">Se connecter</span></div>
+        </div>
     </div>
 
-    <!-- Petit script pour rendre le profil un peu dynamique -->
-    <script>
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Récupérer les nouvelles valeurs
-            const newName = document.getElementById('username').value;
-            const newEmail = document.getElementById('email').value;
-            
-            // Mettre à jour l'affichage sur la carte de gauche
-            document.getElementById('profileName').textContent = newName;
-            document.getElementById('profileEmail').textContent = newEmail;
-            
-            // Mettre à jour les initiales de l'avatar (ex: Jean Dupont -> JD)
-            const initials = newName.split(' ').map(name => name[0]).join('').toUpperCase().slice(0, 2);
-            document.getElementById('avatarTitle').textContent = initials;
 
-            alert('Profil mis à jour avec succès ! 🦔');
+    <div id="main-app">
+        
+        <div class="sidebar">
+            <div class="brand">🍃 NIGLO <span style="font-size:0.7rem; font-weight:300; color:white;">SANDWICH</span></div>
+            
+            <div class="user-summary">
+                <div class="name" id="side-name">zzhhr</div>
+                <div class="rank">Rookie</div>
+                <div class="mini-stats">
+                    <div class="mini-box"><span id="side-pts">0</span>PTS</div>
+                    <div class="mini-box"><span class="orange" id="side-sandwichs">0</span>⏳</div>
+                </div>
+            </div>
+
+            <div class="menu-items">
+                <button class="menu-btn active" onclick="switchPage('profil', this)">🕒 Chrono</button>
+                <button class="menu-btn" onclick="switchPage('compteurs', this)">📊 Compteurs</button>
+                <button class="menu-btn" onclick="switchPage('profil-view', this)">👤 Profil</button>
+                <button class="menu-btn" onclick="switchPage('boutique', this)">🛍️ Boutique</button>
+                <button class="menu-btn" onclick="switchPage('histoire', this)">📖 Histoire</button>
+            </div>
+        </div>
+
+        <div class="content-container">
+            
+            <div id="page-profil" class="page active">
+                <div class="page-header">
+                    <div class="page-title">Chrono</div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+                <div class="profile-centered">
+                    <div class="chrono-circle" id="chrono-display">00:00:00.00</div>
+                    <div class="chrono-actions">
+                        <button class="btn-chrono start" id="btn-chrono-toggle" onclick="toggleChrono()">START</button>
+                        <button class="btn-chrono reset" onclick="resetChrono()">RESET</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-compteurs" class="page">
+                <div class="page-header">
+                    <div class="page-title">Compteurs</div>
+                </div>
+                <div class="compteur-wrapper">
+                    <div class="compteur-card">
+                        <div class="compteur-header">
+                            <span>🍃</span>
+                            <div class="compteur-title">Niglos</div>
+                        </div>
+                        <div class="compteur-subtitle">COMPTEUR PERSONNEL</div>
+                        <div class="big-number"><span id="val-niglos">0</span><span>/100</span></div>
+                        <div class="counter-actions">
+                            <button class="btn-count minus" onclick="updateCount('niglos', -1)">-</button>
+                            <button class="btn-count plus" onclick="updateCount('niglos', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="compteur-card">
+                        <div class="compteur-header">
+                            <span>🥪</span>
+                            <div class="compteur-title">Sandwichs</div>
+                        </div>
+                        <div class="compteur-subtitle">+2 PTS PAR SANDWICH</div>
+                        <div class="big-number orange"><span id="val-sandwichs">0</span><span>/100</span></div>
+                        <div class="counter-actions">
+                            <button class="btn-count minus" onclick="updateCount('sandwichs', -1)">-</button>
+                            <button class="btn-count plus orange" onclick="updateCount('sandwichs', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-profil-view" class="page">
+                <div class="page-header">
+                    <div class="page-title">Profil</div>
+                </div>
+                <div class="profile-centered">
+                    <div class="avatar-container">
+                        <div class="avatar-main">🥗</div>
+                        <div class="avatar-badge">📷</div>
+                    </div>
+                    <div class="profile-name" id="prof-name">zzhhr</div>
+                    <div class="profile-rank">Rookie</div>
+
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="val" id="card-pts">0</div>
+                            <div class="lbl">Points</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="val" id="card-niglos">0</div>
+                            <div class="lbl">Niglos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="val orange" id="card-sandwichs">0</div>
+                            <div class="lbl">Sandwichs</div>
+                        </div>
+                    </div>
+
+                    <div class="decorations-section">
+                        <h3>Décorations Équipables</h3>
+                        <div class="empty-box">Aucune décoration. Visitez la Boutique !</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-boutique" class="page">
+                <div class="page-header">
+                    <div class="page-title">Boutique</div>
+                </div>
+                <div class="shop-list">
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">👑</div>
+                            <div class="shop-details">
+                                <h4>Couronne</h4>
+                                <p>La royauté en personne</p>
+                                <div class="shop-cost">50 pts • Légendaire</div>
+                            </div>
+                        </div>
+                        <button class="btn-buy" onclick="buyItem(50)">Acheter</button>
+                    </div>
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">✨</div>
+                            <div class="shop-details">
+                                <h4>Aura Mystique</h4>
+                                <p>Un halo stylé autour de toi</p>
+                                <div class="shop-cost">40 pts • Épique</div>
+                            </div>
+                        </div>
+                        <button class="btn-buy" onclick="buyItem(40)">Acheter</button>
+                    </div>
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">🥪</div>
+                            <div class="shop-details">
+                                <h4>Sandwich d'Or</h4>
+                                <p>Le casse-croûte ultime</p>
+                                <div class="shop-cost">60 pts • Légendaire</div>
+                            </div>
+                        </div>
+                        <button class="btn-buy" onclick="buyItem(60)">Acheter</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-histoire" class="page">
+                <div class="page-header">
+                    <div class="page-title">Histoire</div>
+                </div>
+                <div class="history-card">
+                    <h3>🌍 Origines Historiques</h3>
+                    <p>Le sandwich trouve ses lettres de noblesse au XVIIIe siècle grâce à John Montagu, 4e comte de Sandwich, qui demandait qu'on lui serve de la viande entre deux tranches de pain pour pouvoir manger sans quitter sa table de jeu.</p>
+                </div>
+                <div class="history-card">
+                    <h3>🌾 Culture et Traditions</h3>
+                    <p>Devenu l'emblème mondial du repas rapide sur le pouce, le sandwich varie selon les cultures : de la baguette parisienne au jambon-beurre jusqu'aux créations revisitées modernes de nos jours.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- VARIABLES GLOBALES DE SESSION ---
+        let currentUser = null;
+        let userData = { points: 0, niglos: 0, sandwichs: 0 };
+        
+        // Chrono
+        let chronoInterval = null;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let isChronoRunning = false;
+
+        // --- GESTION AUTHENTIFICATION ---
+        function toggleAuth(showLogin) {
+            document.getElementById('login-card').style.display = showLogin ? 'block' : 'none';
+            document.getElementById('register-card').style.display = showLogin ? 'none' : 'block';
+        }
+
+        // Inscription
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('reg-username').value.trim();
+            const pass = document.getElementById('reg-password').value;
+
+            if(localStorage.getItem('user_' + user)) {
+                alert('Ce pseudo existe déjà !');
+                return;
+            }
+
+            const initialData = { points: 0, niglos: 0, sandwichs: 0, password: pass };
+            localStorage.setItem('user_' + user, JSON.stringify(initialData));
+            alert('Compte créé avec succès ! Connecte-toi vite.');
+            toggleAuth(true);
         });
+
+        // Connexion
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value;
+
+            const stored = localStorage.getItem('user_' + user);
+            if(!stored) {
+                alert('Utilisateur inconnu !');
+                return;
+            }
+
+            const data = JSON.parse(stored);
+            if(data.password !== pass) {
+                alert('Mot de passe incorrect !');
+                return;
+            }
+
+            // Init session
+            currentUser = user;
+            userData = data;
+            launchApp();
+        });
+
+        function launchApp() {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            updateDOMValues();
+        }
+
+        function logout() {
+            if(isChronoRunning) toggleChrono();
+            currentUser = null;
+            document.getElementById('main-app').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'flex';
+        }
+
+        // --- NAVIGATION INTERNE ---
+        function switchPage(pageId, buttonElem) {
+            // Masquer toutes les pages
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Déselectionner tous les boutons menus
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+
+            // Activer la page et le bouton ciblé
+            document.getElementById('page-' + pageId).classList.add('active');
+            buttonElem.classList.add('active');
+        }
+
+        // --- LOGIQUE COMPTEURS ---
+        function updateCount(type, amount) {
+            if((userData[type] + amount) < 0) return; // Pas de valeurs négatives
+            
+            userData[type] += amount;
+
+            // Système d'attribution automatique des points (Ex: +2 pts par sandwich)
+            if(type === 'sandwichs' && amount > 0) userData.points += 2;
+            if(type === 'niglos' && amount > 0) userData.points += 1;
+
+            saveData();
+            updateDOMValues();
+        }
+
+        // --- LOGIQUE BOUTIQUE ---
+        function buyItem(cost) {
+            if(userData.points < cost) {
+                alert("Erreur: Tu n'as pas assez de points ! 😢");
+                return;
+            }
+            userData.points -= cost;
+            alert("Achat réussi ! Objet ajouté à ta collection. 🎉");
+            saveData();
+            updateDOMValues();
+        }
+
+        // --- SAUVEGARDE EN LOCALSTORAGE ---
+        function saveData() {
+            if(currentUser) {
+                localStorage.setItem('user_' + currentUser, JSON.stringify(userData));
+            }
+        }
+
+        // Mettre à jour l'ensemble des éléments visibles à l'écran
+        function updateDOMValues() {
+            if(!currentUser) return;
+
+            // Update Noms
+            document.getElementById('side-name').textContent = currentUser;
+            document.getElementById('prof-name').textContent = currentUser;
+
+            // Update stats globales
+            document.getElementById('side-pts').textContent = userData.points;
+            document.getElementById('card-pts').textContent = userData.points;
+
+            document.getElementById('val-niglos').textContent = userData.niglos;
+            document.getElementById('card-niglos').textContent = userData.niglos;
+
+            document.getElementById('val-sandwichs').textContent = userData.sandwichs;
+            document.getElementById('card-sandwichs').textContent = userData.sandwichs;
+            document.getElementById('side-sandwichs').textContent = userData.sandwichs;
+        }
+
+        // --- LOGIQUE CHRONO ---
+        function toggleChrono() {
+            const btn = document.getElementById('btn-chrono-toggle');
+            if(!isChronoRunning) {
+                // Lancer
+                isChronoRunning = true;
+                btn.textContent = "STOP";
+                btn.style.background = "rgba(214, 48, 49, 0.1)";
+                btn.style.borderColor = "#d63031";
+                btn.style.color = "#d63031";
+                startTime = Date.now() - elapsedTime;
+                chronoInterval = setInterval(updateChronoDisplay, 10);
+            } else {
+                // Arrêter
+                isChronoRunning = false;
+                btn.textContent = "START";
+                btn.style.background = "rgba(0, 184, 148, 0.1)";
+                btn.style.borderColor = "var(--primary)";
+                btn.style.color = "var(--primary)";
+                clearInterval(chronoInterval);
+            }
+        }
+
+        function resetChrono() {
+            if(isChronoRunning) toggleChrono();
+            elapsedTime = 0;
+            document.getElementById('chrono-display').textContent = "00:00:00.00";
+        }
+
+        function updateChronoDisplay() {
+            elapsedTime = Date.now() - startTime;
+            
+            let tempTime = elapsedTime;
+            const ms = Math.floor((tempTime % 1000) / 10);
+            tempTime = Math.floor(tempTime / 1000);
+            const secs = tempTime % 60;
+            tempTime = Math.floor(tempTime / 60);
+            const mins = tempTime % 60;
+            const hrs = Math.floor(tempTime / 60);
+
+            const displayStr = 
+                (hrs < 10 ? "0" + hrs : hrs) + ":" +
+                (mins < 10 ? "0" + mins : mins) + ":" +
+                (secs < 10 ? "0" + secs : secs) + "." +
+                (ms < 10 ? "0" + ms : ms);
+
+            document.getElementById('chrono-display').textContent = displayStr;
+        }
     </script>
 </body>
 </html>
