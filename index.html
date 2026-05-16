@@ -4,49 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Branlette Dashboard - Édition Légendaire</title>
-<link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this)">
-    <input type="file" id="custom-bg-upload-input" accept="image/*" style="display: none;" onchange="handleCustomBgUpload(this)">
-    
-    <div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
-        <div class="modal-wrapper" onclick="event.stopPropagation()">
-            <span class="modal-close" onclick="closeModal(null)">&times;</span>
-            <div class="profile-centered" style="margin-top: 1rem;">
-                <div class="avatar-container">
-                    <div class="avatar-main" id="modal-avatar-container">😈</div>
-                </div>
-                <div class="user-block" style="align-items: center; margin-bottom: 0.2rem;">
-                    <div class="profile-name" id="modal-name">User</div>
-                    <div class="equipped-badges-sub" id="modal-badges" style="font-size: 1.3rem;"></div>
-                </div>
-                <div class="profile-rank" id="modal-rank" style="margin-bottom: 1.5rem;">Novice</div>
-                <div class="stats-row" style="gap: 1rem;">
-                    <div class="stat-card" style="padding: 1rem;"><div class="val" id="modal-stat-pts" style="font-size:1.6rem;">0</div><div class="lbl" style="font-size:0.65rem;">Points</div></div>
-                    <div class="stat-card" style="padding: 1rem;"><div class="val" id="modal-stat-br" style="font-size:1.6rem;">0</div><div class="lbl" style="font-size:0.65rem;">Branlettes</div></div>
-                    <div class="stat-card" style="padding: 1rem;"><div class="val" id="modal-stat-ej" style="font-size:1.6rem;">0</div><div class="lbl" style="font-size:0.65rem;">Éjaculations</div></div>
-                </div>
-                <div style="text-align:left; margin-top:1.5rem;">
-                    <h4 style="color:var(--primary); font-size:0.8rem; text-transform:uppercase; margin-bottom:0.6rem;">🏆 Succès passifs</h4>
-                    <div class="achievements-grid" id="modal-achievements-container" style="grid-template-columns: repeat(2, 1fr); gap: 0.6rem;"></div>
-                </div>
-                <div class="logs-section" style="margin-top: 1.5rem;">
-                    <h4 style="color:var(--primary); font-size:0.8rem; text-transform:uppercase;">📓 Dernières notes publiques</h4>
-                    <div class="logs-container" id="modal-logs-container" style="max-height: 120px; margin-top: 0.4rem;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div id="auth-container">
         <div class="auth-card" id="login-card">
             <h2>CONNEXION</h2>
-            <form id="loginForm" onsubmit="handleLogin(event)">
+            <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Pseudo</label>
-                    <input type="text" id="login-username" required placeholder="Ex: zzhhr">
+                    <input type="text" id="login-username" required placeholder="Votre pseudo...">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
@@ -54,203 +22,73 @@
                 </div>
                 <button type="submit" class="auth-btn">Se connecter</button>
             </form>
-            <div class="auth-toggle">Pas de compte ? <span onclick="toggleAuth(false)">S'inscrire</span></div>
+            <div class="auth-toggle">
+                Pas encore de compte ? <span onclick="toggleAuth(false)">S'inscrire</span>
+            </div>
         </div>
+
         <div class="auth-card" id="register-card" style="display: none;">
             <h2>INSCRIPTION</h2>
-            <form id="registerForm" onsubmit="handleRegister(event)">
+            <form onsubmit="handleRegister(event)">
                 <div class="form-group">
-                    <label>Choisissez un Pseudo</label>
-                    <input type="text" id="reg-username" required placeholder="Ex: zzhhr">
+                    <label>Pseudo</label>
+                    <input type="text" id="reg-username" required placeholder="Choisissez un pseudo...">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" id="reg-password" required placeholder="••••••••">
+                    <input type="password" id="reg-password" required placeholder="Créer un mot de passe...">
                 </div>
-                <button type="submit" class="auth-btn">Créer mon compte</button>
+                <button type="submit" class="auth-btn">Créer le compte</button>
             </form>
-            <div class="auth-toggle">Déjà inscrit ? <span onclick="toggleAuth(true)">Se connecter</span></div>
+            <div class="auth-toggle">
+                Déjà inscrit ? <span onclick="toggleAuth(true)">Se connecter</span>
+            </div>
         </div>
     </div>
 
-    <div id="main-app">
+    <div id="main-app" style="display: none;">
         <div class="sidebar">
-            <div class="brand">🍆 BRANLETTE</div>
+            <div class="brand">👑 DASHBOARD</div>
             <div class="user-summary">
                 <div class="user-block">
-                    <div class="name" id="side-name">User</div>
-                    <div class="equipped-badges-sub" id="side-badges"></div>
-                </div>
-                <div class="rank" id="side-rank">Novice</div>
-                <div class="mini-stats">
-                    <div class="mini-box"><span id="side-pts">0</span>PTS</div>
-                    <div class="mini-box"><span id="side-ejaculations">0</span>⏳</div>
+                    <div class="name" id="sb-username">Utilisateur</div>
+                    <div class="rank" id="sb-rank">Novice</div>
+                    <div class="equipped-badges-sub" id="sb-badges"></div>
                 </div>
             </div>
             <div class="menu-items">
-                <button class="menu-btn active" onclick="switchPage('profil', this)">🕒 Chrono</button>
-                <button class="menu-btn" onclick="switchPage('compteurs', this)">📊 Compteurs</button>
-                <button class="menu-btn" onclick="switchPage('challenges', this)">🎯 Défis</button>
-                <button class="menu-btn" onclick="switchPage('comm', this)">👥 Communauté</button>
-                <button class="menu-btn" onclick="switchPage('profil-view', this)">👤 Profil</button>
-                <button class="menu-btn" onclick="switchPage('boutique', this)">🛍️ Boutique</button>
-                <button class="menu-btn" onclick="switchPage('histoire', this)">📖 Histoire</button>
-                <button class="menu-btn" id="admin-nav-btn" style="display: none; color: #ff4757;" onclick="switchPage('admin-panel', this)">🛠️ Admin Panel</button>
+                <button class="menu-btn active" onclick="switchPage('profil', this)">Profil</button>
+                <button class="menu-btn" id="admin-nav-btn" onclick="switchPage('admin', this)">🛡️ Panel Admin</button>
             </div>
         </div>
 
         <div class="content-container">
+            <div class="page-header">
+                <div class="page-title" id="current-page-title">PROFIL</div>
+                <button class="btn-logout" onclick="logout()">Déconnexion</button>
+            </div>
+
             <div id="page-profil" class="page active">
-                <div class="page-header">
-                    <div class="page-title">Chrono</div>
-                    <button class="btn-logout" onclick="logout()">Logout</button>
+                <h2>Bienvenue sur votre espace.</h2>
+                <p style="margin-top: 10px; color: var(--text-muted);">Vos statistiques de session sont prêtes.</p>
+            </div>
+
+            <div id="page-admin" class="page">
+                <h2>Panel d'Administration Global</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Gestion des privilèges et données locales.</p>
+                <div class="comm-section" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid rgba(255,159,67,0.2); height: 40px; color: var(--primary);">
+                                <th>Pseudo</th>
+                                <th>Points</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-tbody">
+                            </tbody>
+                    </table>
                 </div>
-                <div class="profile-centered">
-                    <div class="chrono-circle" id="chrono-display">00:00:00.00</div>
-                    <div class="chrono-actions">
-                        <button class="btn-chrono start" id="btn-chrono-toggle" onclick="toggleChrono()">START</button>
-                        <button class="btn-chrono reset" onclick="resetChrono()">RESET</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="page-compteurs" class="page">
-                <div class="page-header"><div class="page-title">Compteurs</div></div>
-                <div class="compteur-wrapper">
-                    <div class="compteur-card">
-                        <div class="compteur-header"><span>🍆</span><div class="compteur-title">Branlettes</div></div>
-                        <div class="compteur-subtitle">Friction de base (+1 PT)</div>
-                        <div class="big-number"><span id="val-branlettes">0</span></div>
-                        <div class="counter-actions">
-                            <button class="btn-count minus" onclick="updateCount('branlettes', -1)">-</button>
-                            <button class="btn-count plus" onclick="updateCount('branlettes', 1)">+</button>
-                        </div>
-                    </div>
-                    <div class="compteur-card">
-                        <div class="compteur-header"><span>💦</span><div class="compteur-title">Éjaculations</div></div>
-                        <div class="compteur-subtitle">Finalisation (+2 PTS)</div>
-                        <div class="big-number"><span id="val-ejaculations">0</span></div>
-                        <div class="journal-box">
-                            <label>📓 Note de session (Journal de bord) :</label>
-                            <textarea id="session-note" placeholder="Comment s'est passée cette session ? (Visible publiquement)"></textarea>
-                        </div>
-                        <div class="counter-actions">
-                            <button class="btn-count minus" onclick="updateCount('ejaculations', -1)">-</button>
-                            <button class="btn-count plus" onclick="updateCount('ejaculations', 1)">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="page-challenges" class="page">
-                <div class="page-header"><div class="page-title">Défis</div></div>
-                <div class="challenge-list" id="challenges-container">
-                    </div>
-            </div>
-
-            <div id="page-comm" class="page">
-                <div class="page-header"><div class="page-title">Communauté</div></div>
-                <div class="comm-grid">
-                    <div class="comm-section">
-                        <h3>Utilisateurs</h3>
-                        <input type="text" class="search-box" id="user-search" oninput="loadCommunityData()" placeholder="Rechercher un membre...">
-                        <div class="user-list" id="global-user-list">
-                            </div>
-                    </div>
-                    <div class="comm-section">
-                        <h3>Classement Général</h3>
-                        <div class="lead-tabs">
-                            <button class="lead-tab-btn active" id="tab-lead-pts" onclick="switchLeaderboard('points')">Points</button>
-                            <button class="lead-tab-btn" id="tab-lead-ej" onclick="switchLeaderboard('ejaculations')">Éjaculations</button>
-                        </div>
-                        <table class="leaderboard-table">
-                            <thead>
-                                <tr>
-                                    <th>Pos</th>
-                                    <th>Joueur</th>
-                                    <th id="lead-th-score" style="text-align: right;">Points</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboard-body">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="page-profil-view" class="page">
-                <div class="page-header"><div class="page-title">Mon Profil</div></div>
-                <div class="profile-centered">
-                    <div class="avatar-container">
-                        <div class="avatar-main" id="my-profile-avatar">😈</div>
-                        <div class="avatar-badge" onclick="triggerAvatarUpload()">✏️</div>
-                    </div>
-                    <div class="profile-name" id="my-profile-name">User</div>
-                    <div class="equipped-badges-sub" id="my-profile-badges" style="justify-content: center; font-size: 1.4rem;"></div>
-                    <div class="profile-rank" id="my-profile-rank">Novice</div>
-
-                    <div class="stats-row">
-                        <div class="stat-card"><div class="val" id="prof-stat-pts">0</div><div class="lbl">Points</div></div>
-                        <div class="stat-card"><div class="val" id="prof-stat-br">0</div><div class="lbl">Branlettes</div></div>
-                        <div class="stat-card"><div class="val" id="prof-stat-ej">0</div><div class="lbl">Éjaculations</div></div>
-                    </div>
-
-                    <div class="badges-section">
-                        <div class="customization-tabs">
-                            <button class="custom-tab-btn active" onclick="switchCustomTab('badges', this)">🏅 Badges</button>
-                            <button class="custom-tab-btn" onclick="switchCustomTab('themes', this)">🖼️ Arrière-plans</button>
-                            <button class="custom-tab-btn" onclick="switchCustomTab('achievements', this)">🏆 Succès Passifs</button>
-                        </div>
-
-                        <div class="custom-panel active" id="custom-panel-badges">
-                            <div class="badges-grid" id="badges-inventory-grid">
-                                </div>
-                        </div>
-
-                        <div class="custom-panel" id="custom-panel-themes">
-                            <div class="themes-preview-grid" id="themes-inventory-grid">
-                                </div>
-                        </div>
-
-                        <div class="custom-panel" id="custom-panel-achievements">
-                            <div class="achievements-grid" id="my-achievements-grid">
-                                </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="page-boutique" class="page">
-                <div class="page-header"><div class="page-title">Boutique Cosmetique</div></div>
-                <div class="shop-list-title">Badges Honorifiques</div>
-                <div class="shop-list" id="shop-badges-list"></div>
-                <div class="shop-list-title">Thèmes d'ambiance</div>
-                <div class="shop-list" id="shop-themes-list"></div>
-            </div>
-
-            <div id="page-histoire" class="page">
-                <div class="page-header"><div class="page-title">Histoire Légendaire</div></div>
-                <div class="history-card">
-                    <h3>Chapitre 1 : L'Éveil de la Force Élastique</h3>
-                    <p>Au commencement, il n'y avait que le vide... puis vint la friction primitive. Les pionniers de l'Édition Légendaire ont tracé la voie à la force du poignet.</p>
-                </div>
-            </div>
-
-            <div id="page-admin-panel" class="page">
-                <div class="page-header"><div class="page-title" style="color: #ff4757;">Admin Control Center</div></div>
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Joueur</th>
-                            <th>Points</th>
-                            <th>Branlettes</th>
-                            <th>Éjaculations</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-table-body">
-                        </tbody>
-                </table>
             </div>
         </div>
     </div>
