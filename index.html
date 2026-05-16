@@ -15,6 +15,9 @@
             --accent-orange: #ff9f43; 
             --success: #2ed573;
             --danger: #ff4757;
+
+            /* Fond dynamique par défaut */
+            --app-background: radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%);
         }
 
         * {
@@ -25,11 +28,12 @@
         }
 
         body {
-            background: radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%);
+            background: var(--app-background);
             background-attachment: fixed;
             color: var(--text-main);
             overflow-x: hidden;
             height: 100vh;
+            transition: background 0.5s ease; /* Transition fluide lors du changement de fond */
         }
 
         /* --- AUTHENTICATION --- */
@@ -413,7 +417,7 @@
         }
         .btn-count:active { transform: translateY(0); }
 
-        /* --- ONGLETS DEFIS (CHALLENGES) --- */
+        /* --- ONGLETS DEFIS --- */
         .challenge-list { display: flex; flex-direction: column; gap: 1.2rem; max-width: 650px; margin: 0 auto; }
         .challenge-card {
             background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 14px; padding: 1.5rem;
@@ -494,6 +498,15 @@
         }
 
         /* --- SHOP / SUCCESS / OTHER --- */
+        .shop-list-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin: 1.5rem 0 0.8rem 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 159, 67, 0.1);
+            padding-bottom: 4px;
+        }
         .shop-list { display: flex; flex-direction: column; gap: 1rem; max-width: 600px; margin: 0 auto; }
         .shop-item { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 12px; padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
         .shop-info { display: flex; align-items: center; gap: 15px; }
@@ -872,6 +885,8 @@
 
             <div id="page-boutique" class="page">
                 <div class="page-header"><div class="page-title">Boutique</div></div>
+                
+                <div class="shop-list-title">🎭 Cosmétiques & Effets</div>
                 <div class="shop-list">
                     <div class="shop-item">
                         <div class="shop-info">
@@ -888,6 +903,10 @@
                         <button class="btn-buy" id="btn-shop-aura" onclick="handleShopAction('aura', 50)">Acheter</button>
                     </div>
                 </div>
+
+                <div class="shop-list-title">🖼️ Thèmes & Fonds d'Application</div>
+                <div class="shop-list" id="themes-shop-list">
+                    </div>
             </div>
 
             <div id="page-histoire" class="page">
@@ -911,7 +930,11 @@
 
     <script>
         let currentUser = null;
-        let userData = { points: 0, branlettes: 0, ejaculations: 0, avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], friends: [], blocked: [] };
+        let userData = { 
+            points: 0, branlettes: 0, ejaculations: 0, avatar: "", role: "user",
+            inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], 
+            friends: [], blocked: [], themeEquipped: "classic" 
+        };
         
         let chronoInterval = null;
         let startTime = 0;
@@ -923,7 +946,15 @@
         const ADMIN_USERNAME = "admin";
         const ADMIN_PASSWORD = "admin123";
 
-        // Liste globale des descriptions de succès pour la Modal profil
+        // Définition de tous les thèmes/fonds disponibles
+        const APP_THEMES = {
+            classic: { name: "Sombre Classique (Feu de camp)", style: "radial-gradient(circle at 50% 30%, #4a2000 0%, #110700 45%, #000000 100%)", price: 0, icon: "🔥" },
+            pitchblack: { name: "Nuit Profonde (Noir Total)", style: "linear-gradient(135deg, #050505 0%, #000000 100%)", price: 0, icon: "🌑" },
+            sunrise: { name: "Aube Orangée", style: "radial-gradient(circle at 50% 10%, #3a1c00 0%, #1a0b00 50%, #050200 100%)", price: 0, icon: "🌅" },
+            cyberpunk: { name: "Néon Cyberpunk", style: "linear-gradient(135deg, #1f0326 0%, #05010d 100%)", price: 40, icon: "🔮" },
+            royal: { name: "Or Impérial Royal", style: "radial-gradient(circle at 50% 30%, #362903 0%, #120e01 60%, #000000 100%)", price: 75, icon: "🔱" }
+        };
+
         const ALL_ACHIEVEMENTS = {
             marathon: { title: "Le Marathonien", desc: "Chrono supérieur à 5 mins", icon: "⏱️" },
             sprinter: { title: "Le Sprinter", desc: "Session finie en < 30 secs", icon: "⚡" },
@@ -933,7 +964,7 @@
 
         if (!localStorage.getItem('user_' + ADMIN_USERNAME)) {
             localStorage.setItem('user_' + ADMIN_USERNAME, JSON.stringify({
-                points: 100, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], friends: [], blocked: []
+                points: 100, branlettes: 0, ejaculations: 0, password: ADMIN_PASSWORD, role: "admin", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [], friends: [], blocked: [], themeEquipped: "classic"
             }));
         }
 
@@ -951,7 +982,12 @@
                 alert('Ce pseudo est indisponible !'); return;
             }
 
-            const initialData = { points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", inventory: [], equipped: [], logs: [], achievements: [], claimedChallenges: [] , friends: [], blocked: []};
+            const initialData = { 
+                points: 0, branlettes: 0, ejaculations: 0, password: pass, role: "user", avatar: "", 
+                inventory: ["classic", "pitchblack", "sunrise"], // Les 3 thèmes gratuits débloqués dès le début
+                equipped: [], logs: [], achievements: [], claimedChallenges: [] , friends: [], blocked: [], 
+                themeEquipped: "classic"
+            };
             localStorage.setItem('user_' + user, JSON.stringify(initialData));
             alert('Compte créé !'); toggleAuth(true);
         });
@@ -974,19 +1010,26 @@
         });
 
         function validateUserArrays() {
-            if(!userData.inventory) userData.inventory = [];
+            if(!userData.inventory) userData.inventory = ["classic", "pitchblack", "sunrise"];
+            // S'assurer que les thèmes gratuits y sont
+            if(!userData.inventory.includes("classic")) userData.inventory.push("classic");
+            if(!userData.inventory.includes("pitchblack")) userData.inventory.push("pitchblack");
+            if(!userData.inventory.includes("sunrise")) userData.inventory.push("sunrise");
+            
             if(!userData.equipped) userData.equipped = [];
             if(!userData.logs) userData.logs = [];
             if(!userData.achievements) userData.achievements = [];
             if(!userData.claimedChallenges) userData.claimedChallenges = [];
             if(!userData.friends) userData.friends = [];
             if(!userData.blocked) userData.blocked = [];
+            if(!userData.themeEquipped) userData.themeEquipped = "classic";
         }
 
         function launchApp() {
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             document.getElementById('admin-nav-btn').style.display = userData.role === "admin" ? 'flex' : 'none';
+            applyCurrentTheme();
             updateDOMValues();
         }
 
@@ -995,6 +1038,14 @@
             currentUser = null;
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('auth-container').style.display = 'flex';
+            document.documentElement.style.setProperty('--app-background', APP_THEMES.classic.style);
+        }
+
+        function applyCurrentTheme() {
+            const currentThemeKey = userData.themeEquipped || "classic";
+            if (APP_THEMES[currentThemeKey]) {
+                document.documentElement.style.setProperty('--app-background', APP_THEMES[currentThemeKey].style);
+            }
         }
 
         function switchPage(pageId, buttonElem) {
@@ -1004,6 +1055,7 @@
             buttonElem.classList.add('active');
             if (pageId === 'admin-panel') loadAdminPanelData();
             if (pageId === 'comm') { renderCommunitySearch(); renderLeaderboard(); }
+            if (pageId === 'boutique') { renderThemesShop(); }
         }
 
         function getRank(pts, role) {
@@ -1113,6 +1165,62 @@
                 else { userData.equipped.push(itemKey); alert("Objet équipé !"); }
             }
             saveData(); updateDOMValues();
+        }
+
+        /* --- LOGIQUE RENDU ET CONFIGURATION DE LA BOUTIQUE DE THÈMES --- */
+        function renderThemesShop() {
+            const container = document.getElementById('themes-shop-list');
+            container.innerHTML = "";
+
+            Object.keys(APP_THEMES).forEach(themeKey => {
+                const theme = APP_THEMES[themeKey];
+                const hasTheme = userData.inventory.includes(themeKey);
+                const isEquipped = userData.themeEquipped === themeKey;
+
+                let btnText = `Acheter (${theme.price} pts)`;
+                let btnClass = "btn-buy";
+
+                if (hasTheme) {
+                    btnText = isEquipped ? "Équipé ✔️" : "Équiper";
+                    if (isEquipped) btnClass += " equipped";
+                }
+
+                container.innerHTML += `
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <div class="shop-icon">${theme.icon}</div>
+                            <div class="shop-details">
+                                <h4>${theme.name}</h4>
+                                <p>${theme.price === 0 ? 'Gratuit dès le départ' : 'Change complètement l\'arrière-plan de l\'application'}</p>
+                                ${!hasTheme ? `<div class="shop-cost">${theme.price} pts</div>` : '<div class="shop-cost" style="color:var(--success);">Débloqué</div>'}
+                            </div>
+                        </div>
+                        <button class="${btnClass}" onclick="handleThemeAction('${themeKey}', ${theme.price})">${btnText}</button>
+                    </div>
+                `;
+            });
+        }
+
+        function handleThemeAction(themeKey, price) {
+            const hasTheme = userData.inventory.includes(themeKey);
+
+            if (!hasTheme) {
+                if (userData.points < price) {
+                    alert("Pas assez de points pour acheter ce fond d'application ! 😢");
+                    return;
+                }
+                userData.points -= price;
+                userData.inventory.push(themeKey);
+                userData.themeEquipped = themeKey;
+                alert(`Fond "${APP_THEMES[themeKey].name}" débloqué et appliqué ! 🎉`);
+            } else {
+                userData.themeEquipped = themeKey;
+            }
+
+            saveData();
+            applyCurrentTheme();
+            updateDOMValues();
+            renderThemesShop();
         }
 
         function triggerAvatarUpload() { document.getElementById('avatar-upload-input').click(); }
@@ -1317,8 +1425,6 @@
             resultsContainer.innerHTML = "";
 
             const allUsers = getAllPlatformUsers();
-
-            // Filtrer l'utilisateur lui-même
             const filteredUsers = allUsers.filter(u => u.username !== currentUser);
 
             let matchingUsers = filteredUsers;
@@ -1334,8 +1440,6 @@
             matchingUsers.forEach(u => {
                 const isFriend = userData.friends.includes(u.username);
                 const isBlocked = userData.blocked.includes(u.username);
-                
-                // Si l'autre nous a bloqué, optionnel: on cache. Ici on gère l'état local
                 const uRank = getRank(u.data.points || 0, u.data.role);
 
                 let avatarHtml = "😈";
@@ -1376,10 +1480,8 @@
             if(index > -1) {
                 userData.friends.splice(index, 1);
             } else {
-                // S'il est bloqué, on le débloque d'abord
                 const blockIdx = userData.blocked.indexOf(targetUser);
                 if(blockIdx > -1) userData.blocked.splice(blockIdx, 1);
-                
                 userData.friends.push(targetUser);
             }
             saveData();
@@ -1392,10 +1494,8 @@
             if(index > -1) {
                 userData.blocked.splice(index, 1);
             } else {
-                // Retirer des amis si présent
                 const friendIdx = userData.friends.indexOf(targetUser);
                 if(friendIdx > -1) userData.friends.splice(friendIdx, 1);
-
                 userData.blocked.push(targetUser);
             }
             saveData();
@@ -1403,7 +1503,7 @@
             renderLeaderboard();
         }
 
-        /* --- GESTION DU LEADERBOARD MULTI-ONGLETS --- */
+        /* --- GESTION DU LEADERBOARD --- */
         function toggleLeadTab(tabType) {
             activeLeadTab = tabType;
             document.getElementById('btn-lead-global').classList.toggle('active', tabType === 'global');
@@ -1416,16 +1516,12 @@
             tbody.innerHTML = "";
 
             let allUsers = getAllPlatformUsers();
-
-            // Filtrer les personnes qu'on a bloquées (on ne veut pas les voir)
             allUsers = allUsers.filter(u => !userData.blocked.includes(u.username));
 
-            // Si onglet Amis, filtrer uniquement soi-même + la liste d'amis
             if(activeLeadTab === 'friends') {
                 allUsers = allUsers.filter(u => u.username === currentUser || userData.friends.includes(u.username));
             }
 
-            // Trier par points décroissants
             allUsers.sort((a, b) => (b.data.points || 0) - (a.data.points || 0));
 
             allUsers.forEach((u, index) => {
@@ -1456,7 +1552,7 @@
             });
         }
 
-        /* --- FENÊTRE DIALOG MODALE D'UN PROFIL TIERS --- */
+        /* --- FENÊTRE MODALE PROFIL TIERS --- */
         function viewUserUserProfile(username) {
             let targetData = null;
             if(username === currentUser) {
@@ -1467,17 +1563,14 @@
                 targetData = JSON.parse(stored);
             }
 
-            // Remplissage dynamique des infos de la modal
             document.getElementById('modal-name').textContent = username;
             document.getElementById('modal-rank').textContent = getRank(targetData.points || 0, targetData.role);
             document.getElementById('modal-stat-pts').textContent = targetData.points || 0;
             document.getElementById('modal-stat-br').textContent = targetData.branlettes || 0;
             document.getElementById('modal-stat-ej').textContent = targetData.ejaculations || 0;
 
-            // Badges équipés en dessous du pseudo (uniquement emojis)
             document.getElementById('modal-badges').innerHTML = getBadgesEmojisString(targetData.equipped || []);
 
-            // Config Avatar
             const modalAvatar = document.getElementById('modal-avatar-container');
             if(targetData.equipped && targetData.equipped.includes('aura')) modalAvatar.classList.add('has-aura');
             else modalAvatar.classList.remove('has-aura');
@@ -1485,7 +1578,6 @@
             if(targetData.avatar) modalAvatar.innerHTML = `<img src="${targetData.avatar}">`;
             else modalAvatar.innerHTML = targetData.role === 'admin' ? "👑" : "😈";
 
-            // Succès
             const achContainer = document.getElementById('modal-achievements-container');
             achContainer.innerHTML = "";
             const tAch = targetData.achievements || [];
@@ -1508,7 +1600,6 @@
                 });
             }
 
-            // Notes de journal
             const logsContainer = document.getElementById('modal-logs-container');
             const tLogs = targetData.logs || [];
             if(tLogs.length === 0) {
@@ -1531,7 +1622,7 @@
             }
         }
 
-
+        /* --- ADMIN PANEL --- */
         function loadAdminPanelData() {
             const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = "";
             const allUsers = getAllPlatformUsers();
@@ -1565,7 +1656,7 @@
             data.ejaculations = parseInt(document.getElementById(`adm-ej-${username}`).value) || 0;
             localStorage.setItem('user_' + username, JSON.stringify(data));
             alert('Données mises à jour.');
-            if (username === currentUser) { userData = data; validateUserArrays(); updateDOMValues(); }
+            if (username === currentUser) { userData = data; validateUserArrays(); applyCurrentTheme(); updateDOMValues(); }
         }
 
         function deleteUserFromAdmin(username) {
