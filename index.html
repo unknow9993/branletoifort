@@ -349,6 +349,7 @@
         /* --- COMPTEURS --- */
         .compteur-wrapper { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
         .compteur-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 16px; padding: 2rem; }
+        .compteur-card { background: var(--bg-card); border: 1px solid rgba(255, 159, 67, 0.1); border-radius: 16px; padding: 2rem; }
         .compteur-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
         .compteur-title { font-weight: bold; font-size: 1.1rem;}
         .compteur-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;}
@@ -790,7 +791,7 @@
         let startTime = 0;
         let elapsedTime = 0;
         let isChronoRunning = false;
-        let rageClicks = 0; // Compteur pour le défi secret rageux
+        let rageClicks = 0; 
 
         const ADMIN_USERNAME = "admin";
         const ADMIN_PASSWORD = "admin123";
@@ -872,7 +873,6 @@
         }
 
         function updateCount(type, amount) {
-            // Défi secret : Clic répétitif dans le vide (Rageux)
             if (type === 'branlettes' && amount === -1 && userData.branlettes === 0) {
                 rageClicks++;
                 if (rageClicks >= 10 && !userData.inventory.includes('rage_badge')) {
@@ -889,9 +889,8 @@
 
             const hours = new Date().getHours();
 
-            // Défi secret : Créature de la nuit
             if (amount > 0 && (hours >= 2 && hours <= 5) && !userData.inventory.includes('night_checked')) {
-                userData.inventory.push('night_checked'); // Marqueur temporaire de condition remplie
+                userData.inventory.push('night_checked'); 
             }
 
             if(amount > 0) {
@@ -899,7 +898,6 @@
                     userData.points += 2;
                     if(hours >= 2 && hours <= 5) unlockAchievement('vampire', 15);
                     
-                    // Vérification Speedrun (-90 sec)
                     if(elapsedTime > 0 && elapsedTime <= 90000 && !userData.inventory.includes('speedrun_checked')) {
                         userData.inventory.push('speedrun_checked');
                     }
@@ -950,13 +948,13 @@
         }
 
         function toggleEquipBadge(badgeKey) {
-            if (!userData.inventory.includes(badgeKey)) return; // Pas encore débloqué
+            if (!userData.inventory.includes(badgeKey)) return; 
 
             const index = userData.equipped.indexOf(badgeKey);
             if (index > -1) {
-                userData.equipped.splice(index, 1); // Retire le badge
+                userData.equipped.splice(index, 1); 
             } else {
-                userData.equipped.push(badgeKey); // Équipe le badge
+                userData.equipped.push(badgeKey); 
             }
             saveData();
             updateDOMValues();
@@ -993,7 +991,6 @@
             
             if(userData.equipped.includes('crown')) finalName = "👑 " + finalName;
             
-            // Concaténation des titres/badges équipés dans le pseudo
             if(userData.equipped.includes('shaolin_title')) finalName += " [Moine Shaolin]";
             if(userData.equipped.includes('veloce_title')) finalName += " [⚡ Véloce]";
             if(userData.equipped.includes('vampire_badge')) finalName += " [🦇 Vampire]";
@@ -1035,7 +1032,6 @@
                 const card = document.getElementById('ach-' + achId); if(card) card.classList.add('unlocked');
             });
 
-            // Mise à jour visuelle de la grille des badges
             const badgeKeys = ['shaolin_title', 'veloce_title', 'vampire_badge', 'rage_badge'];
             badgeKeys.forEach(key => {
                 const badgeElement = document.getElementById('badge-' + key);
@@ -1152,14 +1148,20 @@
                 if (key.startsWith('user_')) {
                     const username = key.replace('user_', ''); const data = JSON.parse(localStorage.getItem(key));
                     const tr = document.createElement('tr');
+                    
+                    let deleteButtonHtml = '';
+                    if (username !== ADMIN_USERNAME) {
+                        deleteButtonHtml = `<button class="btn-admin-action" onclick="deleteUserFromAdmin('${username}')">Bannir</button>`;
+                    }
+
                     tr.innerHTML = `
                         <td style="font-weight:bold; color:${username === ADMIN_USERNAME ? '#ff4757':'white'}">${username}</td>
                         <td><input type="number" class="admin-input" id="adm-pts-${username}" value="${data.points}"></td>
                         <td><input type="number" class="admin-input" id="adm-br-${username}" value="${data.branlettes}"></td>
                         <td><input type="number" class="admin-input" id="adm-ej-${username}" value="${data.ejaculations}"></td>
                         <td>
-                            <button class="btn-admin-action btn-admin-save" onclick=\"saveUserFromAdmin('${username}')\">Sauver</button>
-                            \${username !== ADMIN_USERNAME ? `<button class="btn-admin-action" onclick="deleteUserFromAdmin('\${username}')">Bannir</button>` : ''}
+                            <button class="btn-admin-action btn-admin-save" onclick="saveUserFromAdmin('${username}')">Sauver</button>
+                            ${deleteButtonHtml}
                         </td>
                     `;
                     tbody.appendChild(tr);
